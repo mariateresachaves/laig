@@ -75,6 +75,77 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 
 }
 
+// --- Parse Views ----
+MySceneGraph.prototype.parseViews = function(rootElement) {
+
+	var elems =  rootElement.getElementsByTagName('views');
+
+	if (elems == null) { // errro não existe um scene - reporta e termina
+		return "views element is missing.";
+	}
+
+	if (elems.length != 1) { // erro tem mais do que um scene - reporta e termina
+		return "views zero or more than one 'views' element found.";
+	}
+
+	// various examples of different types of access
+	var views = elems[0];
+	this.default = this.reader.getString(views, 'default');
+
+	console.log("Views read from file: {default=" + this.default + "}");
+
+	views.list = [];
+
+	// iterate over every element
+	var nnodes = views.children.length;
+
+	if(nnodes < 1)
+		return "perspective element is missing.";
+
+	for (var i = 0; i < nnodes; i++)
+	{
+		var e = views.children[i];
+
+		console.log("NEAR: " + e.attributes.getNamedItem("near").value);
+
+		// process each element and store its information
+		var perspective_attr = new Object;
+
+		perspective_attr.near = e.attributes.getNamedItem("near").value;
+		perspective_attr.far = e.attributes.getNamedItem("far").value;
+		perspective_attr.angle = e.attributes.getNamedItem("angle").value;
+
+		var nnnodes = nnodes.children.length;
+
+		if(nnnodes != 2)
+			return " missing from and to elements.";
+
+		var perspective_from = e.children[0];
+		var x = this.reader.getFloat(perspective_from, 'x');
+		var y = this.reader.getFloat(perspective_from, 'y');
+		var z = this.reader.getFloat(perspective_from, 'z');
+
+		perspective_attr.from = [x,y,z];
+
+		var perspective_to = e.children[1];
+		x = this.reader.getFloat(perspective_to, 'x');
+		y = this.reader.getFloat(perspective_to, 'y');
+		z = this.reader.getFloat(perspective_to, 'z');
+
+		perspective_attr.to = [x,y,z];
+
+		console.log("Read views item id " + e.id+
+								" near = " + views.list[e.id].near +
+								" far = " + views.list[e.id].far +
+								" angle = " + views.list[e.id].angle);
+
+		console.log("from = [ " + views.list[e.id].from[0] + ", " + views.list[e.id].from[1] + ", " + views.list[e.id].from[2] + "] " +
+								"to = ["+ views.list[e.id].to[0] + ", " + views.list[e.id].to[1] + ", " + views.list[e.id].to[2] + "] ");
+
+		views.list[e.id] = perspective_attr;
+	}
+}
+
 /*
  * Example of method that parses elements of one block and stores information in a specific data structure
  */

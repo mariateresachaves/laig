@@ -17,17 +17,17 @@
 
     <!-- deve definir-se um objeto para raiz do grafo , assim -->
     <!-- como o comprimento dos tres eixos (cilindros) -->
-    <scene root="ss" axis_length="ff" />
+    <scene root="raiz" axis_length="1.0" />
 
 
-    <views default="ss" >
+    <views default="v1" >
 
         <!-- declaracao obrigatoria de pelo menos uma vista; -->
         <!-- se varias vistas declaradas, o default e' a -->
         <!-- primeira vista; de cada vez que se pressione a tecla v/V, -->
         <!-- a vista muda para a proxima da lista; da -->
         <!-- ultima vista da lista volta 'a primeira -->
-        <perspective id="ss" near="ff" far="ff" angle="ff">
+        <perspective id="v1" near="1.0" far="2.0" angle="60.0">
             <from x="ff" y="ff" z="ff" />
             <to x="ff" y="ff" z="ff" />
         </perspective>

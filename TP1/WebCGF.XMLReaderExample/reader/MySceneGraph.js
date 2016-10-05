@@ -207,72 +207,74 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('lights');
 
-	if (elems == null) { // errro não existe um scene - reporta e termina
+	if (elems == null) { // errro não existe um lights - reporta e termina
 		return "lights element is missing.";
 	}
 
-	if (elems.length != 1) { // erro tem mais do que um scene - reporta e termina
+	if (elems.length != 1) { // erro tem mais do que um lights - reporta e termina
 		return "lights zero or more than one 'lights' element found.";
 	}
 
-	// various examples of different types of access
 	var lights = elems[0];
 
-	lights.list = [];
+	var omnis = lights.getElementsByTagName('omni');
+	var spots = lights.getElementsByTagName('spot');
 
-	// iterate over every element
-	var nnodes = lights.children.length;
+	if(omnis.length != 0) { // tem omnis
 
-	if(nnodes < 1)
-		return "perspective element is missing.";
+		// iterate over every element
+		var n_omnis = omnis.length;
 
-	for (var i = 0; i < nnodes; i++)
-	{
-		//console.log("Numero de LIGHTS omni: " + lights.getElementsByTagName('omni').length);
+		for (var i = 0; i < n_omnis; i++)
+		{
 
-		if (... == 'omni') {
-			console.log("Tag omni");
-		} else {
-			console.log("Tag spot")
+			var omni = omnis[i];
+			omnis[i].enabled = this.reader.getString(omni, 'enabled');
+
+			var omnis_location = omnis[i].children[0];
+			var x = this.reader.getFloat(omnis_location, 'x');
+			var y = this.reader.getFloat(omnis_location, 'y');
+			var z = this.reader.getFloat(omnis_location, 'z');
+			var w = this.reader.getFloat(omnis_location, 'w');
+
+			omnis[i].location = [x,y,z,w];
+
+			var omnis_ambient = omnis[i].children[1];
+			var r = this.reader.getFloat(omnis_ambient, 'r');
+			var g = this.reader.getFloat(omnis_ambient, 'g');
+			var b = this.reader.getFloat(omnis_ambient, 'b');
+			var a = this.reader.getFloat(omnis_ambient, 'a');
+
+			omnis[i].ambient = [r,g,b,a];
+
+			var omnis_diffuse = omnis[i].children[2];
+			r = this.reader.getFloat(omnis_diffuse, 'r');
+			g = this.reader.getFloat(omnis_diffuse, 'g');
+			b = this.reader.getFloat(omnis_diffuse, 'b');
+			a = this.reader.getFloat(omnis_diffuse, 'a');
+
+			omnis[i].diffuse = [r,g,b,a];
+
+			var omnis_specular = omnis[i].children[3];
+			r = this.reader.getFloat(omnis_specular, 'r');
+			g = this.reader.getFloat(omnis_specular, 'g');
+			b = this.reader.getFloat(omnis_specular, 'b');
+			a = this.reader.getFloat(omnis_specular, 'a');
+
+			omnis[i].specular = [r,g,b,a];
+
+			console.log("Read omni item id " + omnis[i].id + " (enabled = " + omnis[i].enabled + ")" +
+									" location = [" + omnis[i].location + "]" +
+									" ambient = " + omnis[i].ambient + "]" +
+									" diffuse = " + omnis[i].diffuse + "]" +
+									" specular = " + omnis[i].specular + "]");
+
 		}
 
-		/*if(lights.children[i])
+	} else { //nao tem omnis
 
-		// process each element and store its information
-		var perspective_attr = new Object;
+		console.log("Nao tem omnis");
 
-		perspective_attr.near = e.attributes.getNamedItem("near").value;
-		perspective_attr.far = e.attributes.getNamedItem("far").value;
-		perspective_attr.angle = e.attributes.getNamedItem("angle").value;
-
-		var nnnodes = e.children.length;
-
-		if(nnnodes != 2)
-			return " missing from and to elements.";
-
-		var perspective_from = e.children[0];
-		var x = this.reader.getFloat(perspective_from, 'x');
-		var y = this.reader.getFloat(perspective_from, 'y');
-		var z = this.reader.getFloat(perspective_from, 'z');
-
-		perspective_attr.from = [x,y,z];
-
-		var perspective_to = e.children[1];
-		x = this.reader.getFloat(perspective_to, 'x');
-		y = this.reader.getFloat(perspective_to, 'y');
-		z = this.reader.getFloat(perspective_to, 'z');
-
-		perspective_attr.to = [x,y,z];
-
-		console.log("Read lights item id " + e.id +
-								" near = " + perspective_attr.near +
-								" far = " + perspective_attr.far +
-								" angle = " + perspective_attr.angle);
-
-		console.log("from = [ " + perspective_attr.from + "] " +
-								"to = ["+ perspective_attr.to + "] ");
-
-		lights.list[e.id] = perspective_attr;*/
 	}
 
 }

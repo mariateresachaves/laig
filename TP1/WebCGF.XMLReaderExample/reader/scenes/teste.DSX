@@ -52,11 +52,23 @@
 
         <!-- Deve existir um ou mais blocos "omni" ou "spot" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
-        <omni id="ss" enabled="tt" >
-            <location x="ff" y="ff" z="ff" w="ff" />
-            <ambient r="ff" g="ff" b="ff" a="ff" />
-            <diffuse r="ff" g="ff" b="ff" a="ff" />
-            <specular r="ff" g="ff" b="ff" a="ff" />
+        <omni id="o1" enabled="0" >
+            <location x="1.0" y="2.0" z="3.0" w="1.0" />
+            <ambient r="0.3" g="1.0" b="0.1" a="0.0" />
+            <diffuse r="1.0" g="1.0" b="0.2" a="1.0" />
+            <specular r="1.0" g="1.0" b="0.3" a="1.0" />
+        </omni>
+        <omni id="o2" enabled="1" >
+            <location x="1.0" y="2.0" z="3.0" w="1.0" />
+            <ambient r="0.3" g="1.0" b="0.1" a="0.0" />
+            <diffuse r="1.0" g="1.0" b="0.2" a="1.0" />
+            <specular r="1.0" g="1.0" b="0.3" a="1.0" />
+        </omni>
+        <omni id="o3" enabled="1" >
+            <location x="1.0" y="2.0" z="3.0" w="1.0" />
+            <ambient r="0.3" g="1.0" b="0.1" a="0.0" />
+            <diffuse r="1.0" g="1.0" b="0.2" a="1.0" />
+            <specular r="1.0" g="1.0" b="0.3" a="1.0" />
         </omni>
 
         <spot id="ss" enabled="tt" angle="ff" exponent="ff">

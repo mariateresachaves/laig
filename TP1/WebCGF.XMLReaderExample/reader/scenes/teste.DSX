@@ -104,7 +104,7 @@
         <!-- objetos respetivos podem a violar esta regra.         -->
         <!-- Nao necessario aplicar fatores de escala em  -->
         <!-- quadricas (esfera, ciclindro...) -->
-        <texture id="ss" file="ss" length_s="ff" length_t="ff" />
+        <texture id="texture1" file="filename" length_s="1.0" length_t="0.5" />
 
     </textures>
 

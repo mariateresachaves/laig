@@ -355,7 +355,31 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 // --- Parse Textures ---
 MySceneGraph.prototype.parseTextures = function(rootElement) {
 
-	// TODO
+	var elems =  rootElement.getElementsByTagName('textures');
+
+	// <texture id="ss" file="ss" length_s="ff" length_t="ff" />
+
+	// iterate over every element
+	var n_textures = elems.length;
+
+	var textures = elems[0];
+	var texture = textures.getElementsByTagName('texture');
+
+	for (var i = 0; i < n_textures; i++)
+	{
+
+		var texture_i = texture[i];
+
+		texture[i].file = this.reader.getString(texture_i, 'file');
+		texture[i].length_s = this.reader.getFloat(texture_i, 'length_s');
+		texture[i].length_t = this.reader.getFloat(texture_i, 'length_t');
+
+		console.log("Read texture item id= " + texture[i].id +
+								" file = " + texture[i].file +
+								" length_s = " + texture[i].length_s +
+								" length_t = " + texture[i].length_t);
+
+	}
 
 }
 

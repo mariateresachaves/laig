@@ -135,12 +135,12 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 		perspective_attr.to = [x,y,z];
 
 		console.log("Read views item id " + e.id +
-								" near = " + views.list[e.id].near +
-								" far = " + views.list[e.id].far +
-								" angle = " + views.list[e.id].angle);
+								" near = " + perspective_attr.near +
+								" far = " + perspective_attr.far +
+								" angle = " + perspective_attr.angle);
 
-		console.log("from = [ " + views.list[e.id].from[0] + ", " + views.list[e.id].from[1] + ", " + views.list[e.id].from[2] + "] " +
-								"to = ["+ views.list[e.id].to[0] + ", " + views.list[e.id].to[1] + ", " + views.list[e.id].to[2] + "] ");
+		console.log("from = [ " + perspective_attr.from + "] " +
+								"to = ["+ perspective_attr.to[0] + ", " + perspective_attr.to[1] + ", " + perspective_attr.to[2] + "] ");
 
 		views.list[e.id] = perspective_attr;
 	}

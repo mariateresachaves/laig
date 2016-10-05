@@ -115,7 +115,7 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 		perspective_attr.far = e.attributes.getNamedItem("far").value;
 		perspective_attr.angle = e.attributes.getNamedItem("angle").value;
 
-		var nnnodes = views.children[i].children.length;
+		var nnnodes = e.children.length;
 
 		if(nnnodes != 2)
 			return " missing from and to elements.";
@@ -140,7 +140,7 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 								" angle = " + perspective_attr.angle);
 
 		console.log("from = [ " + perspective_attr.from + "] " +
-								"to = ["+ perspective_attr.to[0] + ", " + perspective_attr.to[1] + ", " + perspective_attr.to[2] + "] ");
+								"to = ["+ perspective_attr.to + "] ");
 
 		views.list[e.id] = perspective_attr;
 	}

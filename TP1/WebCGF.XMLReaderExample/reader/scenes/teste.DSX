@@ -28,8 +28,8 @@
         <!-- a vista muda para a proxima da lista; da -->
         <!-- ultima vista da lista volta 'a primeira -->
         <perspective id="v1" near="1.0" far="2.0" angle="60.0">
-            <from x="ff" y="ff" z="ff" />
-            <to x="ff" y="ff" z="ff" />
+            <from x="1.0" y="3.0" z="2.0" />
+            <to x="2.0" y="4.0" z="1.0" />
         </perspective>
 
     </views>

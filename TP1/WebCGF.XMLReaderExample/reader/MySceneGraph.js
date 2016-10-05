@@ -205,6 +205,8 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 // --- Parse Lights ---
 MySceneGraph.prototype.parseLights = function(rootElement) {
 
+	var exists_one = 0;
+
 	var elems =  rootElement.getElementsByTagName('lights');
 
 	if (elems == null) { // errro não existe um lights - reporta e termina
@@ -221,6 +223,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 	var spots = lights.getElementsByTagName('spot');
 
 	if(omnis.length != 0) { // tem omnis
+
+		exists_one = 1;
 
 		// iterate over every element
 		var n_omnis = omnis.length;
@@ -271,24 +275,11 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 		}
 
-	} else { // nao tem omnis
-
-		console.log("Nao tem omnis");
-
 	}
 
 	if (spots.length != 0){
 
-		/*
-		<spot id="ss" enabled="tt" angle="ff" exponent="ff">
-				<!-- atencao, "target" e' diferente de "direction" -->
-				<target x="ff" y="ff" z="ff" />
-				<location x="ff" y="ff" z="ff" />
-				<ambient r="ff" g="ff" b="ff" a="ff" />
-				<diffuse r="ff" g="ff" b="ff" a="ff" />
-				<specular r="ff" g="ff" b="ff" a="ff" />
-		</spot>
-		*/
+		exists_one = 1;
 
 		// iterate over every element
 		var n_spots = spots.length;
@@ -347,8 +338,10 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 									" specular = " + spots[i].specular + "]");
 
 		}
-
 	}
+
+	if (exists_one == 0)
+		return "Needs at least one omni or spot light.";
 
 }
 

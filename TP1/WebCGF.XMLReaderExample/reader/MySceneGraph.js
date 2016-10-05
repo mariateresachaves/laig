@@ -106,8 +106,6 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 	{
 		var e = views.children[i];
 
-		console.log("NEAR: " + e.attributes.getNamedItem("near").value);
-
 		// process each element and store its information
 		var perspective_attr = new Object;
 

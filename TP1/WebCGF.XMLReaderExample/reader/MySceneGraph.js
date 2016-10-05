@@ -64,6 +64,13 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
+	// --- Parse Textures ---
+	error = this.parseTextures(rootElement);
+
+	if (error != null) {
+		this.onXMLError(error);
+		return;
+	}
 
 
 	this.loadedOk=true;
@@ -342,6 +349,13 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 	if (exists_one == 0)
 		return "Needs at least one omni or spot light.";
+
+}
+
+// --- Parse Textures ---
+MySceneGraph.prototype.parseTextures = function(rootElement) {
+
+	// TODO
 
 }
 

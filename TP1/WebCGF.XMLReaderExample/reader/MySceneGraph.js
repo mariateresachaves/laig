@@ -71,6 +71,14 @@ MySceneGraph.prototype.onXMLReady=function()
 		this.onXMLError(error);
 		return;
 	}
+	
+	// --- Parse Textures ---
+	error = this.parseMaterials(rootElement);
+
+	if (error != null) {
+		this.onXMLError(error);
+		return;
+	}
 
 
 	this.loadedOk=true;
@@ -216,7 +224,7 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('lights');
 
-	if (elems == null) { // errro não existe um lights - reporta e termina
+	if (elems == null) { // erro não existe um lights - reporta e termina
 		return "lights element is missing.";
 	}
 
@@ -378,9 +386,133 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 								" file = " + texture[i].file +
 								" length_s = " + texture[i].length_s +
 								" length_t = " + texture[i].length_t);
+	}
+}
 
+//--- Parse Materials ---
+MySceneGraph.prototype.parseMaterials = function(rootElement) {
+
+	var elems =  rootElement.getElementsByTagName('materials');
+
+	if (elems == null) { // erro não existe um materials - reporta e termina
+		return "materials element is missing.";
 	}
 
+	var materials;
+	var count = 0;
+	
+	for(i=0; i < elems.length; i++){
+		if (elems[i].parentNode == rootElement){
+			materials = elems[i];
+			count++;
+		}
+	}
+	
+	if (count != 1) { // erro tem mais do que um materials - reporta e termina
+		return "zero or more than one 'materials' element found.";
+	}
+
+	materials = elems[0];
+	var materialsList = materials.getElementsByTagName('material');
+	
+	if (materialsList == null  || materialsList.length==0) {
+		return "zero 'material' element found..";
+	}
+	
+	this.materials = [];
+
+	// iterate over every material
+	for (var i = 0; i < materialsList.length; i++)
+	{
+		var material = materialsList[i];
+		var m = new Object;
+		
+		//Id
+		m.id = this.reader.getString(material, 'id', true);
+		
+		//Emission		
+		elems = material.getElementsByTagName('emission');
+		
+		if (elems == null  || elems.length != 1) {
+			return "either zero or more than one 'emission' element found.";
+		}		
+		var emission = elems[0];
+		
+		var r = this.reader.getFloat(emission, 'r', true);
+		var g = this.reader.getFloat(emission, 'g', true);
+		var b = this.reader.getFloat(emission, 'b', true);
+		var a = this.reader.getFloat(emission, 'a', true);
+		
+		m.emission = [r,g,b,a];		
+		
+		//Ambient
+		elems = material.getElementsByTagName('ambient');
+		
+		if (elems == null  || elems.length != 1) {
+			return "zero or more than one 'ambient' element found.";
+		}		
+		var ambient = elems[0];
+		
+		r = this.reader.getFloat(ambient, 'r', true);
+		g = this.reader.getFloat(ambient, 'g', true);
+		b = this.reader.getFloat(ambient, 'b', true);
+		a = this.reader.getFloat(ambient, 'a', true);
+		
+		m.ambient = [r,g,b,a];
+		
+		//Diffuse
+		elems = material.getElementsByTagName('diffuse');
+		
+		if (elems == null  || elems.length != 1) {
+			return "zero or more than one 'diffuse' element found.";
+		}
+		var diffuse = elems[0];
+		
+		r = this.reader.getFloat(diffuse, 'r', true);
+		g = this.reader.getFloat(diffuse, 'g', true);
+		b = this.reader.getFloat(diffuse, 'b', true);
+		a = this.reader.getFloat(diffuse, 'a', true);
+		
+		m.diffuse = [r,g,b,a];
+		
+		//Specular
+		elems = material.getElementsByTagName('specular');
+		
+		if (elems == null  || elems.length != 1) {
+			return "zero or more than one 'specular' element found.";
+		}		
+		var specular = elems[0];
+		
+		r = this.reader.getFloat(specular, 'r', true);
+		g = this.reader.getFloat(specular, 'g', true);
+		b = this.reader.getFloat(specular, 'b', true);
+		a = this.reader.getFloat(specular, 'a', true);
+		
+		m.specular = [r,g,b,a];	
+		
+		//Shininess
+		elems = material.getElementsByTagName('shininess');
+		
+		if (elems == null  || elems.length != 1) {
+			return "zero or more than one 'shininess' element found.";
+		}		
+		var shininess = elems[0];
+		
+		m.shininess = this.reader.getFloat(shininess, 'value', true);
+		
+		this.materials.push(m);
+	}
+
+	console.log("Materials:");
+	this.materials.forEach(function(material) {
+		console.log("Material id = " + material.id +
+				"\nEmission = [" + material.emission[0] + ", " + material.emission[1] + ", " + material.emission[2] + ", " + material.emission[3] + "]" +
+				"\nAmbient = [" + material.ambient[0] + ", " + material.ambient[1] + ", " + material.ambient[2] + ", " + material.ambient[3] + "]" +
+				"\nDiffuse = [" + material.diffuse[0] + ", " + material.diffuse[1] + ", " + material.diffuse[2] + ", " + material.diffuse[3] + "]" +
+				"\nSpecular = [" + material.specular[0] + ", " + material.specular[1] + ", " + material.specular[2] + ", " + material.specular[3] + "]" +
+				"\nShininess = " + material.shininess + "\n"
+				);
+	  });
 }
 
 /*
@@ -389,7 +521,7 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 MySceneGraph.prototype.parseGlobalsExample= function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('globals');
-	if (elems == null) { // errro não existe um globals - reporta e termina
+	if (elems == null) { // erro não existe um globals - reporta e termina
 		return "globals element is missing.";
 	}
 

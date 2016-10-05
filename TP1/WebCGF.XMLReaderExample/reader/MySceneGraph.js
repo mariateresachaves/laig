@@ -48,13 +48,21 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
+	// --- Parse Illumination ---
+	error = this.parseIllumination(rootElement);
+
+	if (error != null) {
+		this.onXMLError(error);
+		return;
+	}
+
 	this.loadedOk=true;
 
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
 	this.scene.onGraphLoaded();
 };
 
-// --- Parse Scene ----
+// --- Parse Scene ---
 MySceneGraph.prototype.parseScene = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('scene');
@@ -71,11 +79,11 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 	this.root = this.reader.getString(scene, 'root');
 	this.axis_length = this.reader.getFloat(scene, 'axis_length');
 
-	console.log("Scene read from file: {root=" + this.root + "axis_length=" + this.axis_length + "}");
+	console.log("Scene read from file: {root=" + this.root + ", axis_length=" + this.axis_length + "}");
 
 }
 
-// --- Parse Views ----
+// --- Parse Views ---
 MySceneGraph.prototype.parseViews = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('views');
@@ -142,6 +150,46 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 		views.list[e.id] = perspective_attr;
 	}
+}
+
+// --- Parse Illumination ---
+MySceneGraph.prototype.parseIllumination = function(rootElement) {
+
+	var elems =  rootElement.getElementsByTagName('illumination');
+	if (elems == null) { // errro não existe um illumination - reporta e termina
+		return "illumination element is missing.";
+	}
+
+	if (elems.length != 1) { // erro tem mais do que um illumination - reporta e termina
+		return "either zero or more than one 'illumination' element found.";
+	}
+
+	// various examples of different types of access
+	var illumination = elems[0];
+	this.doublesided = this.reader.getString(illumination, 'doublesided');
+	this.local = this.reader.getString(illumination, 'local');
+
+	var illumination_ambient = illumination.children[0];
+	var r = this.reader.getFloat(illumination_ambient, 'r');
+	var g = this.reader.getFloat(illumination_ambient, 'g');
+	var b = this.reader.getFloat(illumination_ambient, 'b');
+	var a = this.reader.getFloat(illumination_ambient, 'a');
+
+	illumination.ambient = [r,g,b,a];
+
+	var illumination_background = illumination.children[1];
+	var r = this.reader.getFloat(illumination_background, 'r');
+	var g = this.reader.getFloat(illumination_background, 'g');
+	var b = this.reader.getFloat(illumination_background, 'b');
+	var a = this.reader.getFloat(illumination_background, 'a');
+
+	illumination.background = [r,g,b,a];
+
+	console.log("Illumination read from file: {doublesided=" + this.doublesided + ", local=" + this.local + "}");
+
+	console.log("ambient = [ " + illumination.ambient + "] " +
+							"background = ["+ illumination.background + "] ");
+
 }
 
 /*

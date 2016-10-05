@@ -271,9 +271,82 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 		}
 
-	} else { //nao tem omnis
+	} else { // nao tem omnis
 
 		console.log("Nao tem omnis");
+
+	}
+
+	if (spots.length != 0){
+
+		/*
+		<spot id="ss" enabled="tt" angle="ff" exponent="ff">
+				<!-- atencao, "target" e' diferente de "direction" -->
+				<target x="ff" y="ff" z="ff" />
+				<location x="ff" y="ff" z="ff" />
+				<ambient r="ff" g="ff" b="ff" a="ff" />
+				<diffuse r="ff" g="ff" b="ff" a="ff" />
+				<specular r="ff" g="ff" b="ff" a="ff" />
+		</spot>
+		*/
+
+		// iterate over every element
+		var n_spots = spots.length;
+
+		for (var i = 0; i < n_spots; i++)
+		{
+
+			var spot = spots[i];
+			spots[i].enabled = this.reader.getString(spot, 'enabled');
+			spots[i].angle = this.reader.getFloat(spot, 'angle');
+			spots[i].exponent = this.reader.getFloat(spot, 'exponent');
+
+			var spots_target = spots[i].children[0];
+			var x = this.reader.getFloat(spots_target, 'x');
+			var y = this.reader.getFloat(spots_target, 'y');
+			var z = this.reader.getFloat(spots_target, 'z');
+
+			spots[i].target = [x,y,z];
+
+			var spots_location = spots[i].children[1];
+			x = this.reader.getFloat(spots_location, 'x');
+			y = this.reader.getFloat(spots_location, 'y');
+			z = this.reader.getFloat(spots_location, 'z');
+
+			spots[i].location = [x,y,z];
+
+			var spots_ambient = spots[i].children[2];
+			var r = this.reader.getFloat(spots_ambient, 'r');
+			var g = this.reader.getFloat(spots_ambient, 'g');
+			var b = this.reader.getFloat(spots_ambient, 'b');
+			var a = this.reader.getFloat(spots_ambient, 'a');
+
+			spots[i].ambient = [r,g,b,a];
+
+			var spots_diffuse = spots[i].children[3];
+			r = this.reader.getFloat(spots_diffuse, 'r');
+			g = this.reader.getFloat(spots_diffuse, 'g');
+			b = this.reader.getFloat(spots_diffuse, 'b');
+			a = this.reader.getFloat(spots_diffuse, 'a');
+
+			spots[i].diffuse = [r,g,b,a];
+
+			var spots_specular = spots[i].children[4];
+			r = this.reader.getFloat(spots_specular, 'r');
+			g = this.reader.getFloat(spots_specular, 'g');
+			b = this.reader.getFloat(spots_specular, 'b');
+			a = this.reader.getFloat(spots_specular, 'a');
+
+			spots[i].specular = [r,g,b,a];
+
+			console.log("Read spot item id " + spots[i].id + " (enabled = " + spots[i].enabled + ")" +
+									" target = [" + spots[i].target + "]" +
+									" location = [" + spots[i].location + "]" +
+									" ambient = " + spots[i].ambient + "]" +
+									" diffuse = " + spots[i].diffuse + "]" +
+									" specular = " + spots[i].specular + "]");
+
+		}
 
 	}
 

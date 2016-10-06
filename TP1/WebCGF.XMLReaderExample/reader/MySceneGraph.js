@@ -625,6 +625,75 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 	  });
 }
 
+//--- Parse Transformations ---
+MySceneGraph.prototype.parseMTransformations = function(rootElement) {
+
+	var elems =  rootElement.getElementsByTagName('transformations');
+	
+	if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um transformations - reporta e termina
+		return "zero or more than one 'transformations' element found.";
+	}
+	
+	transformations = elems[0];
+	
+	var transformationsList =  transformations.getElementsByTagName('transformation');
+	if (transformationsList == null  || transformationsList.length == 0) { //erro nenhuma transformation - reporta e termina
+		return "no 'transformation' element found.";
+	}
+	
+	this.transformations = [];
+	
+	for(i = 0; i < transformationsList.length; i++)
+	{
+		var transformation = transformationsList[i];
+		var t = new Object;
+		
+		//Id
+		t.id = this.reader.getString(transformation, 'id', true);
+		
+		//Transformations
+		var list = transformation.children;
+		
+		if (list == null  || list.length == 0) { //erro nenhuma transformation - reporta e termina
+			return "no 'translate', 'rotate' or 'scale' element found.";
+		}
+		
+		t.list = [];
+		
+		for(j = 0; j < list.length; j++)
+		{
+			var s = new Object;
+			
+			switch(list[i].nodeName)
+			{
+		    case "TRANSLATE":
+		        s.type = "translate";
+		        s.x = this.reader.getFloat(list[i], 'x', true);
+		        s.y = this.reader.getFloat(list[i], 'y', true);
+		        s.z = this.reader.getFloat(list[i], 'z', true);
+		        break;
+		    case "ROTATE":
+		    	s.type = "rotate";
+		        s.axis = this.reader.getItem(list[i], 'axis', ['x','y','z']);
+		        s.angle = this.reader.getFloat(list[i], 'angle', true);
+		        break;
+		    case "SCALE":
+		    	s.type = "scale";
+		        s.x = this.reader.getFloat(list[i], 'x', true);
+		        s.y = this.reader.getFloat(list[i], 'y', true);
+		        s.z = this.reader.getFloat(list[i], 'z', true);
+		        break;
+		    default:
+		    	return "element found is not 'translate', 'rotate' or 'scale'.";
+		    } 
+			
+			t.list.push(s);
+		}
+		
+		this.transformations.push(t);
+	}
+}
+
 /*
  * Example of method that parses elements of one block and stores information in a specific data structure
  */

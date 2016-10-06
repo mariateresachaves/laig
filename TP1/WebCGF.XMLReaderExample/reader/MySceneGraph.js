@@ -188,6 +188,7 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('illumination');
+
 	if (elems == null) { // errro não existe um illumination - reporta e termina
 		return "illumination element is missing.";
 	}
@@ -198,29 +199,47 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	// various examples of different types of access
 	var illumination = elems[0];
-	this.doublesided = this.reader.getString(illumination, 'doublesided');
-	this.local = this.reader.getString(illumination, 'local');
 
-	var illumination_ambient = illumination.children[0];
+	this.illumination = new Object;
+
+	this.illumination.doublesided = this.reader.getInteger(illumination, 'doublesided');
+	this.illumination.local = this.reader.getInteger(illumination, 'local');
+
+	elems = illumination.getElementsByTagName('ambient');
+
+	if(elems == null || elems.length != 1) {
+		return "missing ambient element.";
+	}
+
+	var illumination_ambient = elems[0];
+
 	var r = this.reader.getFloat(illumination_ambient, 'r');
 	var g = this.reader.getFloat(illumination_ambient, 'g');
 	var b = this.reader.getFloat(illumination_ambient, 'b');
 	var a = this.reader.getFloat(illumination_ambient, 'a');
 
-	illumination.ambient = [r,g,b,a];
+	this.illumination.ambient = [r,g,b,a];
 
-	var illumination_background = illumination.children[1];
-	var r = this.reader.getFloat(illumination_background, 'r');
-	var g = this.reader.getFloat(illumination_background, 'g');
-	var b = this.reader.getFloat(illumination_background, 'b');
-	var a = this.reader.getFloat(illumination_background, 'a');
+	elems = illumination.getElementsByTagName('background');
 
-	illumination.background = [r,g,b,a];
+	if(elems == null || elems.length != 1) {
+		return "missing background element.";
+	}
 
-	console.log("Illumination read from file: {doublesided=" + this.doublesided + ", local=" + this.local + "}");
+	var illumination_background = elems[0];
 
-	console.log("ambient = [ " + illumination.ambient + "] " +
-							"background = ["+ illumination.background + "] ");
+	r = this.reader.getFloat(illumination_background, 'r');
+	g = this.reader.getFloat(illumination_background, 'g');
+	b = this.reader.getFloat(illumination_background, 'b');
+	a = this.reader.getFloat(illumination_background, 'a');
+
+	this.illumination.background = [r,g,b,a];
+
+	console.log("Illumination read from file: {doublesided=" + this.illumination.doublesided +
+																							", local=" + this.illumination.local + "}");
+
+	console.log("ambient = [ " + this.illumination.ambient + "] " +
+							"background = ["+ this.illumination.background + "] ");
 
 }
 

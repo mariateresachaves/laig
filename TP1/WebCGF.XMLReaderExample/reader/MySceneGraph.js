@@ -246,6 +246,8 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 // --- Parse Lights ---
 MySceneGraph.prototype.parseLights = function(rootElement) {
 
+	var exists_one = 0;
+
 	var elems =  rootElement.getElementsByTagName('lights');
 
 	if (elems == null) { // erro não existe um lights - reporta e termina
@@ -257,214 +259,130 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 	}
 
 	var lights = elems[0];
-	this.lights = new Object;
-	this.lights.omni_list = [];
-	this.lights.spot_list = [];
 
 	var omnis = lights.getElementsByTagName('omni');
 	var spots = lights.getElementsByTagName('spot');
 
-	var num_elems = omnis.length + spots.length;
+	if(omnis.length != 0) { // tem omnis
 
-	if(num_elems == 0) {
-		return "missing omnis or spots elements.";
-	}
+		exists_one = 1;
 
-	if(num_elems != lights.children.length) {
-		return "Found not omnis nor spot elements."
-	}
-
-	var n_omnis = omnis.length;
-	var n_spots = spots.length;
-
-	if(n_omnis != 0) { // tem omnis
+		// iterate over every element
+		var n_omnis = omnis.length;
 
 		for (var i = 0; i < n_omnis; i++)
 		{
 
 			var omni = omnis[i];
-			var omni_tmp = new Object;
+			omnis[i].enabled = this.reader.getString(omni, 'enabled');
 
-			omni_tmp.id = omni.id;
-
-			omni_tmp.enabled = this.reader.getBoolean(omni, 'enabled');
-
-			elems = omni.getElementsByTagName('location');
-
-			if(elems.length != 1) {
-				return "missing location element in omni.";
-			}
-
-			var omnis_location = elems[0];
-
+			var omnis_location = omnis[i].children[0];
 			var x = this.reader.getFloat(omnis_location, 'x');
 			var y = this.reader.getFloat(omnis_location, 'y');
 			var z = this.reader.getFloat(omnis_location, 'z');
 			var w = this.reader.getFloat(omnis_location, 'w');
 
-			omni_tmp.location = [x,y,z,w];
+			omnis[i].location = [x,y,z,w];
 
-			elems = omni.getElementsByTagName('ambient');
-
-			if(elems.length != 1) {
-				return "missing ambient element in omni.";
-			}
-
-			var omnis_ambient = elems[0];
-
+			var omnis_ambient = omnis[i].children[1];
 			var r = this.reader.getFloat(omnis_ambient, 'r');
 			var g = this.reader.getFloat(omnis_ambient, 'g');
 			var b = this.reader.getFloat(omnis_ambient, 'b');
 			var a = this.reader.getFloat(omnis_ambient, 'a');
 
-			omni_tmp.ambient = [r,g,b,a];
+			omnis[i].ambient = [r,g,b,a];
 
-			elems = omni.getElementsByTagName('diffuse');
-
-			if(elems.length != 1) {
-				return "missing diffuse element in omni.";
-			}
-
-			var omnis_diffuse = elems[0];
-
+			var omnis_diffuse = omnis[i].children[2];
 			r = this.reader.getFloat(omnis_diffuse, 'r');
 			g = this.reader.getFloat(omnis_diffuse, 'g');
 			b = this.reader.getFloat(omnis_diffuse, 'b');
 			a = this.reader.getFloat(omnis_diffuse, 'a');
 
-			omni_tmp.diffuse = [r,g,b,a];
+			omnis[i].diffuse = [r,g,b,a];
 
-			elems = omni.getElementsByTagName('specular');
-
-			if(elems.length != 1) {
-				return "missing specular element in omni.";
-			}
-
-			var omnis_specular = elems[0];
-
+			var omnis_specular = omnis[i].children[3];
 			r = this.reader.getFloat(omnis_specular, 'r');
 			g = this.reader.getFloat(omnis_specular, 'g');
 			b = this.reader.getFloat(omnis_specular, 'b');
 			a = this.reader.getFloat(omnis_specular, 'a');
 
-			omni_tmp.specular = [r,g,b,a];
+			omnis[i].specular = [r,g,b,a];
 
-			this.lights.omni_list.push(omni_tmp);
+			console.log("Read omni item id " + omnis[i].id + " (enabled = " + omnis[i].enabled + ")" +
+									" location = [" + omnis[i].location + "]" +
+									" ambient = " + omnis[i].ambient + "]" +
+									" diffuse = " + omnis[i].diffuse + "]" +
+									" specular = " + omnis[i].specular + "]");
 
 		}
 
 	}
 
-	if (n_spots != 0){
+	if (spots.length != 0){
+
+		exists_one = 1;
+
+		// iterate over every element
+		var n_spots = spots.length;
 
 		for (var i = 0; i < n_spots; i++)
 		{
 
 			var spot = spots[i];
-			var spot_tmp = new Object;
-			spots[i].enabled = this.reader.getBoolean(spot, 'enabled');
+			spots[i].enabled = this.reader.getString(spot, 'enabled');
 			spots[i].angle = this.reader.getFloat(spot, 'angle');
 			spots[i].exponent = this.reader.getFloat(spot, 'exponent');
 
-			spot_tmp.id = spot.id;
-
-			elems = spot.getElementsByTagName('target');
-
-			if(elems.length != 1) {
-				return "missing target element in spot.";
-			}
-
-			var spots_target = elems[0];
-
+			var spots_target = spots[i].children[0];
 			var x = this.reader.getFloat(spots_target, 'x');
 			var y = this.reader.getFloat(spots_target, 'y');
 			var z = this.reader.getFloat(spots_target, 'z');
 
-			spot_tmp.target = [x,y,z];
+			spots[i].target = [x,y,z];
 
-			elems = spot.getElementsByTagName('location');
-
-			if(elems.length != 1) {
-				return "missing location element in spot.";
-			}
-
-			var spots_location = elems[0];
-
+			var spots_location = spots[i].children[1];
 			x = this.reader.getFloat(spots_location, 'x');
 			y = this.reader.getFloat(spots_location, 'y');
 			z = this.reader.getFloat(spots_location, 'z');
 
-			spot_tmp.location = [x,y,z,w];
+			spots[i].location = [x,y,z];
 
-			elems = spot.getElementsByTagName('ambient');
-
-			if(elems.length != 1) {
-				return "missing ambient element in spot.";
-			}
-
-			var spots_ambient = elems[0];
-
+			var spots_ambient = spots[i].children[2];
 			var r = this.reader.getFloat(spots_ambient, 'r');
 			var g = this.reader.getFloat(spots_ambient, 'g');
 			var b = this.reader.getFloat(spots_ambient, 'b');
 			var a = this.reader.getFloat(spots_ambient, 'a');
 
-			spot_tmp.ambient = [r,g,b,a];
+			spots[i].ambient = [r,g,b,a];
 
-			elems = spot.getElementsByTagName('diffuse');
-
-			if(elems.length != 1) {
-				return "missing diffuse element in spot.";
-			}
-
-			var spots_diffuse = elems[0];
-
+			var spots_diffuse = spots[i].children[3];
 			r = this.reader.getFloat(spots_diffuse, 'r');
 			g = this.reader.getFloat(spots_diffuse, 'g');
 			b = this.reader.getFloat(spots_diffuse, 'b');
 			a = this.reader.getFloat(spots_diffuse, 'a');
 
-			spot_tmp.diffuse = [r,g,b,a];
+			spots[i].diffuse = [r,g,b,a];
 
-			elems = spot.getElementsByTagName('specular');
-
-			if(elems.length != 1) {
-				return "missing specular element in spot.";
-			}
-
-			var spots_specular = elems[0];
-
+			var spots_specular = spots[i].children[4];
 			r = this.reader.getFloat(spots_specular, 'r');
 			g = this.reader.getFloat(spots_specular, 'g');
 			b = this.reader.getFloat(spots_specular, 'b');
 			a = this.reader.getFloat(spots_specular, 'a');
 
-			spot_tmp.specular = [r,g,b,a];
+			spots[i].specular = [r,g,b,a];
 
-			this.lights.spot_list.push(spot_tmp);
+			console.log("Read spot item id " + spots[i].id + " (enabled = " + spots[i].enabled + ")" +
+									" target = [" + spots[i].target + "]" +
+									" location = [" + spots[i].location + "]" +
+									" ambient = " + spots[i].ambient + "]" +
+									" diffuse = " + spots[i].diffuse + "]" +
+									" specular = " + spots[i].specular + "]");
 
 		}
-
 	}
 
-	for(i = 0; i < this.lights.omni_list.length; i++) {
-		console.log("Read omni item id " + this.lights.omni_list[i].id + " (enabled = "
-																																		+ this.lights.omni_list[i].enabled + ")" +
-								" location = [" + this.lights.omni_list[i].location + "]" +
-								" ambient = [" + this.lights.omni_list[i].ambient + "]" +
-								" diffuse = [" + this.lights.omni_list[i].diffuse + "]" +
-								" specular = [" + this.lights.omni_list[i].specular + "]");
-	}
-
-
-	for(i = 0; i < this.lights.spot_list.length; i++) {
-		console.log("Read spot item id " + this.lights.spot_list[i].id + " (enabled = " + this.lights.spot_list[i].enabled + ")" +
-								" target = [" + this.lights.spot_list[i].target + "]" +
-								" location = [" + this.lights.spot_list[i].location + "]" +
-								" ambient = [" + this.lights.spot_list[i].ambient + "]" +
-								" diffuse = [" + this.lights.spot_list[i].diffuse + "]" +
-								" specular = [" + this.lights.spot_list[i].specular + "]");
-	}
+	if (exists_one == 0)
+		return "Needs at least one omni or spot light.";
 
 }
 

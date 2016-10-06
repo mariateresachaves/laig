@@ -71,7 +71,7 @@ MySceneGraph.prototype.onXMLReady=function()
 		this.onXMLError(error);
 		return;
 	}
-	
+
 	// --- Parse Textures ---
 	error = this.parseMaterials(rootElement);
 
@@ -123,57 +123,64 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 	// various examples of different types of access
 	var views = elems[0];
-	this.default = this.reader.getString(views, 'default');
+	this.views = new Object;
+	this.views.default = this.reader.getString(views, 'default');
 
-	console.log("Views read from file: {default=" + this.default + "}");
+	console.log("Views read from file: {default=" + this.views.default + "}");
 
-	views.list = [];
+	this.views.list = [];
 
 	// iterate over every element
 	var nnodes = views.children.length;
+	var e = views.getElementsByTagName('perspective');
 
-	if(nnodes < 1)
+	if(nnodes != e.length) {
+		return "Not perspective elements found.";
+	}
+
+	if(e.length < 1)
 		return "perspective element is missing.";
 
-	for (var i = 0; i < nnodes; i++)
+	for (var i = 0; i < e.length; i++)
 	{
-		var e = views.children[i];
-
 		// process each element and store its information
 		var perspective_attr = new Object;
 
-		perspective_attr.near = e.attributes.getNamedItem("near").value;
-		perspective_attr.far = e.attributes.getNamedItem("far").value;
-		perspective_attr.angle = e.attributes.getNamedItem("angle").value;
+		perspective_attr.near = e[i].attributes.getNamedItem("near").value;
+		perspective_attr.far = e[i].attributes.getNamedItem("far").value;
+		perspective_attr.angle = e[i].attributes.getNamedItem("angle").value;
 
-		var nnnodes = e.children.length;
+		var e_from = e[i].getElementsByTagName('from');
+		var e_to = e[i].getElementsByTagName('to');
 
-		if(nnnodes != 2)
-			return " missing from and to elements.";
+		if(e_from.length != 1 && e_to.length != 1)
+			return " missing from and/or to elements.";
 
-		var perspective_from = e.children[0];
+		var perspective_from = e_from[0];
 		var x = this.reader.getFloat(perspective_from, 'x');
 		var y = this.reader.getFloat(perspective_from, 'y');
 		var z = this.reader.getFloat(perspective_from, 'z');
 
 		perspective_attr.from = [x,y,z];
 
-		var perspective_to = e.children[1];
+		var perspective_to = e_to[0];
 		x = this.reader.getFloat(perspective_to, 'x');
 		y = this.reader.getFloat(perspective_to, 'y');
 		z = this.reader.getFloat(perspective_to, 'z');
 
 		perspective_attr.to = [x,y,z];
 
-		console.log("Read views item id " + e.id +
-								" near = " + perspective_attr.near +
-								" far = " + perspective_attr.far +
-								" angle = " + perspective_attr.angle);
+		this.views.list.push(perspective_attr);
+	}
 
-		console.log("from = [ " + perspective_attr.from + "] " +
-								"to = ["+ perspective_attr.to + "] ");
+	for(i = 0; i < this.views.list.length; i++) {
+		console.log("Read views item id " + this.views.list[i].id +
+								" near = " + this.views.list[i].near +
+								" far = " + this.views.list[i].far +
+								" angle = " + this.views.list[i].angle);
 
-		views.list[e.id] = perspective_attr;
+		console.log("from = [ " + this.views.list[i].from + "] " +
+								"to = ["+ this.views.list[i].to + "] ");
 	}
 }
 
@@ -400,25 +407,25 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 	var materials;
 	var count = 0;
-	
+
 	for(i=0; i < elems.length; i++){
 		if (elems[i].parentNode == rootElement){
 			materials = elems[i];
 			count++;
 		}
 	}
-	
+
 	if (count != 1) { // erro tem mais do que um materials - reporta e termina
 		return "zero or more than one 'materials' element found.";
 	}
 
 	materials = elems[0];
 	var materialsList = materials.getElementsByTagName('material');
-	
+
 	if (materialsList == null  || materialsList.length==0) {
 		return "zero 'material' element found..";
 	}
-	
+
 	this.materials = [];
 
 	// iterate over every material
@@ -426,80 +433,80 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 	{
 		var material = materialsList[i];
 		var m = new Object;
-		
+
 		//Id
 		m.id = this.reader.getString(material, 'id', true);
-		
-		//Emission		
+
+		//Emission
 		elems = material.getElementsByTagName('emission');
-		
+
 		if (elems == null  || elems.length != 1) {
 			return "either zero or more than one 'emission' element found.";
-		}		
+		}
 		var emission = elems[0];
-		
+
 		var r = this.reader.getFloat(emission, 'r', true);
 		var g = this.reader.getFloat(emission, 'g', true);
 		var b = this.reader.getFloat(emission, 'b', true);
 		var a = this.reader.getFloat(emission, 'a', true);
-		
-		m.emission = [r,g,b,a];		
-		
+
+		m.emission = [r,g,b,a];
+
 		//Ambient
 		elems = material.getElementsByTagName('ambient');
-		
+
 		if (elems == null  || elems.length != 1) {
 			return "zero or more than one 'ambient' element found.";
-		}		
+		}
 		var ambient = elems[0];
-		
+
 		r = this.reader.getFloat(ambient, 'r', true);
 		g = this.reader.getFloat(ambient, 'g', true);
 		b = this.reader.getFloat(ambient, 'b', true);
 		a = this.reader.getFloat(ambient, 'a', true);
-		
+
 		m.ambient = [r,g,b,a];
-		
+
 		//Diffuse
 		elems = material.getElementsByTagName('diffuse');
-		
+
 		if (elems == null  || elems.length != 1) {
 			return "zero or more than one 'diffuse' element found.";
 		}
 		var diffuse = elems[0];
-		
+
 		r = this.reader.getFloat(diffuse, 'r', true);
 		g = this.reader.getFloat(diffuse, 'g', true);
 		b = this.reader.getFloat(diffuse, 'b', true);
 		a = this.reader.getFloat(diffuse, 'a', true);
-		
+
 		m.diffuse = [r,g,b,a];
-		
+
 		//Specular
 		elems = material.getElementsByTagName('specular');
-		
+
 		if (elems == null  || elems.length != 1) {
 			return "zero or more than one 'specular' element found.";
-		}		
+		}
 		var specular = elems[0];
-		
+
 		r = this.reader.getFloat(specular, 'r', true);
 		g = this.reader.getFloat(specular, 'g', true);
 		b = this.reader.getFloat(specular, 'b', true);
 		a = this.reader.getFloat(specular, 'a', true);
-		
-		m.specular = [r,g,b,a];	
-		
+
+		m.specular = [r,g,b,a];
+
 		//Shininess
 		elems = material.getElementsByTagName('shininess');
-		
+
 		if (elems == null  || elems.length != 1) {
 			return "zero or more than one 'shininess' element found.";
-		}		
+		}
 		var shininess = elems[0];
-		
+
 		m.shininess = this.reader.getFloat(shininess, 'value', true);
-		
+
 		this.materials.push(m);
 	}
 

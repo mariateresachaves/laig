@@ -148,12 +148,27 @@
 
         <!-- Deve existir um ou mais blocos "transformation" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
-        <transformation id="ss">
+        
+        <transformation id="A">
            <!-- instrucoes a usar sem limite nem ordem -->
            <!-- deve existir pelo menos uma transformacao -->
-           <translate x="ff" y="ff" z="ff" />
-           <rotate axis="cc" angle="ff" />
-           <scale x="ff" y="ff" z="ff" />
+           
+           <translate x="15.5" y="-15.5" z="-100.1" />
+           <rotate axis="x" angle="30.1" />
+           <scale x="2.5" y="2.5" z="-1.5" />
+        </transformation>
+        
+        <transformation id="B">
+           <translate x="15.5" y="-15.5" z="-100.1" />
+           <rotate axis="x" angle="30.1" />
+           <translate x="15.5" y="-15.5" z="-100.1" />
+           <scale x="2.5" y="2.5" z="-1.5" />
+           <translate x="0.5" y="-0.5" z="0" />
+           <translate x="0.5" y="-0.5" z="0" />
+        </transformation>
+        
+        <transformation id="C">
+           <scale x="2.5" y="2.5" z="-1.5" />
         </transformation>
 
     </transformations>

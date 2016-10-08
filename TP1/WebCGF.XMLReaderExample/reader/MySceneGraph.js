@@ -17,7 +17,7 @@ function MySceneGraph(filename, scene) { // filename: path
 
 	this.reader.open('scenes/'+filename, this); // abre o ficheiro xml
 
-	// aqui estamos em condicoes de intrepertar o ficheiro
+	// aqui estamos em condicoes de interpretar o ficheiro
 	// aqui temos de fazer o parse do ficheiro
 }
 
@@ -72,7 +72,7 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
-	// --- Parse Textures ---
+	// --- Parse Materials ---
 	error = this.parseMaterials(rootElement);
 
 	if (error != null) {
@@ -80,6 +80,29 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
+	// --- Parse Transformations ---
+	error = this.parseTransformations(rootElement);
+
+	if (error != null) {
+		this.onXMLError(error);
+		return;
+	}
+	
+	// --- Parse Primitives ---
+	error = this.parsePrimitives(rootElement);
+
+	if (error != null) {
+		this.onXMLError(error);
+		return;
+	}
+	
+	// --- Parse Components ---
+	error = this.parseComponents(rootElement);
+
+	if (error != null) {
+		this.onXMLError(error);
+		return;
+	}
 
 	this.loadedOk=true;
 
@@ -500,7 +523,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('materials');
 
-	if (elems == null) { // erro não existe um materials - reporta e termina
+	if (elems == null) { // erro não existe nenhum materials - reporta e termina
 		return "materials element is missing.";
 	}
 
@@ -518,7 +541,6 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		return "zero or more than one 'materials' element found.";
 	}
 
-	materials = elems[0];
 	var materialsList = materials.getElementsByTagName('material');
 
 	if (materialsList == null  || materialsList.length==0) {
@@ -616,13 +638,13 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 				"\nAmbient = [" + material.ambient[0] + ", " + material.ambient[1] + ", " + material.ambient[2] + ", " + material.ambient[3] + "]" +
 				"\nDiffuse = [" + material.diffuse[0] + ", " + material.diffuse[1] + ", " + material.diffuse[2] + ", " + material.diffuse[3] + "]" +
 				"\nSpecular = [" + material.specular[0] + ", " + material.specular[1] + ", " + material.specular[2] + ", " + material.specular[3] + "]" +
-				"\nShininess = " + material.shininess + "\n"
+				"\nShininess = " + material.shininess + "\n\n"
 				);
 	  });
 }
 
 //--- Parse Transformations ---
-MySceneGraph.prototype.parseMTransformations = function(rootElement) {
+MySceneGraph.prototype.parseTransformations = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('transformations');
 
@@ -632,7 +654,7 @@ MySceneGraph.prototype.parseMTransformations = function(rootElement) {
 
 	transformations = elems[0];
 
-	var transformationsList =  transformations.getElementsByTagName('transformation');
+	var transformationsList = transformations.getElementsByTagName('transformation');
 	if (transformationsList == null  || transformationsList.length == 0) { //erro nenhuma transformation - reporta e termina
 		return "no 'transformation' element found.";
 	}
@@ -641,53 +663,76 @@ MySceneGraph.prototype.parseMTransformations = function(rootElement) {
 
 	for(i = 0; i < transformationsList.length; i++)
 	{
-		var transformation = transformationsList[i];
-		var t = new Object;
+		var t = transformationsList[i];
+		var transformation = new Object;
 
 		//Id
-		t.id = this.reader.getString(transformation, 'id', true);
+		transformation.id = this.reader.getString(t, 'id', true);
 
 		//Transformations
-		var list = transformation.children;
+		var singleTransformationList = t.children;
 
-		if (list == null  || list.length == 0) { //erro nenhuma transformation - reporta e termina
+		if (singleTransformationList == null  || singleTransformationList.length == 0) { //erro nenhuma transformation - reporta e termina
 			return "no 'translate', 'rotate' or 'scale' element found.";
 		}
 
-		t.list = [];
+		transformation.list = [];
 
-		for(j = 0; j < list.length; j++)
+		for(j = 0; j < singleTransformationList.length; j++)
 		{
-			var s = new Object;
+			s = singleTransformationList[j];
+			console.log(s.nodeName);
+			var singletransformation = new Object;
 
-			switch(list[i].nodeName)
+			switch(s.nodeName)
 			{
-		    case "TRANSLATE":
-		        s.type = "translate";
-		        s.x = this.reader.getFloat(list[i], 'x', true);
-		        s.y = this.reader.getFloat(list[i], 'y', true);
-		        s.z = this.reader.getFloat(list[i], 'z', true);
+		    case "translate":
+		    	singletransformation.type = "translate";
+		    	singletransformation.x = this.reader.getFloat(s, 'x', true);
+		    	singletransformation.y = this.reader.getFloat(s, 'y', true);
+		    	singletransformation.z = this.reader.getFloat(s, 'z', true);
 		        break;
-		    case "ROTATE":
-		    		s.type = "rotate";
-		        s.axis = this.reader.getItem(list[i], 'axis', ['x','y','z']);
-		        s.angle = this.reader.getFloat(list[i], 'angle', true);
+		    case "rotate":
+		    	singletransformation.type = "rotate";
+		    	singletransformation.axis = this.reader.getItem(s, 'axis', ['x','y','z']);
+		    	singletransformation.angle = this.reader.getFloat(s, 'angle', true);
 		        break;
-		    case "SCALE":
-		    		s.type = "scale";
-		        s.x = this.reader.getFloat(list[i], 'x', true);
-		        s.y = this.reader.getFloat(list[i], 'y', true);
-		        s.z = this.reader.getFloat(list[i], 'z', true);
+		    case "scale":
+		    	singletransformation.type = "scale";
+		    	singletransformation.x = this.reader.getFloat(s, 'x', true);
+		    	singletransformation.y = this.reader.getFloat(s, 'y', true);
+		    	singletransformation.z = this.reader.getFloat(s, 'z', true);
 		        break;
 		    default:
 		    	return "element found is not 'translate', 'rotate' or 'scale'.";
 		    }
 
-			t.list.push(s);
+			transformation.list.push(singletransformation);
 		}
 
-		this.transformations.push(t);
+		this.transformations.push(transformation);
 	}
+	
+	console.log("Transformations ("+ this.transformations.length + "):");
+	this.transformations.forEach(function(t) {
+		console.log("Transformation " + t.id + " (" + t.list.length + "):");
+		t.list.forEach(function(s){
+			if(s.type == "rotate")
+				console.log(s.type + ": axis=" + s.axis + ", angle=" + s.angle);
+			else
+				console.log(s.type + ": [" + s.x + "," + s.y + "," + s.z + "]");
+		});
+	});
+}
+
+//--- Parse Primitives ---
+MySceneGraph.prototype.parsePrimitives = function(rootElement) {
+	
+}
+
+//--- Parse Components ---
+MySceneGraph.prototype.parseComponents = function(rootElement) {
+	
 }
 
 /*

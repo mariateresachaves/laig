@@ -178,18 +178,26 @@
 
         <!-- Deve existir um ou mais blocos "primitive" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
-        <primitive id="ss">
+        <primitive id="A">
 
             <!-- apenas pode existir UMA das seguintes tags: -->
             <!--     rectangle, triangle, cylinder, sphere, torus -->
             <!-- os parametros devem ser interpretados, genericamente como-->
             <!-- em OpenGL/GLUT; o cilindro deve adicionalmente ter tampas -->
-            <rectangle x1="ff" y1="ff" x2="ff" y2="ff" />
-            <triangle x1="ff" y1="ff" z1="ff" x2="ff" y2="ff" z2="ff" x3="ff" y3="ff" z3="ff" />
-            <cylinder base="ff" top="ff" height="ff" slices="ii" stacks="ii" />
-            <sphere radius="ff" slices="ii" stacks="ii" />
-            <torus inner="ff" outer="ff" slices="ii" loops="ii" />
-
+            <rectangle x1="1.1" y1="-1.1" x2="-1.1" y2="-1.1" />
+        </primitive>
+        
+        <primitive id="B">
+            <triangle x1="-10.1" y1="-1.1" z1="-1.1" x2="-5.1" y2="-1.1" z2="-1.1" x3="-0.1" y3="-1.1" z3="-1.1" />
+        </primitive>
+        <primitive id="C">
+            <cylinder base="0" top="5.5" height="12.5" slices="50" stacks="20" />
+        </primitive>
+        <primitive id="D">
+            <sphere radius="12.5" slices="50" stacks="10" />
+        </primitive>
+        <primitive id="E">
+            <torus inner="5" outer="6.5" slices="20" loops="10" />
         </primitive>
 
     </primitives>

@@ -631,7 +631,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		this.materials.push(m);
 	}
 
-	console.log("Materials:");
+	console.log("Materials:\n\n");
 	this.materials.forEach(function(material) {
 		console.log("Material id = " + material.id +
 				"\nEmission = [" + material.emission[0] + ", " + material.emission[1] + ", " + material.emission[2] + ", " + material.emission[3] + "]" +
@@ -681,7 +681,6 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 		for(j = 0; j < singleTransformationList.length; j++)
 		{
 			s = singleTransformationList[j];
-			console.log(s.nodeName);
 			var singletransformation = new Object;
 
 			switch(s.nodeName)
@@ -713,7 +712,7 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 		this.transformations.push(transformation);
 	}
 	
-	console.log("Transformations ("+ this.transformations.length + "):");
+	console.log("Transformations ("+ this.transformations.length + "):\n\n");
 	this.transformations.forEach(function(t) {
 		console.log("Transformation " + t.id + " (" + t.list.length + "):");
 		t.list.forEach(function(s){
@@ -722,12 +721,114 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 			else
 				console.log(s.type + ": [" + s.x + "," + s.y + "," + s.z + "]");
 		});
+		console.log("\n");
 	});
 }
 
 //--- Parse Primitives ---
 MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	
+	var elems =  rootElement.getElementsByTagName('primitives');
+
+	if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um primitives - reporta e termina
+		return "zero or more than one 'primitives' element found.";
+	}
+
+	primitives = elems[0];
+
+	var primitivesList = primitives.getElementsByTagName('primitive');
+	if (primitivesList == null  || primitivesList.length == 0) { //erro nenhuma primitive - reporta e termina
+		return "no 'primitive' element found.";
+	}
+
+	this.primitives = [];
+	
+	for(i = 0; i < primitivesList.length; i++)
+	{
+		var p = primitivesList[i];
+		var primitive = new Object;
+
+		//Id
+		primitive.id = this.reader.getString(p, 'id', true);
+
+		//Geometric Figure
+		if (p.children == null  || p.children.length != 1) { //erro primitive vazia - reporta e termina
+			return "'primitive' element with id="+ primitive.id +" is empty.";
+		}
+		
+		var figure = p.children[0];
+		
+		switch(figure.nodeName)
+		{
+	    case "rectangle":
+	    	primitive.type = "rectangle";
+	    	primitive.x1 = this.reader.getFloat(figure, 'x1', true);
+	    	primitive.y1 = this.reader.getFloat(figure, 'y1', true);
+	    	primitive.x2 = this.reader.getFloat(figure, 'x2', true);
+	    	primitive.y2 = this.reader.getFloat(figure, 'y2', true);
+	        break;
+	    case "triangle":
+	    	primitive.type = "triangle";
+	    	primitive.x1 = this.reader.getFloat(figure, 'x1', true);
+	    	primitive.y1 = this.reader.getFloat(figure, 'y1', true);
+	    	primitive.z1 = this.reader.getFloat(figure, 'z1', true);
+	    	primitive.x2 = this.reader.getFloat(figure, 'x2', true);
+	    	primitive.y2 = this.reader.getFloat(figure, 'y2', true);
+	    	primitive.z2 = this.reader.getFloat(figure, 'z2', true);
+	    	primitive.x3 = this.reader.getFloat(figure, 'x3', true);
+	    	primitive.y3 = this.reader.getFloat(figure, 'y3', true);
+	    	primitive.z3 = this.reader.getFloat(figure, 'z3', true);
+	        break;
+	    case "cylinder":
+	    	primitive.type = "cylinder";
+	    	primitive.base = this.reader.getFloat(figure, 'base', true);
+	    	primitive.top = this.reader.getFloat(figure, 'top', true);
+	    	primitive.height = this.reader.getFloat(figure, 'height', true);
+	    	primitive.slices = this.reader.getInteger(figure, 'slices', true);
+	    	primitive.stacks = this.reader.getInteger(figure, 'stacks', true);
+	        break;
+	    case "sphere":
+	    	primitive.type = "sphere";
+	    	primitive.radius = this.reader.getFloat(figure, 'radius', true);
+	    	primitive.slices = this.reader.getInteger(figure, 'slices', true);
+	    	primitive.stacks = this.reader.getInteger(figure, 'stacks', true);
+	        break;
+	    case "torus":
+	    	primitive.type = "torus";
+	    	primitive.inner = this.reader.getFloat(figure, 'inner', true);
+	    	primitive.outer = this.reader.getFloat(figure, 'outer', true);
+	    	primitive.slices = this.reader.getInteger(figure, 'slices', true);
+	    	primitive.loops = this.reader.getInteger(figure, 'loops', true);
+	        break;
+	    default:
+	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere' or torus.";
+	    }
+
+		this.primitives.push(primitive);
+	}
+	
+	console.log("Primitives ("+ this.primitives.length + "):\n\n");
+	this.primitives.forEach(function(p) {
+		console.log("Primitive " + p.id);
+		switch(p.type)
+		{
+	    case "rectangle":
+	    	console.log("rectangle: x1="+ p.x1 + ", y1=" + p.y1 + ", x2=" + p.x2 + ", y2=" + p.y2 +"\n\n");
+	        break;
+	    case "triangle":
+	    	console.log("triangle: x1="+ p.x1 + ", y1=" + p.y1 + ", z1=" + p.z1 + ", x2=" + p.x2 + ", y2=" + p.y2 + ", z2=" + p.z2 + ", x3=" + p.x3 + ", y3=" + p.y3 + ", z3=" + p.z3 +"\n\n");
+	        break;
+	    case "cylinder":
+	    	console.log("cylinder: base="+ p.base + ", top=" + p.top + ", height=" + p.height + ", slices=" + p.slices + ", stacks=" + p.stacks +"\n\n");
+	        break;
+	    case "sphere":
+	    	console.log("sphere: radius="+ p.radius + ", slices=" + p.slices + ", stacks=" + p.stacks +"\n\n");
+	        break;
+	    case "torus":
+	    	console.log("torus: inner="+ p.inner + ", outer=" + p.outer + ", slices=" + p.slices + ", loops=" + p.loops +"\n\n");
+	        break;
+	    }		
+	});	
 }
 
 //--- Parse Components ---

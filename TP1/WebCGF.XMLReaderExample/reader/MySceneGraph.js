@@ -279,10 +279,10 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	this.illumination = new Object;
 
-	this.illumination.doublesided = this.parseIntegerAttr(illumination, 'doublesided');	
+	this.illumination.doublesided = this.parseIntegerAttrAsBoolean(illumination, 'doublesided');	
 	if(this.error != null) return this.error;
 	
-	this.illumination.local = this.parseIntegerAttr(illumination, 'local');	
+	this.illumination.local = this.parseIntegerAttrAsBoolean(illumination, 'local');	
 	if(this.error != null) return this.error;
 
 	elems = illumination.getElementsByTagName('ambient');
@@ -1125,16 +1125,19 @@ MySceneGraph.prototype.parseFloatAttr = function(elem, attr) {
 	return e;
 }
 
-MySceneGraph.prototype.parseIntegerAttr = function(elem, attr) {
+MySceneGraph.prototype.parseIntegerAttrAsBoolean = function(elem, attr) {
 
 	var e = this.reader.getInteger(elem, attr, false);
 
 	//errors
-	if(e == null)
+	if (e == null)
 		this.error = "Attribute " + attr + " not found.";
 
-	if( isNaN(e) )
-		this.error = "Attribute " + attr + " must be an integer number.";
-
-	return e;
+	if ( isNaN(e) || (e != 0 && e != 1 ) )
+		this.error = "Attribute " + attr + " must be 0 or 1.";
+	
+	if (e == 0)
+		return false;
+	
+	return true;
 }

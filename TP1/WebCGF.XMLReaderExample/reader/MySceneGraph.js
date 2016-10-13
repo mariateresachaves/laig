@@ -108,7 +108,8 @@ MySceneGraph.prototype.onXMLReady=function()
 	this.loadedOk=true;
 
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
-	this.scene.onGraphLoaded();
+	// TODO: inserir no grafo os nós lidos no dsx
+	// this.scene.onGraphLoaded();
 };
 
 // --- Parse Scene ---
@@ -116,11 +117,7 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('scene');
 
-	if (elems == null) { // errro não existe um scene - reporta e termina
-		return "Scene element is missing.";
-	}
-
-	if (elems.length != 1) { // erro tem mais do que um scene - reporta e termina
+	if (elems == null || elems.length != 1) { // erro tem mais do que um scene - reporta e termina
 		return "Either zero or more than one 'scene' element found.";
 	}
 
@@ -128,17 +125,20 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 
 	this.root = this.parseStringAttr(scene, "root");
 
-	// errors
+	// parse string attribute error
 	if(this.error != null)
 		return this.error;
 
 	this.axis_length = this.parseFloatAttr(scene, 'axis_length');
 
-	// errors
+	// parse float attribute error
 	if(this.error != null)
 		return this.error;
 
+	console.log("");
+	console.log("--- Parse Scene ---");
 	console.log("Scene read from file: {root=" + this.root + ", axis_length=" + this.axis_length + "}");
+	console.log("");
 
 }
 
@@ -147,57 +147,54 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('views');
 
-	if (elems == null) { // errro não existe um scene - reporta e termina
-		return "views element is missing.";
-	}
-
-	if (elems.length != 1) { // erro tem mais do que um scene - reporta e termina
+	if (elems == null || elems.length != 1) { // erro tem mais do que um scene - reporta e termina
 		return "views zero or more than one 'views' element found.";
 	}
 
-	// various examples of different types of access
 	var views = elems[0];
 	this.views = new Object;
-	this.views.default = this.reader.getString(views, 'default');
 
-	console.log("Views read from file: {default=" + this.views.default + "}");
+	this.views.default = this.parseStringAttr(views, 'default');
+
+	// parse string attribute error
+	if(this.error != null)
+		return this.error;
 
 	this.views.list = [];
 
 	// iterate over every element
-	var nnodes = views.children.length;
-	var e = views.getElementsByTagName('perspective');
+	var num_perspectives = views.children.length;
+	var perspectives = views.getElementsByTagName('perspective');
 
-	if(nnodes != e.length) {
+	if(num_perspectives != perspectives.length)
 		return "Not perspective elements found.";
-	}
 
-	if(e.length < 1)
+	if(perspectives.length < 1)
 		return "perspective element is missing.";
 
-	for (var i = 0; i < e.length; i++)
+	for (var i = 0; i < perspectives.length; i++)
 	{
 		// process each element and store its information
 		var perspective_attr = new Object;
 
-		perspective_attr.near = e[i].attributes.getNamedItem("near").value;
-		perspective_attr.far = e[i].attributes.getNamedItem("far").value;
-		perspective_attr.angle = e[i].attributes.getNamedItem("angle").value;
+		perspective_attr.near = perspectives[i].attributes.getNamedItem("near").value;
+		perspective_attr.far = perspectives[i].attributes.getNamedItem("far").value;
+		perspective_attr.angle = perspectives[i].attributes.getNamedItem("angle").value;
 
-		var e_from = e[i].getElementsByTagName('from');
-		var e_to = e[i].getElementsByTagName('to');
+		var perspectives_from = perspectives[i].getElementsByTagName('from');
+		var perspectives_to = perspectives[i].getElementsByTagName('to');
 
-		if(e_from.length != 1 && e_to.length != 1)
+		if(perspectives_from.length != 1 && perspectives_to.length != 1)
 			return " missing from and/or to elements.";
 
-		var perspective_from = e_from[0];
+		var perspective_from = perspectives_from[0];
 		var x = this.reader.getFloat(perspective_from, 'x');
 		var y = this.reader.getFloat(perspective_from, 'y');
 		var z = this.reader.getFloat(perspective_from, 'z');
 
 		perspective_attr.from = [x,y,z];
 
-		var perspective_to = e_to[0];
+		var perspective_to = perspectives_to[0];
 		x = this.reader.getFloat(perspective_to, 'x');
 		y = this.reader.getFloat(perspective_to, 'y');
 		z = this.reader.getFloat(perspective_to, 'z');
@@ -206,6 +203,9 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 		this.views.list.push(perspective_attr);
 	}
+
+	console.log("--- Parse Views ---");
+	console.log("Views read from file: {default=" + this.views.default + "}");
 
 	for(i = 0; i < this.views.list.length; i++) {
 		console.log("Read views item id " + this.views.list[i].id +
@@ -216,6 +216,8 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 		console.log("from = [ " + this.views.list[i].from + "] " +
 								"to = ["+ this.views.list[i].to + "] ");
 	}
+
+	console.log("");
 }
 
 // --- Parse Illumination ---

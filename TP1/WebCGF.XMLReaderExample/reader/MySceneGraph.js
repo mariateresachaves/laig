@@ -975,9 +975,9 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um children - reporta e termina
 			return "zero or more than one 'children' element found in component " + component.id;
 		}
-		
+
 		var children = elems[0];
-		
+
 		component.children = [];
 
 		for(j = 0; j < children.length; j++)
@@ -1001,14 +1001,14 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 			component.children.push(child);
 		}
-		
+
 		this.components.push(component);
 	}
-	
+
 	console.log("Components ("+ this.components.length + "):\n\n");
 	this.components.forEach(function(c) {
 		console.log("Component " + c.id);
-	}
+	});
 
 }
 

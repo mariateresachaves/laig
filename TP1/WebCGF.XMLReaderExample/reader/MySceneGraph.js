@@ -117,7 +117,7 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('scene');
 
-	if (elems == null || elems.length != 1) { // erro tem mais do que um scene - reporta e termina
+	if (elems == null || elems.length != 1) { // erro nennhuma ou mais do que uma scene - reporta e termina
 		return "Either zero or more than one 'scene' element found.";
 	}
 
@@ -125,13 +125,11 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 
 	this.root = this.parseStringAttr(scene, "root");
 
-	// parse string attribute error
 	if(this.error != null)
 		return this.error;
 
 	this.axis_length = this.parseFloatAttr(scene, 'axis_length');
 
-	// parse float attribute error
 	if(this.error != null)
 		return this.error;
 
@@ -167,47 +165,43 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 	var perspectives = views.getElementsByTagName('perspective');
 
 	if(num_perspectives != perspectives.length)
-		return "Not perspective elements found.";
+		return "Non 'perspective' elements found.";
 
 	if(perspectives.length < 1)
 		return "perspective element is missing.";
 
+	// process each element and store its information
 	for (var i = 0; i < perspectives.length; i++)
 	{
-		// process each element and store its information
-		var perspective_attr = new Object;
+		var perspective = new Object;
 
-		perspective_attr.id = this.parseStringAttr(perspectives[i], "id");
+		perspective.id = this.parseStringAttr(perspectives[i], "id");
 
-		// parse string attribute error
 		if(this.error != null)
 			return this.error;
-
+		
 		this.views.list.forEach(function(p){
-
-			console.log("P_ID: " + p.id);
-
-			if (p.id === perspective_attr.id) {
-				return "Duplicate entry of perspective id.";
+			if (p.id == perspective.id) {
+				this.error = "Duplicate entry of perspective id (id=" + p.id +").";
+				return;
 			}
-
-		});
-
-		perspective_attr.near = this.parseFloatAttr(perspectives[i], "near");
-
-		// parse float attribute error
+		}, this);
+		
 		if(this.error != null)
 			return this.error;
 
-		perspective_attr.far = this.parseFloatAttr(perspectives[i],"far");
+		perspective.near = this.parseFloatAttr(perspectives[i], "near");
 
-		// parse float attribute error
 		if(this.error != null)
 			return this.error;
 
-		perspective_attr.angle = this.parseFloatAttr(perspectives[i],"angle");
+		perspective.far = this.parseFloatAttr(perspectives[i], "far");
 
-		// parse float attribute error
+		if(this.error != null)
+			return this.error;
+
+		perspective.angle = this.parseFloatAttr(perspectives[i], "angle");
+
 		if(this.error != null)
 			return this.error;
 
@@ -221,47 +215,41 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 		var x = this.parseFloatAttr(perspective_from, 'x');
 
-		// parse float attribute error
 		if(this.error != null)
 			return this.error;
 
 		var y = this.parseFloatAttr(perspective_from, 'y');
 
-		// parse float attribute error
 		if(this.error != null)
 			return this.error;
 
 		var z = this.parseFloatAttr(perspective_from, 'z');
 
-		// parse float attribute error
 		if(this.error != null)
 			return this.error;
 
-		perspective_attr.from = [x,y,z];
+		perspective.from = [x,y,z];
 
 		var perspective_to = perspectives_to[0];
 
 		x = this.parseFloatAttr(perspective_to, 'x');
 
-		// parse float attribute error
 		if(this.error != null)
 			return this.error;
 
 		y = this.parseFloatAttr(perspective_to, 'y');
 
-		// parse float attribute error
 		if(this.error != null)
 			return this.error;
 
 		z = this.parseFloatAttr(perspective_to, 'z');
 
-		// parse float attribute error
 		if(this.error != null)
 			return this.error;
 
-		perspective_attr.to = [x,y,z];
+		perspective.to = [x,y,z];
 
-		this.views.list.push(perspective_attr);
+		this.views.list.push(perspective);
 	}
 
 	console.log("--- Parse Views ---");
@@ -272,11 +260,9 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 								" near = " + this.views.list[i].near +
 								" far = " + this.views.list[i].far +
 								" angle = " + this.views.list[i].angle);
-
 		console.log("from = [ " + this.views.list[i].from + "] " +
 								"to = ["+ this.views.list[i].to + "] ");
 	}
-
 	console.log("");
 }
 
@@ -285,21 +271,19 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('illumination');
 
-	if (elems == null) { // errro não existe um illumination - reporta e termina
-		return "illumination element is missing.";
-	}
-
-	if (elems.length != 1) { // erro tem mais do que um illumination - reporta e termina
+	if (elems == null || elems.length != 1) { // erro nenhuma ou mais do que uma illumination - reporta e termina
 		return "either zero or more than one 'illumination' element found.";
 	}
 
-	// various examples of different types of access
 	var illumination = elems[0];
 
 	this.illumination = new Object;
 
-	this.illumination.doublesided = this.reader.getInteger(illumination, 'doublesided');
-	this.illumination.local = this.reader.getInteger(illumination, 'local');
+	this.illumination.doublesided = this.parseIntegerAttr(illumination, 'doublesided');	
+	if(this.error != null) return this.error;
+	
+	this.illumination.local = this.parseIntegerAttr(illumination, 'local');	
+	if(this.error != null) return this.error;
 
 	elems = illumination.getElementsByTagName('ambient');
 
@@ -309,10 +293,17 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	var illumination_ambient = elems[0];
 
-	var r = this.reader.getFloat(illumination_ambient, 'r');
-	var g = this.reader.getFloat(illumination_ambient, 'g');
-	var b = this.reader.getFloat(illumination_ambient, 'b');
-	var a = this.reader.getFloat(illumination_ambient, 'a');
+	var r = this.parseFloatAttr(illumination_ambient, 'r');
+	if(this.error != null) return this.error;
+	
+	var g = this.parseFloatAttr(illumination_ambient, 'g');
+	if(this.error != null) return this.error;
+	
+	var b = this.parseFloatAttr(illumination_ambient, 'b');
+	if(this.error != null) return this.error;
+	
+	var a = this.parseFloatAttr(illumination_ambient, 'a');
+	if(this.error != null) return this.error;
 
 	this.illumination.ambient = [r,g,b,a];
 
@@ -324,19 +315,26 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	var illumination_background = elems[0];
 
-	r = this.reader.getFloat(illumination_background, 'r');
-	g = this.reader.getFloat(illumination_background, 'g');
-	b = this.reader.getFloat(illumination_background, 'b');
-	a = this.reader.getFloat(illumination_background, 'a');
+	r = this.parseFloatAttr(illumination_ambient, 'r');
+	if(this.error != null) return this.error;
+	
+	g = this.parseFloatAttr(illumination_ambient, 'g');
+	if(this.error != null) return this.error;
+	
+	b = this.parseFloatAttr(illumination_ambient, 'b');
+	if(this.error != null) return this.error;
+	
+	a = this.parseFloatAttr(illumination_ambient, 'a');
+	if(this.error != null) return this.error;
 
 	this.illumination.background = [r,g,b,a];
 
-	console.log("Illumination read from file: {doublesided=" + this.illumination.doublesided +
-																							", local=" + this.illumination.local + "}");
-
-	console.log("ambient = [ " + this.illumination.ambient + "] " +
-							"background = ["+ this.illumination.background + "] ");
-
+	console.log("--- Parse Illumination ---")
+	console.log("doublesided = " + this.illumination.doublesided);
+	console.log("local = " + this.illumination.local);
+	console.log("ambient = [" + this.illumination.ambient + "]")
+	console.log("background = ["+ this.illumination.background + "]");
+	console.log("");
 }
 
 // --- Parse Lights ---
@@ -446,16 +444,13 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 			omni_tmp.specular = [r,g,b,a];
 
 			this.lights.omni_list.push(omni_tmp);
-
 		}
-
 	}
 
 	if (n_spots != 0){
 
 		for (var i = 0; i < n_spots; i++)
 		{
-
 			var spot = spots[i];
 			var spot_tmp = new Object;
 			spots[i].enabled = this.reader.getBoolean(spot, 'enabled');
@@ -538,11 +533,10 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 			spot_tmp.specular = [r,g,b,a];
 
 			this.lights.spot_list.push(spot_tmp);
-
 		}
-
 	}
 
+	console.log("--- Parse Lights ---")
 	for(i = 0; i < this.lights.omni_list.length; i++) {
 		console.log("Read omni item id " + this.lights.omni_list[i].id + " (enabled = "
 																																		+ this.lights.omni_list[i].enabled + ")" +
@@ -561,7 +555,7 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 								" diffuse = [" + this.lights.spot_list[i].diffuse + "]" +
 								" specular = [" + this.lights.spot_list[i].specular + "]");
 	}
-
+	console.log("");
 }
 
 // --- Parse Textures ---
@@ -1115,7 +1109,6 @@ MySceneGraph.prototype.parseStringAttr = function(elem, attr) {
 		this.error = "Attribute " + attr + " not found.";
 
 	return e;
-
 }
 
 MySceneGraph.prototype.parseFloatAttr = function(elem, attr) {
@@ -1126,9 +1119,22 @@ MySceneGraph.prototype.parseFloatAttr = function(elem, attr) {
 	if(e == null)
 		this.error = "Attribute " + attr + " not found.";
 
-	if(isNaN(e))
+	if( isNaN(e) )
 		this.error = "Attribute " + attr + " must be a float number.";
 
 	return e;
+}
 
+MySceneGraph.prototype.parseIntegerAttr = function(elem, attr) {
+
+	var e = this.reader.getInteger(elem, attr, false);
+
+	//errors
+	if(e == null)
+		this.error = "Attribute " + attr + " not found.";
+
+	if( isNaN(e) )
+		this.error = "Attribute " + attr + " must be an integer number.";
+
+	return e;
 }

@@ -32,7 +32,7 @@
             <to x="2.0" y="4.0" z="1.0" />
         </perspective>
 
-        <perspective id="v1" near="2.0" far="3.0" angle="90.0">
+        <perspective id="v2" near="2.0" far="3.0" angle="90.0">
             <from x="1.0" y="2.0" z="3.0" />
             <to x="4.0" y="5.0" z="6.0" />
         </perspective>

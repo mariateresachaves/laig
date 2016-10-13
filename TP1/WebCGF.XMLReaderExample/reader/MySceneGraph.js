@@ -4,6 +4,7 @@ function MySceneGraph(filename, scene) { // filename: path
 
 	// Establish bidirectional references between scene and graph
 	this.scene = scene;
+	this.error = null;
 	scene.graph=this;
 
 	// File reading
@@ -125,23 +126,17 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 
 	var scene = elems[0];
 
-	this.root = this.reader.getString(scene, 'root', true);
+	this.root = this.parseStringAttr(scene, "root");
 
 	// errors
-	if(this.root == null) {
-		return "Attribute root not found.";
-	}
+	if(this.error != null)
+		return this.error;
 
-	this.axis_length = this.reader.getFloat(scene, 'axis_length', true);
+	this.axis_length = this.parseFloatAttr(scene, 'axis_length');
 
 	// errors
-	if(this.axis_length == null) {
-		return "Attribute axis_length not found.";
-	}
-
-	if(isNaN(this.axis_length)) {
-		return "Attribute axis_length must be a float number.";
-	}
+	if(this.error != null)
+		return this.error;
 
 	console.log("Scene read from file: {root=" + this.root + ", axis_length=" + this.axis_length + "}");
 
@@ -996,6 +991,29 @@ MySceneGraph.prototype.onXMLError=function (message) {
 	this.loadedOk=false;
 };
 
-MySceneGraph.prototype.parseStringAttr = function() {
+MySceneGraph.prototype.parseStringAttr = function(elem, attr) {
+
+	var e = this.reader.getString(elem, attr, false);
+
+	//errors
+	if(e == null)
+		this.error = "Attribute " + attr + " not found.";
+
+	return e;
+
+}
+
+MySceneGraph.prototype.parseFloatAttr = function(elem, attr) {
+
+	var e = this.reader.getFloat(elem, attr, false);
+
+	//errors
+	if(e == null)
+		this.error = "Attribute " + attr + " not found.";
+
+	if(isNaN(e))
+		this.error = "Attribute " + attr + " must be a float number.";
+
+	return e;
 
 }

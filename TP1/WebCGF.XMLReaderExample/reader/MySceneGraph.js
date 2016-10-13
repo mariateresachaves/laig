@@ -908,23 +908,17 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			    	subtransformation.x = this.reader.getFloat(t, 'x', true);
 			    	subtransformation.y = this.reader.getFloat(t, 'y', true);
 			    	subtransformation.z = this.reader.getFloat(t, 'z', true);
-
-						console.log(subtransformation.type + " x=" + subtransformation.x + " y=" + subtransformation.y + " z=" + subtransformation.z);
-			        break;
+			    	break;
 			    case "rotate":
 			    	subtransformation.type = "rotate";
 			    	subtransformation.axis = this.reader.getItem(t, 'axis', ['x','y','z']);
 			    	subtransformation.angle = this.reader.getFloat(t, 'angle', true);
-
-						console.log(subtransformation.type + " axis=" + subtransformation.axis + " angle=" + subtransformation.angle);
-			        break;
+			    	break;
 			    case "scale":
 			    	subtransformation.type = "scale";
 			    	subtransformation.x = this.reader.getFloat(t, 'x', true);
 			    	subtransformation.y = this.reader.getFloat(t, 'y', true);
 			    	subtransformation.z = this.reader.getFloat(t, 'z', true);
-
-						console.log(subtransformation.type + " x=" + subtransformation.x + " y=" + subtransformation.y + " z=" + subtransformation.z);
 			        break;
 			    default:
 			    	return "element found is not 'translate', 'rotate' or 'scale'.";
@@ -974,10 +968,44 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		component.textureid = this.reader.getString(texture, 'id', true);
 
 		//children
-		//...
+		elems = c.getElementsByTagName('children');
 
+		if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um children - reporta e termina
+			return "zero or more than one 'children' element found in component " + component.id;
+		}
+		
+		var children = elems[0];
+		
+		component.children = [];
 
+		for(j = 0; j < children.length; j++)
+		{
+			var c = children[j];
+			var child = new Object;
+
+			switch(c.nodeName)
+			{
+		    case "componentref":
+		    	child.type = "component";
+		    	child.id = this.reader.getString(c, 'id');
+		        break;
+		    case "primitiveref":
+		    	child.type = "primitive";
+		    	child.id = this.reader.getString(c, 'id');
+		    	break;
+		    default:
+		    	return "element found in " + component.id + " is not 'componentref' or 'primitiveref' (" + c.nodeName +")."  ;
+		    }
+
+			component.children.push(child);
+		}
+		
 		this.components.push(component);
+	}
+	
+	console.log("Components ("+ this.components.length + "):\n\n");
+	this.components.forEach(function(c) {
+		console.log("Component " + c.id);
 	}
 
 }

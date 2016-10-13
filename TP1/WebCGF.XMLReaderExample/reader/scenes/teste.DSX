@@ -148,16 +148,16 @@
 
         <!-- Deve existir um ou mais blocos "transformation" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
-        
+
         <transformation id="A">
            <!-- instrucoes a usar sem limite nem ordem -->
            <!-- deve existir pelo menos uma transformacao -->
-           
+
            <translate x="15.5" y="-15.5" z="-100.1" />
            <rotate axis="x" angle="30.1" />
            <scale x="2.5" y="2.5" z="-1.5" />
         </transformation>
-        
+
         <transformation id="B">
            <translate x="15.5" y="-15.5" z="-100.1" />
            <rotate axis="x" angle="30.1" />
@@ -166,7 +166,7 @@
            <translate x="0.5" y="-0.5" z="0" />
            <translate x="0.5" y="-0.5" z="0" />
         </transformation>
-        
+
         <transformation id="C">
            <scale x="2.5" y="2.5" z="-1.5" />
         </transformation>
@@ -186,7 +186,7 @@
             <!-- em OpenGL/GLUT; o cilindro deve adicionalmente ter tampas -->
             <rectangle x1="1.1" y1="-1.1" x2="-1.1" y2="-1.1" />
         </primitive>
-        
+
         <primitive id="B">
             <triangle x1="-10.1" y1="-1.1" z1="-1.1" x2="-5.1" y2="-1.1" z2="-1.1" x3="-0.1" y3="-1.1" z3="-1.1" />
         </primitive>
@@ -205,22 +205,22 @@
 
     <components>
 
-        <component id="ss">
+        <component id="componentA">
 
             <!-- bloco "transformation" obrigatorio -->
             <transformation>
 
                 <!-- deve conter uma referencia a uma das "transformation" -->
                 <!-- declaradas anteriormente -->
-                <transformationref id="ss" />
+                <transformationref id="B" />
 
                 <!-- ou, ALTERNATIVAMENTE, transformacoes explicitas, -->
                 <!-- usando zero ou mais das instrucoes seguintes, sem -->
                 <!-- limite nem ordem -->
                 <!-- ex: bloco transformation pode ficar sem conteudo -->
-                <translate x="ff" y="ff" z="ff" />
-                <rotate axis="cc" angle="ff" />
-                <scale x="ff" y="ff" z="ff" />
+                <!-- <translate x="1.0" y="1.0" z="1.0" /> -->
+                <!-- <rotate axis="x" angle="30.0" /> -->
+                <!-- <scale x="1.0" y="1.0" z="1.0" /> -->
             </transformation>
 
             <!-- declaracao obrigatoria de pelo menos um material; -->
@@ -230,7 +230,7 @@
             <!-- o material muda para o proximo material da lista; do -->
             <!-- ultimo material da lista volta ao primeiro -->
             <materials>
-                <material id="ss" />
+                <material id="A" />
             </materials>
 
             <!-- declaracao obrigatoria de texture -->
@@ -238,7 +238,7 @@
             <!-- id="none" remove a textura recebida do pai -->
             <!-- a textura declarada sobrepoe a textura recebida do -->
             <!-- objecto "pai" -->
-            <texture id="ss" />
+            <texture id="texture1" />
 
             <!-- bloco "children" obrigatorio num "component" -->
             <children>
@@ -246,8 +246,8 @@
                 <!-- deve existir uma ou mais tags "componentref" e/ou -->
                 <!-- "primitiveref", identificando outros -->
                 <!-- componentes ou primitivas -->
-                <componentref id="ss" />
-                <primitiveref id="ss" />
+                <componentref id="A" />
+                <primitiveref id="E" />
 
             </children>
 

@@ -87,7 +87,7 @@ MySceneGraph.prototype.onXMLReady=function()
 		this.onXMLError(error);
 		return;
 	}
-	
+
 	// --- Parse Primitives ---
 	error = this.parsePrimitives(rootElement);
 
@@ -95,7 +95,7 @@ MySceneGraph.prototype.onXMLReady=function()
 		this.onXMLError(error);
 		return;
 	}
-	
+
 	// --- Parse Components ---
 	error = this.parseComponents(rootElement);
 
@@ -711,7 +711,7 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 
 		this.transformations.push(transformation);
 	}
-	
+
 	console.log("Transformations ("+ this.transformations.length + "):\n\n");
 	this.transformations.forEach(function(t) {
 		console.log("Transformation " + t.id + " (" + t.list.length + "):");
@@ -727,7 +727,7 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 
 //--- Parse Primitives ---
 MySceneGraph.prototype.parsePrimitives = function(rootElement) {
-	
+
 	var elems =  rootElement.getElementsByTagName('primitives');
 
 	if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um primitives - reporta e termina
@@ -742,7 +742,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	}
 
 	this.primitives = [];
-	
+
 	for(i = 0; i < primitivesList.length; i++)
 	{
 		var p = primitivesList[i];
@@ -755,9 +755,9 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 		if (p.children == null  || p.children.length != 1) { //erro primitive vazia - reporta e termina
 			return "'primitive' element with id="+ primitive.id +" is empty.";
 		}
-		
+
 		var figure = p.children[0];
-		
+
 		switch(figure.nodeName)
 		{
 	    case "rectangle":
@@ -806,7 +806,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 
 		this.primitives.push(primitive);
 	}
-	
+
 	console.log("Primitives ("+ this.primitives.length + "):\n\n");
 	this.primitives.forEach(function(p) {
 		console.log("Primitive " + p.id);
@@ -827,13 +827,13 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	    case "torus":
 	    	console.log("torus: inner="+ p.inner + ", outer=" + p.outer + ", slices=" + p.slices + ", loops=" + p.loops +"\n\n");
 	        break;
-	    }		
-	});	
+	    }
+	});
 }
 
 //--- Parse Components ---
 MySceneGraph.prototype.parseComponents = function(rootElement) {
-	
+
 	var elems =  rootElement.getElementsByTagName('components');
 
 	if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um components - reporta e termina
@@ -843,16 +843,16 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 	var components = elems[0];
 
 	var componentsList = components.getElementsByTagName('component');
-	if (componentsList == null  || componentsList.length == 0) { //erro nenhuma primitive - reporta e termina
+	if (componentsList == null  || componentsList.length == 0) { //erro nenhuma component - reporta e termina
 		return "no 'component' element found.";
 	}
-	
-	if (componentsList.length != components.children.length) { //erro elemento nao 'component' encontrado - reporta e termina
+
+	if (componentsList.length != components.children.length) { //erro elemento 'component' nao encontrado - reporta e termina
 		return "non 'component' element found.";
 	}
-	
+
 	this.components = [];
-	
+
 	for(i = 0; i < componentsList.length; i++)
 	{
 		var c = componentsList[i];
@@ -860,34 +860,36 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 		//id
 		component.id = this.reader.getString(c, 'id', true);
-		
+
 		//transformation
 		elems = c.getElementsByTagName('transformation');
-		
+
 		if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um transformation - reporta e termina
 			return "zero or more than one 'transformation' element found in component " + component.id;
 		}
-		
+
 		var transformation = elems[0];
 		elems = transformation.getElementsByTagName('transformationref');
-		
+
 		if (elems != null  && elems.length == 1)
-		{			
+		{
 			if (transformation.children.length != 1) { //erro transformationref tem que ser exclusiva - reporta e termina
 				return "'transformationref' must be exclusive in " + component.id;
 			}
-			
-			component.transformationref = this.reader.getString(elems[0], 'transformationref', true);
+
+			component.transformationref = this.reader.getString(elems[0], 'id', true);
+
+			console.log("transformationref id=" + component.transformationref);
 		}
 		else
 		{
 			component.transformations = [];
-			
+
 			for(j = 0; j < transformation.children.length; j++)
 			{
 				var t = transformation.children[j];
 				var subtransformation = new Object;
-				
+
 				switch(t.nodeName)
 				{
 			    case "translate":
@@ -895,73 +897,78 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			    	subtransformation.x = this.reader.getFloat(t, 'x', true);
 			    	subtransformation.y = this.reader.getFloat(t, 'y', true);
 			    	subtransformation.z = this.reader.getFloat(t, 'z', true);
+
+						console.log(subtransformation.type + " x=" + subtransformation.x + " y=" + subtransformation.y + " z=" + subtransformation.z);
 			        break;
 			    case "rotate":
 			    	subtransformation.type = "rotate";
 			    	subtransformation.axis = this.reader.getItem(t, 'axis', ['x','y','z']);
 			    	subtransformation.angle = this.reader.getFloat(t, 'angle', true);
+
+						console.log(subtransformation.type + " axis=" + subtransformation.axis + " angle=" + subtransformation.angle);
 			        break;
 			    case "scale":
 			    	subtransformation.type = "scale";
 			    	subtransformation.x = this.reader.getFloat(t, 'x', true);
 			    	subtransformation.y = this.reader.getFloat(t, 'y', true);
 			    	subtransformation.z = this.reader.getFloat(t, 'z', true);
+
+						console.log(subtransformation.type + " x=" + subtransformation.x + " y=" + subtransformation.y + " z=" + subtransformation.z);
 			        break;
 			    default:
 			    	return "element found is not 'translate', 'rotate' or 'scale'.";
 			    }
-				
+
 				component.transformations.push(subtransformation);
-			}			
+			}
 		}
-		
+
 		//materials
 		elems = c.getElementsByTagName('materials');
-		
+
 		if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um materials - reporta e termina
 			return "zero or more than one 'materials' element found in component " + component.id;
 		}
-		
+
 		var materials = elems[0];
-		
+
 		var materialsList = materials.getElementsByTagName('material');
-		
+
 		if (materialsList == null  || materialsList.length == 0) { //erro nenhum material - reporta e termina
 			return "zero 'material' elements found in component " + component.id;
 		}
-		
+
 		if (materialsList.length != materials.children.length) { //erro elemento nao 'material' encontrado - reporta e termina
 			return "non 'material' element found.";
 		}
-		
+
 		component.materials = [];
-		
+
 		for(j = 0; j < materialsList.length; j++)
 		{
 			var material = materialsList[j];
 			var id = this.reader.getString(material, 'id', true);
 			component.materials.push(id);
-		}		
-		
+		}
+
 		//texture
 		elems = c.getElementsByTagName('texture');
-		
+
 		if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um texture - reporta e termina
 			return "zero or more than one 'texture' element found in component " + component.id;
 		}
-		
+
 		var texture = elems[0];
-		
+
 		component.textureid = this.reader.getString(texture, 'id', true);
-		
+
 		//children
-		//...		
-		
-		
-		
+		//...
+
+
 		this.components.push(component);
 	}
-	
+
 }
 
 /*

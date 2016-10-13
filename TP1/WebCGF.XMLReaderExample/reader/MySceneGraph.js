@@ -177,27 +177,87 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 		// process each element and store its information
 		var perspective_attr = new Object;
 
-		perspective_attr.near = perspectives[i].attributes.getNamedItem("near").value;
-		perspective_attr.far = perspectives[i].attributes.getNamedItem("far").value;
-		perspective_attr.angle = perspectives[i].attributes.getNamedItem("angle").value;
+		perspective_attr.id = this.parseStringAttr(perspectives[i], "id");
+
+		// parse string attribute error
+		if(this.error != null)
+			return this.error;
+
+		this.views.list.forEach(function(p){
+
+			console.log("P_ID: " + p.id);
+
+			if (p.id === perspective_attr.id) {
+				return "Duplicate entry of perspective id.";
+			}
+
+		});
+
+		perspective_attr.near = this.parseFloatAttr(perspectives[i], "near");
+
+		// parse float attribute error
+		if(this.error != null)
+			return this.error;
+
+		perspective_attr.far = this.parseFloatAttr(perspectives[i],"far");
+
+		// parse float attribute error
+		if(this.error != null)
+			return this.error;
+
+		perspective_attr.angle = this.parseFloatAttr(perspectives[i],"angle");
+
+		// parse float attribute error
+		if(this.error != null)
+			return this.error;
 
 		var perspectives_from = perspectives[i].getElementsByTagName('from');
 		var perspectives_to = perspectives[i].getElementsByTagName('to');
 
 		if(perspectives_from.length != 1 && perspectives_to.length != 1)
-			return " missing from and/or to elements.";
+			return " missing \"from\" and/or \"to\" elements.";
 
 		var perspective_from = perspectives_from[0];
-		var x = this.reader.getFloat(perspective_from, 'x');
-		var y = this.reader.getFloat(perspective_from, 'y');
-		var z = this.reader.getFloat(perspective_from, 'z');
+
+		var x = this.parseFloatAttr(perspective_from, 'x');
+
+		// parse float attribute error
+		if(this.error != null)
+			return this.error;
+
+		var y = this.parseFloatAttr(perspective_from, 'y');
+
+		// parse float attribute error
+		if(this.error != null)
+			return this.error;
+
+		var z = this.parseFloatAttr(perspective_from, 'z');
+
+		// parse float attribute error
+		if(this.error != null)
+			return this.error;
 
 		perspective_attr.from = [x,y,z];
 
 		var perspective_to = perspectives_to[0];
-		x = this.reader.getFloat(perspective_to, 'x');
-		y = this.reader.getFloat(perspective_to, 'y');
-		z = this.reader.getFloat(perspective_to, 'z');
+
+		x = this.parseFloatAttr(perspective_to, 'x');
+
+		// parse float attribute error
+		if(this.error != null)
+			return this.error;
+
+		y = this.parseFloatAttr(perspective_to, 'y');
+
+		// parse float attribute error
+		if(this.error != null)
+			return this.error;
+
+		z = this.parseFloatAttr(perspective_to, 'z');
+
+		// parse float attribute error
+		if(this.error != null)
+			return this.error;
 
 		perspective_attr.to = [x,y,z];
 

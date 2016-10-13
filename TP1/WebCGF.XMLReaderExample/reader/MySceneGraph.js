@@ -1036,7 +1036,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			return "zero or more than one 'children' element found in component " + component.id;
 		}
 
-		var children = elems[0];
+		var children = elems[0].children;
 
 		component.children = [];
 
@@ -1067,7 +1067,32 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 	console.log("Components ("+ this.components.length + "):\n\n");
 	this.components.forEach(function(c) {
+		//id
 		console.log("Component " + c.id);
+		//transformations
+		if (c.transformationref != null)
+			console.log("transformationref id=" + c.transformationref);
+		else{
+			console.log("transformations: ");
+			c.transformations.forEach(function(t) {
+				if (t.type == "rotate")
+					console.log(t.type + ": axis=" + t.axis + " angle=" + t.angle );
+				else
+					console.log(t.type + ": x=" + t.x + ": y=" + t.y + " z=" + t.z );
+			});
+		}
+		//materials
+		console.log("materials:");
+		c.materials.forEach(function(m_id) {
+			console.log("material id=" + m_id );
+		});
+		//texture
+		console.log("texture id=" + c.textureid );
+		//children
+		console.log("children: ");
+		c.children.forEach(function(ch) {
+			console.log(ch.type + ": id=" + ch.id );
+		});		
 	});
 
 }

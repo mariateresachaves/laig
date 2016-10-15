@@ -236,6 +236,16 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 		this.views.list.push(perspective);
 	}
+	
+	//check default view
+	this.error = "Cannot find default view (id=" + this.views.default + ").";
+	this.views.list.forEach(function(x){
+		if (x.id == this.views.default) {
+			this.error = null;
+			return;
+		}
+	}, this);
+	if(this.error != null) return this.error;
 
 	//Display values for Debugging
 	console.log("--- Parse Views ---");
@@ -683,7 +693,7 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 	console.log("--- Parse Textures ---");
 	for(i = 0; i < this.textures.length; i++) {
 		var x = this.textures[i];
-		console.log("Texture id= " + x.id +
+		console.log("Texture id = " + x.id +
 				" { file = " + x.file +
 				", length_s = " + x.length_s +
 				", length_t = " + x.length_t + " }");
@@ -849,14 +859,14 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('transformations');
 
-	if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um transformations - reporta e termina
+	if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um 'transformations - reporta e termina
 		return "zero or more than one 'transformations' element found.";
 	}
 
 	transformations = elems[0];
 
 	var transformationsList = transformations.getElementsByTagName('transformation');
-	if (transformationsList == null  || transformationsList.length == 0) { //erro nenhuma transformation - reporta e termina
+	if (transformationsList == null  || transformationsList.length == 0) { //erro nenhum 'transformation' - reporta e termina
 		return "no 'transformation' element found.";
 	}
 
@@ -868,7 +878,16 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 		var transformation = new Object;
 
 		//Id
-		transformation.id = this.reader.getString(t, 'id', true);
+		transformation.id = this.parseStringAttr(t, 'id');
+		if(this.error != null) return this.error;
+
+		//check for duplicate ids
+		this.transformations.forEach(function(x){
+			if (x.id == transformation.id) {
+				this.error = "Duplicate entry of transformation id (id=" + x.id +").";
+				return;
+			}
+		}, this);
 
 		//Transformations
 		var singleTransformationList = t.children;
@@ -888,20 +907,28 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 			{
 		    case "translate":
 		    	singletransformation.type = "translate";
-		    	singletransformation.x = this.reader.getFloat(s, 'x', true);
-		    	singletransformation.y = this.reader.getFloat(s, 'y', true);
-		    	singletransformation.z = this.reader.getFloat(s, 'z', true);
+		    	singletransformation.x = this.parseFloatAttr(s, 'x');
+				if(this.error != null) return this.error;
+		    	singletransformation.y = this.parseFloatAttr(s, 'y');
+				if(this.error != null) return this.error;
+		    	singletransformation.z = this.parseFloatAttr(s, 'z');
+				if(this.error != null) return this.error;
 		        break;
 		    case "rotate":
 		    	singletransformation.type = "rotate";
-		    	singletransformation.axis = this.reader.getItem(s, 'axis', ['x','y','z']);
-		    	singletransformation.angle = this.reader.getFloat(s, 'angle', true);
+		    	singletransformation.axis = this.parseItemAttr(s, 'axis', ['x','y','z']);
+				if(this.error != null) return this.error;
+		    	singletransformation.angle = this.parseFloatAttr(s, 'angle');
+				if(this.error != null) return this.error;
 		        break;
 		    case "scale":
 		    	singletransformation.type = "scale";
-		    	singletransformation.x = this.reader.getFloat(s, 'x', true);
-		    	singletransformation.y = this.reader.getFloat(s, 'y', true);
-		    	singletransformation.z = this.reader.getFloat(s, 'z', true);
+		    	singletransformation.x = this.parseFloatAttr(s, 'x');
+				if(this.error != null) return this.error;
+		    	singletransformation.y = this.parseFloatAttr(s, 'y');
+				if(this.error != null) return this.error;
+		    	singletransformation.z = this.parseFloatAttr(s, 'z');
+				if(this.error != null) return this.error;
 		        break;
 		    default:
 		    	return "element found is not 'translate', 'rotate' or 'scale'.";
@@ -913,17 +940,18 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 		this.transformations.push(transformation);
 	}
 
-	console.log("Transformations ("+ this.transformations.length + "):\n\n");
+	//Display values for Debugging
+	console.log("--- Parse Transformations ---");
 	this.transformations.forEach(function(t) {
-		console.log("Transformation " + t.id + " (" + t.list.length + "):");
+		console.log("Transformation id = " + t.id + " (" + t.list.length + " subtransformations):");
 		t.list.forEach(function(s){
 			if(s.type == "rotate")
-				console.log(s.type + ": axis=" + s.axis + ", angle=" + s.angle);
+				console.log("	" + s.type + ": axis=" + s.axis + ", angle=" + s.angle);
 			else
-				console.log(s.type + ": [" + s.x + "," + s.y + "," + s.z + "]");
+				console.log("	" + s.type + ": [" + s.x + "," + s.y + "," + s.z + "]");
 		});
-		console.log("\n");
 	});
+	console.log("");
 }
 
 //--- Parse Primitives ---
@@ -949,8 +977,17 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 		var p = primitivesList[i];
 		var primitive = new Object;
 
-		//Id
-		primitive.id = this.reader.getString(p, 'id', true);
+		//Id		
+		primitive.id = this.parseStringAttr(p, 'id');
+		if(this.error != null) return this.error;
+
+		//check for duplicate ids
+		this.primitives.forEach(function(x){
+			if (x.id == primitive.id) {
+				this.error = "Duplicate entry of primitive id (id=" + x.id +").";
+				return;
+			}
+		}, this);
 
 		//Geometric Figure
 		if (p.children == null  || p.children.length != 1) { //erro primitive vazia - reporta e termina
@@ -963,43 +1000,68 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 		{
 	    case "rectangle":
 	    	primitive.type = "rectangle";
-	    	primitive.x1 = this.reader.getFloat(figure, 'x1', true);
-	    	primitive.y1 = this.reader.getFloat(figure, 'y1', true);
-	    	primitive.x2 = this.reader.getFloat(figure, 'x2', true);
-	    	primitive.y2 = this.reader.getFloat(figure, 'y2', true);
+	    	primitive.x1 = this.parseFloatAttr(figure, 'x1');
+			if(this.error != null) return this.error;
+	    	primitive.y1 = this.parseFloatAttr(figure, 'y1');
+			if(this.error != null) return this.error;
+	    	primitive.x2 = this.parseFloatAttr(figure, 'x2');
+			if(this.error != null) return this.error;
+	    	primitive.y2 = this.parseFloatAttr(figure, 'y2');
+			if(this.error != null) return this.error;
 	        break;
 	    case "triangle":
 	    	primitive.type = "triangle";
-	    	primitive.x1 = this.reader.getFloat(figure, 'x1', true);
-	    	primitive.y1 = this.reader.getFloat(figure, 'y1', true);
-	    	primitive.z1 = this.reader.getFloat(figure, 'z1', true);
-	    	primitive.x2 = this.reader.getFloat(figure, 'x2', true);
-	    	primitive.y2 = this.reader.getFloat(figure, 'y2', true);
-	    	primitive.z2 = this.reader.getFloat(figure, 'z2', true);
-	    	primitive.x3 = this.reader.getFloat(figure, 'x3', true);
-	    	primitive.y3 = this.reader.getFloat(figure, 'y3', true);
-	    	primitive.z3 = this.reader.getFloat(figure, 'z3', true);
+	    	primitive.x1 = this.parseFloatAttr(figure, 'x1');
+			if(this.error != null) return this.error;
+	    	primitive.y1 = this.parseFloatAttr(figure, 'y1');
+			if(this.error != null) return this.error;
+	    	primitive.z1 = this.parseFloatAttr(figure, 'z1');
+			if(this.error != null) return this.error;
+	    	primitive.x2 = this.parseFloatAttr(figure, 'x2');
+			if(this.error != null) return this.error;
+	    	primitive.y2 = this.parseFloatAttr(figure, 'y2');
+			if(this.error != null) return this.error;
+	    	primitive.z2 = this.parseFloatAttr(figure, 'z2');
+			if(this.error != null) return this.error;
+	    	primitive.x3 = this.parseFloatAttr(figure, 'x3');
+			if(this.error != null) return this.error;
+	    	primitive.y3 = this.parseFloatAttr(figure, 'y3');
+			if(this.error != null) return this.error;
+	    	primitive.z3 = this.parseFloatAttr(figure, 'z3');
+			if(this.error != null) return this.error;
 	        break;
 	    case "cylinder":
 	    	primitive.type = "cylinder";
-	    	primitive.base = this.reader.getFloat(figure, 'base', true);
-	    	primitive.top = this.reader.getFloat(figure, 'top', true);
-	    	primitive.height = this.reader.getFloat(figure, 'height', true);
-	    	primitive.slices = this.reader.getInteger(figure, 'slices', true);
-	    	primitive.stacks = this.reader.getInteger(figure, 'stacks', true);
+	    	primitive.base = this.parseFloatAttr(figure, 'base');
+			if(this.error != null) return this.error;
+	    	primitive.top = this.parseFloatAttr(figure, 'top');
+			if(this.error != null) return this.error;
+	    	primitive.height = this.parseFloatAttr(figure, 'height');
+			if(this.error != null) return this.error;
+	    	primitive.slices = this.parseIntegerAttr(figure, 'slices');
+			if(this.error != null) return this.error;
+	    	primitive.stacks = this.parseIntegerAttr(figure, 'stacks');
+			if(this.error != null) return this.error;
 	        break;
 	    case "sphere":
 	    	primitive.type = "sphere";
-	    	primitive.radius = this.reader.getFloat(figure, 'radius', true);
-	    	primitive.slices = this.reader.getInteger(figure, 'slices', true);
-	    	primitive.stacks = this.reader.getInteger(figure, 'stacks', true);
+	    	primitive.radius = this.parseFloatAttr(figure, 'radius');
+			if(this.error != null) return this.error;
+	    	primitive.slices = this.parseIntegerAttr(figure, 'slices');
+			if(this.error != null) return this.error;
+	    	primitive.stacks = this.parseIntegerAttr(figure, 'stacks');
+			if(this.error != null) return this.error;
 	        break;
 	    case "torus":
 	    	primitive.type = "torus";
-	    	primitive.inner = this.reader.getFloat(figure, 'inner', true);
-	    	primitive.outer = this.reader.getFloat(figure, 'outer', true);
-	    	primitive.slices = this.reader.getInteger(figure, 'slices', true);
-	    	primitive.loops = this.reader.getInteger(figure, 'loops', true);
+	    	primitive.inner = this.parseFloatAttr(figure, 'inner');
+			if(this.error != null) return this.error;
+	    	primitive.outer = this.parseFloatAttr(figure, 'outer');
+			if(this.error != null) return this.error;
+	    	primitive.slices = this.parseIntegerAttr(figure, 'slices');
+			if(this.error != null) return this.error;
+	    	primitive.loops = this.parseIntegerAttr(figure, 'loops');
+			if(this.error != null) return this.error;
 	        break;
 	    default:
 	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere' or torus.";
@@ -1008,25 +1070,25 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 		this.primitives.push(primitive);
 	}
 
-	console.log("Primitives ("+ this.primitives.length + "):\n\n");
+	//Display values for Debugging
+	console.log("--- Parse Primitives ---");
 	this.primitives.forEach(function(p) {
-		console.log("Primitive " + p.id);
 		switch(p.type)
 		{
 	    case "rectangle":
-	    	console.log("rectangle: x1="+ p.x1 + ", y1=" + p.y1 + ", x2=" + p.x2 + ", y2=" + p.y2 +"\n\n");
+	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", x1 = "+ p.x1 + ", y1 = " + p.y1 + ", x2 = " + p.x2 + ", y2 = " + p.y2 + " }");
 	        break;
 	    case "triangle":
-	    	console.log("triangle: x1="+ p.x1 + ", y1=" + p.y1 + ", z1=" + p.z1 + ", x2=" + p.x2 + ", y2=" + p.y2 + ", z2=" + p.z2 + ", x3=" + p.x3 + ", y3=" + p.y3 + ", z3=" + p.z3 +"\n\n");
+	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", x1 = "+ p.x1 + ", y1 = " + p.y1 + ", z1 = " + p.z1 + ", x2 = " + p.x2 + ", y2 = " + p.y2 + ", z2 = " + p.z2 + ", x3 = " + p.x3 + ", y3 = " + p.y3 + ", z3 = " + p.z3 + " }");
 	        break;
 	    case "cylinder":
-	    	console.log("cylinder: base="+ p.base + ", top=" + p.top + ", height=" + p.height + ", slices=" + p.slices + ", stacks=" + p.stacks +"\n\n");
+	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", base="+ p.base + ", top = " + p.top + ", height = " + p.height + ", slices = " + p.slices + ", stacks = " + p.stacks + " }");
 	        break;
 	    case "sphere":
-	    	console.log("sphere: radius="+ p.radius + ", slices=" + p.slices + ", stacks=" + p.stacks +"\n\n");
+	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", radius = "+ p.radius + ", slices = " + p.slices + ", stacks = " + p.stacks + " }");
 	        break;
 	    case "torus":
-	    	console.log("torus: inner="+ p.inner + ", outer=" + p.outer + ", slices=" + p.slices + ", loops=" + p.loops +"\n\n");
+	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", inner = "+ p.inner + ", outer = " + p.outer + ", slices = " + p.slices + ", loops = " + p.loops + " }");
 	        break;
 	    }
 	});
@@ -1293,21 +1355,34 @@ MySceneGraph.prototype.parseFloatAttr = function(elem, attr) {
 	return e;
 }
 
-MySceneGraph.prototype.parseIntegerAttrAsBoolean = function(elem, attr) {
+MySceneGraph.prototype.parseIntegerAttr = function(elem, attr) {
 
 	var e = this.reader.getInteger(elem, attr, false);
 
 	//errors
-	if (e == null)
+	if(e == null)
 		this.error = "Attribute '" + attr + "' not found.";
 
-	if ( isNaN(e) || (e != 0 && e != 1 ) )
-		this.error = "Attribute '" + attr + "' value must be 0 or 1.";
+	if( isNaN(e) )
+		this.error = "Attribute '" + attr + "' value must be a float number.";
 
-	if (e == 0)
-		return false;
+	return e;
+}
 
-	return true;
+MySceneGraph.prototype.parseIntegerAttrAsBoolean = function(elem, attr) {
+	
+	if ( !this.reader.hasAttribute(elem, attr, false) ) {
+		this.error = "Attribute '" + attr + "' not found.";
+		var e = null;
+	}
+	
+	var e = this.reader.getInteger(elem, attr, false);
+
+	//errors
+	if (e == null || isNaN(e))
+		this.error = "Attribute '" + attr + "' value must be an integer number.";
+	
+	return e;
 }
 
 MySceneGraph.prototype.parseItemAttr = function(elem, attr, array) {

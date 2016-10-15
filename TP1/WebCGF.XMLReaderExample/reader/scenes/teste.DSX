@@ -198,7 +198,7 @@
             <sphere radius="12.5" slices="50" stacks="10" />
         </primitive>
         <primitive id="E">
-            <torus inner="5" outer="6.5" slices="20" loops="10" />
+            <torus inner="5" outer="6.5" slices="20.5" loops="10" />
         </primitive>
 
     </primitives>

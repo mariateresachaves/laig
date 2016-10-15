@@ -16,7 +16,7 @@ function MySceneGraph(filename, scene) { // filename: path
 	 * If any error occurs, the reader calls onXMLError on this object, with an error message
 	 */
 
-	this.reader.open('scenes/'+filename, this); // abre o ficheiro xml
+	this.reader.open('scenes/' + filename, this); // abre o ficheiro xml
 
 	// aqui estamos em condicoes de interpretar o ficheiro
 	// aqui temos de fazer o parse do ficheiro
@@ -122,6 +122,9 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 	}
 
 	var scene = elems[0];
+	
+	if (scene != rootElement.children[0]) // erro na ordem dos elementos do ficheiro - reporta e termina
+		return "Element 'scene' doesn't respect the order in the DSX file.";		
 
 	this.root = this.parseStringAttr(scene, "root");
 
@@ -135,7 +138,7 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 
 	console.log("");
 	console.log("--- Parse Scene ---");
-	console.log("Scene read from file: {root=" + this.root + ", axis_length=" + this.axis_length + "}");
+	console.log("Scene read from file: {root = " + this.root + ", axis_length = " + this.axis_length + "}");
 	console.log("");
 
 }
@@ -150,13 +153,14 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 	}
 
 	var views = elems[0];
+	
+	if (views != rootElement.children[1]) // erro na ordem dos elementos do ficheiro - reporta e termina
+		return "element 'views' doesn't respect the order in the DSX file.";	
+	
 	this.views = new Object;
 
 	this.views.default = this.parseStringAttr(views, 'default');
-
-	// parse string attribute error
-	if(this.error != null)
-		return this.error;
+	if(this.error != null) return this.error;
 
 	this.views.list = [];
 
@@ -173,40 +177,33 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 	// process each element and store its information
 	for (var i = 0; i < perspectives.length; i++)
 	{
+		var p = perspectives[i];
 		var perspective = new Object;
 
-		perspective.id = this.parseStringAttr(perspectives[i], "id");
-
-		if(this.error != null)
-			return this.error;
+		perspective.id = this.parseStringAttr(p, "id");
+		if(this.error != null) return this.error;
 		
-		this.views.list.forEach(function(p){
-			if (p.id == perspective.id) {
-				this.error = "Duplicate entry of perspective id (id=" + p.id +").";
+		//check for duplicate ids
+		this.views.list.forEach(function(x){
+			if (x.id == perspective.id) {
+				this.error = "Duplicate entry of perspective id (id=" + x.id +").";
 				return;
 			}
 		}, this);
 		
-		if(this.error != null)
-			return this.error;
+		if(this.error != null) return this.error;
 
-		perspective.near = this.parseFloatAttr(perspectives[i], "near");
+		perspective.near = this.parseFloatAttr(p, "near");
+		if(this.error != null) return this.error;
 
-		if(this.error != null)
-			return this.error;
+		perspective.far = this.parseFloatAttr(p, "far");
+		if(this.error != null) return this.error;
 
-		perspective.far = this.parseFloatAttr(perspectives[i], "far");
+		perspective.angle = this.parseFloatAttr(p, "angle");
+		if(this.error != null) return this.error;
 
-		if(this.error != null)
-			return this.error;
-
-		perspective.angle = this.parseFloatAttr(perspectives[i], "angle");
-
-		if(this.error != null)
-			return this.error;
-
-		var perspectives_from = perspectives[i].getElementsByTagName('from');
-		var perspectives_to = perspectives[i].getElementsByTagName('to');
+		var perspectives_from = p.getElementsByTagName('from');
+		var perspectives_to = p.getElementsByTagName('to');
 
 		if(perspectives_from.length != 1 && perspectives_to.length != 1)
 			return " missing \"from\" and/or \"to\" elements.";
@@ -214,38 +211,26 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 		var perspective_from = perspectives_from[0];
 
 		var x = this.parseFloatAttr(perspective_from, 'x');
-
-		if(this.error != null)
-			return this.error;
+		if(this.error != null) return this.error;
 
 		var y = this.parseFloatAttr(perspective_from, 'y');
-
-		if(this.error != null)
-			return this.error;
+		if(this.error != null) return this.error;
 
 		var z = this.parseFloatAttr(perspective_from, 'z');
-
-		if(this.error != null)
-			return this.error;
+		if(this.error != null) return this.error;
 
 		perspective.from = [x,y,z];
 
 		var perspective_to = perspectives_to[0];
 
 		x = this.parseFloatAttr(perspective_to, 'x');
-
-		if(this.error != null)
-			return this.error;
+		if(this.error != null) return this.error;
 
 		y = this.parseFloatAttr(perspective_to, 'y');
-
-		if(this.error != null)
-			return this.error;
+		if(this.error != null) return this.error;
 
 		z = this.parseFloatAttr(perspective_to, 'z');
-
-		if(this.error != null)
-			return this.error;
+		if(this.error != null) return this.error;
 
 		perspective.to = [x,y,z];
 
@@ -253,15 +238,15 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 	}
 
 	console.log("--- Parse Views ---");
-	console.log("Views read from file: {default=" + this.views.default + "}");
+	console.log("{default = " + this.views.default + "}");
 
 	for(i = 0; i < this.views.list.length; i++) {
-		console.log("Read views item id " + this.views.list[i].id +
-								" near = " + this.views.list[i].near +
-								" far = " + this.views.list[i].far +
-								" angle = " + this.views.list[i].angle);
-		console.log("from = [ " + this.views.list[i].from + "] " +
-								"to = ["+ this.views.list[i].to + "] ");
+		console.log("Item id = " + this.views.list[i].id +
+				" { near = " + this.views.list[i].near +
+				", far = " + this.views.list[i].far +
+				", angle = " + this.views.list[i].angle +
+				", from = [ " + this.views.list[i].from + "]" +
+				", to = ["+ this.views.list[i].to + "] }");
 	}
 	console.log("");
 }
@@ -276,6 +261,9 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 	}
 
 	var illumination = elems[0];
+	
+	if (illumination != rootElement.children[2]) // erro na ordem dos elementos do ficheiro - reporta e termina
+		return "element 'illumination' doesn't respect the order in the DSX file.";	
 
 	this.illumination = new Object;
 
@@ -351,6 +339,10 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 	}
 
 	var lights = elems[0];
+	
+	if (lights != rootElement.children[3]) // erro na ordem dos elementos do ficheiro - reporta e termina
+		return "element 'lights' doesn't respect the order in the DSX file.";	
+	
 	this.lights = new Object;
 	this.lights.omni_list = [];
 	this.lights.spot_list = [];
@@ -365,175 +357,203 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 	}
 
 	if(num_elems != lights.children.length) {
-		return "Found not omnis nor spot elements."
+		return "Found elements that are neither omni nor spot."
 	}
 
-	var n_omnis = omnis.length;
-	var n_spots = spots.length;
+	for (var i = 0; i < omnis.length; i++)
+	{
+		var o = omnis[i];
+		var omni = new Object;
 
-	if(n_omnis != 0) { // tem omnis
-
-		for (var i = 0; i < n_omnis; i++)
-		{
-
-			var omni = omnis[i];
-			var omni_tmp = new Object;
-
-			omni_tmp.id = omni.id;
-
-			omni_tmp.enabled = this.reader.getBoolean(omni, 'enabled');
-
-			elems = omni.getElementsByTagName('location');
-
-			if(elems.length != 1) {
-				return "missing location element in omni.";
+		omni.id = this.parseStringAttr(o, "id");
+		if(this.error != null) return this.error;
+		
+		//check for duplicate ids
+		this.views.list.forEach(function(x){
+			if (x.id == omni.id) {
+				this.error = "Duplicate entry of perspective id (id=" + x.id +").";
+				return;
 			}
+		}, this);		
 
-			var omnis_location = elems[0];
-
-			var x = this.reader.getFloat(omnis_location, 'x');
-			var y = this.reader.getFloat(omnis_location, 'y');
-			var z = this.reader.getFloat(omnis_location, 'z');
-			var w = this.reader.getFloat(omnis_location, 'w');
-
-			omni_tmp.location = [x,y,z,w];
-
-			elems = omni.getElementsByTagName('ambient');
-
-			if(elems.length != 1) {
-				return "missing ambient element in omni.";
-			}
-
-			var omnis_ambient = elems[0];
-
-			var r = this.reader.getFloat(omnis_ambient, 'r');
-			var g = this.reader.getFloat(omnis_ambient, 'g');
-			var b = this.reader.getFloat(omnis_ambient, 'b');
-			var a = this.reader.getFloat(omnis_ambient, 'a');
-
-			omni_tmp.ambient = [r,g,b,a];
-
-			elems = omni.getElementsByTagName('diffuse');
-
-			if(elems.length != 1) {
-				return "missing diffuse element in omni.";
-			}
-
-			var omnis_diffuse = elems[0];
-
-			r = this.reader.getFloat(omnis_diffuse, 'r');
-			g = this.reader.getFloat(omnis_diffuse, 'g');
-			b = this.reader.getFloat(omnis_diffuse, 'b');
-			a = this.reader.getFloat(omnis_diffuse, 'a');
-
-			omni_tmp.diffuse = [r,g,b,a];
-
-			elems = omni.getElementsByTagName('specular');
-
-			if(elems.length != 1) {
-				return "missing specular element in omni.";
-			}
-
-			var omnis_specular = elems[0];
-
-			r = this.reader.getFloat(omnis_specular, 'r');
-			g = this.reader.getFloat(omnis_specular, 'g');
-			b = this.reader.getFloat(omnis_specular, 'b');
-			a = this.reader.getFloat(omnis_specular, 'a');
-
-			omni_tmp.specular = [r,g,b,a];
-
-			this.lights.omni_list.push(omni_tmp);
+		omni.enabled = this.parseIntegerAttrAsBoolean(o, 'enabled');
+		if(this.error != null) return this.error;
+		
+		elems = o.getElementsByTagName('location');
+		
+		if(elems.length != 1) {
+			return "missing location element in omni.";
 		}
+		
+		var o_location = elems[0];
+		
+		var x = this.parseFloatAttr(o_location, 'x');
+		if(this.error != null) return this.error;
+		
+		var y = this.parseFloatAttr(o_location, 'y');
+		if(this.error != null) return this.error;
+		
+		var z = this.parseFloatAttr(o_location, 'z');
+		if(this.error != null) return this.error;
+		
+		var w = this.parseFloatAttr(o_location, 'w');
+		if(this.error != null) return this.error;
+
+		omni.location = [x,y,z,w];
+		
+		elems = o.getElementsByTagName('ambient');
+		
+		if(elems.length != 1) {
+			return "missing ambient element in omni.";
+		}
+		
+		var ambient = elems[0];
+		
+		var r = this.parseFloatAttr(ambient, 'r');
+		if(this.error != null) return this.error;
+		
+		var g = this.parseFloatAttr(ambient, 'g');
+		if(this.error != null) return this.error;
+		
+		var b = this.parseFloatAttr(ambient, 'b');
+		if(this.error != null) return this.error;
+		
+		var a = this.parseFloatAttr(ambient, 'a');
+		if(this.error != null) return this.error;
+		
+		omni.ambient = [r,g,b,a];
+		
+		elems = o.getElementsByTagName('diffuse');
+		
+		if(elems.length != 1) {
+			return "missing diffuse element in omni.";
+		}
+		
+		var diffuse = elems[0];
+		
+		r = this.parseFloatAttr(diffuse, 'r');
+		if(this.error != null) return this.error;
+		
+		g = this.parseFloatAttr(diffuse, 'g');
+		if(this.error != null) return this.error;
+		
+		b = this.parseFloatAttr(diffuse, 'b');
+		if(this.error != null) return this.error;
+		
+		a = this.parseFloatAttr(diffuse, 'a');
+		if(this.error != null) return this.error;
+		
+		omni.diffuse = [r,g,b,a];
+		
+		elems = o.getElementsByTagName('specular');
+		
+		if(elems.length != 1) {
+			return "missing specular element in omni.";
+		}
+		
+		var specular = elems[0];
+		
+		r = this.parseFloatAttr(specular, 'r');
+		if(this.error != null) return this.error;
+		
+		g = this.parseFloatAttr(specular, 'g');
+		if(this.error != null) return this.error;
+		
+		b = this.parseFloatAttr(specular, 'b');
+		if(this.error != null) return this.error;
+		
+		a = this.parseFloatAttr(specular, 'a');
+		if(this.error != null) return this.error;
+		
+		omni.specular = [r,g,b,a];
+		
+		this.lights.omni_list.push(omni);
 	}
 
-	if (n_spots != 0){
 
-		for (var i = 0; i < n_spots; i++)
-		{
-			var spot = spots[i];
-			var spot_tmp = new Object;
-			spots[i].enabled = this.reader.getBoolean(spot, 'enabled');
-			spots[i].angle = this.reader.getFloat(spot, 'angle');
-			spots[i].exponent = this.reader.getFloat(spot, 'exponent');
-
-			spot_tmp.id = spot.id;
-
-			elems = spot.getElementsByTagName('target');
-
-			if(elems.length != 1) {
-				return "missing target element in spot.";
-			}
-
-			var spots_target = elems[0];
-
-			var x = this.reader.getFloat(spots_target, 'x');
-			var y = this.reader.getFloat(spots_target, 'y');
-			var z = this.reader.getFloat(spots_target, 'z');
-
-			spot_tmp.target = [x,y,z];
-
-			elems = spot.getElementsByTagName('location');
-
-			if(elems.length != 1) {
-				return "missing location element in spot.";
-			}
-
-			var spots_location = elems[0];
-
-			x = this.reader.getFloat(spots_location, 'x');
-			y = this.reader.getFloat(spots_location, 'y');
-			z = this.reader.getFloat(spots_location, 'z');
-
-			spot_tmp.location = [x,y,z,w];
-
-			elems = spot.getElementsByTagName('ambient');
-
-			if(elems.length != 1) {
-				return "missing ambient element in spot.";
-			}
-
-			var spots_ambient = elems[0];
-
-			var r = this.reader.getFloat(spots_ambient, 'r');
-			var g = this.reader.getFloat(spots_ambient, 'g');
-			var b = this.reader.getFloat(spots_ambient, 'b');
-			var a = this.reader.getFloat(spots_ambient, 'a');
-
-			spot_tmp.ambient = [r,g,b,a];
-
-			elems = spot.getElementsByTagName('diffuse');
-
-			if(elems.length != 1) {
-				return "missing diffuse element in spot.";
-			}
-
-			var spots_diffuse = elems[0];
-
-			r = this.reader.getFloat(spots_diffuse, 'r');
-			g = this.reader.getFloat(spots_diffuse, 'g');
-			b = this.reader.getFloat(spots_diffuse, 'b');
-			a = this.reader.getFloat(spots_diffuse, 'a');
-
-			spot_tmp.diffuse = [r,g,b,a];
-
-			elems = spot.getElementsByTagName('specular');
-
-			if(elems.length != 1) {
-				return "missing specular element in spot.";
-			}
-
-			var spots_specular = elems[0];
-
-			r = this.reader.getFloat(spots_specular, 'r');
-			g = this.reader.getFloat(spots_specular, 'g');
-			b = this.reader.getFloat(spots_specular, 'b');
-			a = this.reader.getFloat(spots_specular, 'a');
-
-			spot_tmp.specular = [r,g,b,a];
-
-			this.lights.spot_list.push(spot_tmp);
+	for (var i = 0; i < spots.length; i++)
+	{
+		var spot = spots[i];
+		var spot_tmp = new Object;
+		
+		spots[i].enabled = this.reader.getBoolean(spot, 'enabled');
+		spots[i].angle = this.reader.getFloat(spot, 'angle');
+		spots[i].exponent = this.reader.getFloat(spot, 'exponent');
+		
+		spot_tmp.id = spot.id;
+		elems = spot.getElementsByTagName('target');
+		
+		if(elems.length != 1) {
+			return "missing target element in spot.";
 		}
+
+		var spots_target = elems[0];
+		var x = this.reader.getFloat(spots_target, 'x');
+		var y = this.reader.getFloat(spots_target, 'y');
+		var z = this.reader.getFloat(spots_target, 'z');
+		
+		spot_tmp.target = [x,y,z];
+
+		elems = spot.getElementsByTagName('location');
+		
+		if(elems.length != 1) {
+			return "missing location element in spot.";
+		}
+		
+		var spots_location = elems[0];
+
+		x = this.reader.getFloat(spots_location, 'x');
+		y = this.reader.getFloat(spots_location, 'y');
+		z = this.reader.getFloat(spots_location, 'z');
+		
+		spot_tmp.location = [x,y,z,w];
+		
+		elems = spot.getElementsByTagName('ambient');
+
+		if(elems.length != 1) {
+			return "missing ambient element in spot.";
+		}
+
+		var spots_ambient = elems[0];
+
+		var r = this.reader.getFloat(spots_ambient, 'r');
+		var g = this.reader.getFloat(spots_ambient, 'g');
+		var b = this.reader.getFloat(spots_ambient, 'b');
+		var a = this.reader.getFloat(spots_ambient, 'a');
+
+		spot_tmp.ambient = [r,g,b,a];
+
+		elems = spot.getElementsByTagName('diffuse');
+
+		if(elems.length != 1) {
+			return "missing diffuse element in spot.";
+		}
+
+		var spots_diffuse = elems[0];
+
+		r = this.reader.getFloat(spots_diffuse, 'r');
+		g = this.reader.getFloat(spots_diffuse, 'g');
+		b = this.reader.getFloat(spots_diffuse, 'b');
+		a = this.reader.getFloat(spots_diffuse, 'a');
+
+		spot_tmp.diffuse = [r,g,b,a];
+
+		elems = spot.getElementsByTagName('specular');
+
+		if(elems.length != 1) {
+			return "missing specular element in spot.";
+		}
+
+		var spots_specular = elems[0];
+
+		r = this.reader.getFloat(spots_specular, 'r');
+		g = this.reader.getFloat(spots_specular, 'g');
+		b = this.reader.getFloat(spots_specular, 'b');
+		a = this.reader.getFloat(spots_specular, 'a');
+
+		spot_tmp.specular = [r,g,b,a];
+
+		this.lights.spot_list.push(spot_tmp);
 	}
 
 	console.log("--- Parse Lights ---")
@@ -1106,7 +1126,10 @@ MySceneGraph.prototype.parseStringAttr = function(elem, attr) {
 
 	//errors
 	if(e == null)
-		this.error = "Attribute " + attr + " not found.";
+		this.error = "Attribute '" + attr + "' not found.";
+	
+	if(e == "")
+		this.error = "Attribute '" + attr + "' value cannot be an empty string.";
 
 	return e;
 }
@@ -1117,10 +1140,10 @@ MySceneGraph.prototype.parseFloatAttr = function(elem, attr) {
 
 	//errors
 	if(e == null)
-		this.error = "Attribute " + attr + " not found.";
+		this.error = "Attribute '" + attr + "' not found.";
 
 	if( isNaN(e) )
-		this.error = "Attribute " + attr + " must be a float number.";
+		this.error = "Attribute '" + attr + "' value must be a float number.";
 
 	return e;
 }
@@ -1131,10 +1154,10 @@ MySceneGraph.prototype.parseIntegerAttrAsBoolean = function(elem, attr) {
 
 	//errors
 	if (e == null)
-		this.error = "Attribute " + attr + " not found.";
+		this.error = "Attribute '" + attr + "' not found.";
 
 	if ( isNaN(e) || (e != 0 && e != 1 ) )
-		this.error = "Attribute " + attr + " must be 0 or 1.";
+		this.error = "Attribute '" + attr + "' value must be 0 or 1.";
 	
 	if (e == 0)
 		return false;

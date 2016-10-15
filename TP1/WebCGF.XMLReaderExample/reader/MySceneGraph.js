@@ -236,7 +236,7 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 		this.views.list.push(perspective);
 	}
-	
+
 	//check default view
 	this.error = "Cannot find default view (id=" + this.views.default + ").";
 	this.views.list.forEach(function(x){
@@ -977,7 +977,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 		var p = primitivesList[i];
 		var primitive = new Object;
 
-		//Id		
+		//Id
 		primitive.id = this.parseStringAttr(p, 'id');
 		if(this.error != null) return this.error;
 
@@ -1144,6 +1144,16 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			component.transformationref = this.parseStringAttr(elems[0], "id");
 			if(this.error != null) return this.error;
 
+			// check if tansformation with this id exists
+	    this.error = "Cannot find a transformation with id=" + component.transformationref;
+	    this.transformations.forEach(function(x){
+	        if (x.id == component.transformationref) {
+	            this.error = null;
+	            return;
+	        }
+	    }, this);
+	    if(this.error != null) return this.error;
+
 			console.log("transformationref id=" + component.transformationref);
 		}
 		else
@@ -1229,6 +1239,16 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			var id = this.parseStringAttr(material, "id");
 			if(this.error != null) return this.error;
 
+			// check if material with this id exists
+	    this.error = "Cannot find a material with id=" + id;
+	    this.materials.forEach(function(x){
+	        if (x.id == id) {
+	            this.error = null;
+	            return;
+	        }
+	    }, this);
+	    if(this.error != null) return this.error;
+
 			component.materials.push(id);
 		}
 
@@ -1243,6 +1263,18 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 		component.textureid = this.parseStringAttr(texture, "id");
 		if(this.error != null) return this.error;
+
+		if(component.textureid != "inherit" && component.textureid != "none") {
+			// check if texture with this id exists
+			this.error = "Cannot find a texture with id=" + component.textureid;
+			this.textures.forEach(function(x){
+					if (x.id == component.textureid) {
+							this.error = null;
+							return;
+					}
+			}, this);
+			if(this.error != null) return this.error;
+		}
 
 		//children
 		elems = c.getElementsByTagName('children');
@@ -1284,6 +1316,27 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		}
 
 		this.components.push(component);
+	}
+
+	for(i = 0; i < this.components.length; i++)
+	{
+		for(k = 0; k < this.components[i].children.length; k++)
+		{
+			if(this.components[i].children[k].type == "primitive") {
+				// TODO
+			}
+			else {
+				// check components child id
+				this.error = "Cannot find a component with id=" + this.components[i].children[k].id;
+				this.components.forEach(function(x){
+						if (x.id == this.components[i].children[k].id) {
+								this.error = null;
+								return;
+						}
+				}, this);
+				if(this.error != null) return this.error;
+			}
+		}
 	}
 
 	console.log("Components ("+ this.components.length + "):\n\n");
@@ -1370,18 +1423,18 @@ MySceneGraph.prototype.parseIntegerAttr = function(elem, attr) {
 }
 
 MySceneGraph.prototype.parseIntegerAttrAsBoolean = function(elem, attr) {
-	
+
 	if ( !this.reader.hasAttribute(elem, attr, false) ) {
 		this.error = "Attribute '" + attr + "' not found.";
 		var e = null;
 	}
-	
+
 	var e = this.reader.getInteger(elem, attr, false);
 
 	//errors
 	if (e == null || isNaN(e))
 		this.error = "Attribute '" + attr + "' value must be an integer number.";
-	
+
 	return e;
 }
 

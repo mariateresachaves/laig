@@ -213,15 +213,15 @@
 
                 <!-- deve conter uma referencia a uma das "transformation" -->
                 <!-- declaradas anteriormente -->
-                <!-- <transformationref id="B" /> -->
+                <transformationref id="B" />
 
                 <!-- ou, ALTERNATIVAMENTE, transformacoes explicitas, -->
                 <!-- usando zero ou mais das instrucoes seguintes, sem -->
                 <!-- limite nem ordem -->
                 <!-- ex: bloco transformation pode ficar sem conteudo -->
-                <translate x="1.0" y="1.0" z="1.0" />
-                <rotate axis="x" angle="30.0" />
-                <scale x="1.0" y="1.0" z="1.0" />
+                <!-- <translate x="1.0" y="1.0" z="1.0" /> -->
+                <!-- <rotate axis="x" angle="30.0" /> -->
+                <!-- <scale x="1.0" y="1.0" z="1.0" /> -->
             </transformation>
 
             <!-- declaracao obrigatoria de pelo menos um material; -->
@@ -239,7 +239,7 @@
             <!-- id="none" remove a textura recebida do pai -->
             <!-- a textura declarada sobrepoe a textura recebida do -->
             <!-- objecto "pai" -->
-            <texture id="texture1" />
+            <texture id="texture 2" />
 
             <!-- bloco "children" obrigatorio num "component" -->
             <children>
@@ -247,13 +247,28 @@
                 <!-- deve existir uma ou mais tags "componentref" e/ou -->
                 <!-- "primitiveref", identificando outros -->
                 <!-- componentes ou primitivas -->
-                <componentref id="A" />
+                <componentref id="B" />
                 <primitiveref id="E" />
 
             </children>
 
         </component>
 
+        <component id="B">
+          <transformation>
+              <transformationref id="B" />
+          </transformation>
+
+          <materials>
+              <material id="A" />
+          </materials>
+
+            <texture id="texture 2" />
+
+            <children>
+              <componentref id="componentA" />
+            </children>
+        </component>
     </components>
 
 </dsx>

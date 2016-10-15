@@ -1,4 +1,4 @@
-
+var degToRad = Math.PI / 180;
 function MySceneGraph(filename, scene) { // filename: path
 	this.loadedOk = null;
 
@@ -199,7 +199,8 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 		perspective.far = this.parseFloatAttr(p, "far");
 		if(this.error != null) return this.error;
 
-		perspective.angle = this.parseFloatAttr(p, "angle");
+		var a = this.parseFloatAttr(p, "angle");
+		perspective.angle = degToRad*a;
 		if(this.error != null) return this.error;
 
 		var perspectives_from = p.getElementsByTagName('from');
@@ -498,7 +499,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		spot.enabled = this.parseIntegerAttrAsBoolean(s, 'enabled');
 		if(this.error != null) return this.error;
 
-		spot.angle = this.parseFloatAttr(s, 'angle');
+		var a = this.parseFloatAttr(s, 'angle');
+		spot.angle = degToRad*a;
 		if(this.error != null) return this.error;
 
 		spot.exponent = this.parseFloatAttr(s, 'exponent');
@@ -918,7 +920,8 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 		    	singletransformation.type = "rotate";
 		    	singletransformation.axis = this.parseItemAttr(s, 'axis', ['x','y','z']);
 				if(this.error != null) return this.error;
-		    	singletransformation.angle = this.parseFloatAttr(s, 'angle');
+					var a = this.parseFloatAttr(s, 'angle');
+					singletransformation.angle = degToRad*a;
 				if(this.error != null) return this.error;
 		        break;
 		    case "scale":
@@ -1186,7 +1189,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 						subtransformation.axis = this.parseItemAttr(t, 'axis', ['x','y','z']);
 						if(this.error != null) return this.error;
 
-			    	subtransformation.angle = this.parseFloatAttr(t, 'angle');
+						var a = this.parseFloatAttr(t, 'angle');
+						subtransformation.angle = degToRad*a;
 						if(this.error != null) return this.error;
 
 			    	break;

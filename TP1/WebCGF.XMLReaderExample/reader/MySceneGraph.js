@@ -117,7 +117,7 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('scene');
 
-	if (elems == null || elems.length != 1) { // erro nennhuma ou mais do que uma scene - reporta e termina
+	if (elems == null || elems.length != 1) { // erro nennhuma ou mais do que um scene - reporta e termina
 		return "Either zero or more than one 'scene' element found.";
 	}
 
@@ -136,6 +136,7 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 	if(this.error != null)
 		return this.error;
 
+	//Display values for Debugging
 	console.log("");
 	console.log("--- Parse Scene ---");
 	console.log("Scene read from file: {root = " + this.root + ", axis_length = " + this.axis_length + "}");
@@ -148,7 +149,7 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('views');
 
-	if (elems == null || elems.length != 1) { // erro tem mais do que um scene - reporta e termina
+	if (elems == null || elems.length != 1) { // erro nenhuma ou mais do que um views - reporta e termina
 		return "views zero or more than one 'views' element found.";
 	}
 
@@ -164,7 +165,6 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 	this.views.list = [];
 
-	// iterate over every element
 	var num_perspectives = views.children.length;
 	var perspectives = views.getElementsByTagName('perspective');
 
@@ -237,9 +237,9 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 		this.views.list.push(perspective);
 	}
 
+	//Display values for Debugging
 	console.log("--- Parse Views ---");
 	console.log("{default = " + this.views.default + "}");
-
 	for(i = 0; i < this.views.list.length; i++) {
 		console.log("Item id = " + this.views.list[i].id +
 				" { near = " + this.views.list[i].near +
@@ -256,7 +256,7 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('illumination');
 
-	if (elems == null || elems.length != 1) { // erro nenhuma ou mais do que uma illumination - reporta e termina
+	if (elems == null || elems.length != 1) { // erro nenhum ou mais do que um illumination - reporta e termina
 		return "either zero or more than one 'illumination' element found.";
 	}
 
@@ -317,6 +317,7 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	this.illumination.background = [r,g,b,a];
 
+	//Display values for Debugging
 	console.log("--- Parse Illumination ---")
 	console.log("doublesided = " + this.illumination.doublesided);
 	console.log("local = " + this.illumination.local);
@@ -329,13 +330,9 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 MySceneGraph.prototype.parseLights = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('lights');
-
-	if (elems == null) { // erro não existe um lights - reporta e termina
-		return "lights element is missing.";
-	}
-
-	if (elems.length != 1) { // erro tem mais do que um lights - reporta e termina
-		return "lights zero or more than one 'lights' element found.";
+	
+	if (elems == null || elems.length != 1) { // erro nenhum ou mais do que um lights - reporta e termina
+		return "either zero or more than one 'lights' element found.";
 	}
 
 	var lights = elems[0];
@@ -344,8 +341,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		return "element 'lights' doesn't respect the order in the DSX file.";	
 	
 	this.lights = new Object;
-	this.lights.omni_list = [];
-	this.lights.spot_list = [];
+	this.lights.omnis = [];
+	this.lights.spots = [];
 
 	var omnis = lights.getElementsByTagName('omni');
 	var spots = lights.getElementsByTagName('spot');
@@ -360,6 +357,7 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		return "Found elements that are neither omni nor spot."
 	}
 
+	// OMNIS
 	for (var i = 0; i < omnis.length; i++)
 	{
 		var o = omnis[i];
@@ -369,9 +367,9 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		if(this.error != null) return this.error;
 		
 		//check for duplicate ids
-		this.views.list.forEach(function(x){
+		this.lights.omnis.forEach(function(x){
 			if (x.id == omni.id) {
-				this.error = "Duplicate entry of perspective id (id=" + x.id +").";
+				this.error = "Duplicate entry of omni id (id=" + x.id +").";
 				return;
 			}
 		}, this);		
@@ -467,113 +465,166 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		
 		omni.specular = [r,g,b,a];
 		
-		this.lights.omni_list.push(omni);
+		this.lights.omnis.push(omni);
 	}
 
-
+	//SPOTS
 	for (var i = 0; i < spots.length; i++)
 	{
-		var spot = spots[i];
-		var spot_tmp = new Object;
+		var s = spots[i];
+		var spot = new Object;
 		
-		spots[i].enabled = this.reader.getBoolean(spot, 'enabled');
-		spots[i].angle = this.reader.getFloat(spot, 'angle');
-		spots[i].exponent = this.reader.getFloat(spot, 'exponent');
+		spot.id = this.parseStringAttr(s, "id");
+		if(this.error != null) return this.error;
 		
-		spot_tmp.id = spot.id;
-		elems = spot.getElementsByTagName('target');
+		//check for duplicate ids
+		this.lights.spots.forEach(function(x){
+			if (x.id == spot.id) {
+				this.error = "Duplicate entry of spot id (id=" + x.id +").";
+				return;
+			}
+		}, this);
+		
+		spot.enabled = this.parseIntegerAttrAsBoolean(s, 'enabled');
+		if(this.error != null) return this.error;
+		
+		spot.angle = this.parseFloatAttr(s, 'angle');
+		if(this.error != null) return this.error;
+		
+		spot.exponent = this.parseFloatAttr(s, 'exponent');
+		if(this.error != null) return this.error;
+		
+		//target
+		elems = s.getElementsByTagName('target');
 		
 		if(elems.length != 1) {
 			return "missing target element in spot.";
 		}
 
-		var spots_target = elems[0];
-		var x = this.reader.getFloat(spots_target, 'x');
-		var y = this.reader.getFloat(spots_target, 'y');
-		var z = this.reader.getFloat(spots_target, 'z');
+		var target = elems[0];
 		
-		spot_tmp.target = [x,y,z];
+		var x = this.parseFloatAttr(target, 'x');
+		if(this.error != null) return this.error;
+				
+		var y = this.parseFloatAttr(target, 'y');
+		if(this.error != null) return this.error;
+		
+		var z = this.parseFloatAttr(target, 'z');
+		if(this.error != null) return this.error;
+				
+		spot.target = [x,y,z];
 
-		elems = spot.getElementsByTagName('location');
+		//location
+		elems = s.getElementsByTagName('location');
 		
 		if(elems.length != 1) {
 			return "missing location element in spot.";
 		}
 		
-		var spots_location = elems[0];
+		var location = elems[0];
 
-		x = this.reader.getFloat(spots_location, 'x');
-		y = this.reader.getFloat(spots_location, 'y');
-		z = this.reader.getFloat(spots_location, 'z');
+		x = this.parseFloatAttr(location, 'x');
+		if(this.error != null) return this.error;
 		
-		spot_tmp.location = [x,y,z,w];
+		y = this.parseFloatAttr(location, 'y');
+		if(this.error != null) return this.error;
 		
-		elems = spot.getElementsByTagName('ambient');
+		z = this.parseFloatAttr(location, 'z');
+		if(this.error != null) return this.error;
+				
+		spot.location = [x,y,z,w];
+		
+		//ambient
+		elems = s.getElementsByTagName('ambient');
 
 		if(elems.length != 1) {
 			return "missing ambient element in spot.";
 		}
 
-		var spots_ambient = elems[0];
+		var ambient = elems[0];
 
-		var r = this.reader.getFloat(spots_ambient, 'r');
-		var g = this.reader.getFloat(spots_ambient, 'g');
-		var b = this.reader.getFloat(spots_ambient, 'b');
-		var a = this.reader.getFloat(spots_ambient, 'a');
+		var r = this.parseFloatAttr(ambient, 'r');
+		if(this.error != null) return this.error;
+		
+		var g = this.parseFloatAttr(ambient, 'g');
+		if(this.error != null) return this.error;
+		
+		var b = this.parseFloatAttr(ambient, 'b');
+		if(this.error != null) return this.error;
+		
+		var a = this.parseFloatAttr(ambient, 'a');
+		if(this.error != null) return this.error;
 
-		spot_tmp.ambient = [r,g,b,a];
+		spot.ambient = [r,g,b,a];
 
-		elems = spot.getElementsByTagName('diffuse');
+		//diffuse
+		elems = s.getElementsByTagName('diffuse');
 
 		if(elems.length != 1) {
 			return "missing diffuse element in spot.";
 		}
 
-		var spots_diffuse = elems[0];
+		var diffuse = elems[0];
 
-		r = this.reader.getFloat(spots_diffuse, 'r');
-		g = this.reader.getFloat(spots_diffuse, 'g');
-		b = this.reader.getFloat(spots_diffuse, 'b');
-		a = this.reader.getFloat(spots_diffuse, 'a');
+		r = this.parseFloatAttr(diffuse, 'r');
+		if(this.error != null) return this.error;
+		
+		g = this.parseFloatAttr(diffuse, 'g');
+		if(this.error != null) return this.error;
+		
+		b = this.parseFloatAttr(diffuse, 'b');
+		if(this.error != null) return this.error;
+		
+		a = this.parseFloatAttr(diffuse, 'a');
+		if(this.error != null) return this.error;		
 
-		spot_tmp.diffuse = [r,g,b,a];
+		spot.diffuse = [r,g,b,a];
 
-		elems = spot.getElementsByTagName('specular');
+		//specular
+		elems = s.getElementsByTagName('specular');
 
 		if(elems.length != 1) {
 			return "missing specular element in spot.";
 		}
 
-		var spots_specular = elems[0];
+		var specular = elems[0];
 
-		r = this.reader.getFloat(spots_specular, 'r');
-		g = this.reader.getFloat(spots_specular, 'g');
-		b = this.reader.getFloat(spots_specular, 'b');
-		a = this.reader.getFloat(spots_specular, 'a');
+		r = this.parseFloatAttr(specular, 'r');
+		if(this.error != null) return this.error;
+		
+		g = this.parseFloatAttr(specular, 'g');
+		if(this.error != null) return this.error;
+		
+		b = this.parseFloatAttr(specular, 'b');
+		if(this.error != null) return this.error;
+		
+		a = this.parseFloatAttr(specular, 'a');
+		if(this.error != null) return this.error;
+		
+		spot.specular = [r,g,b,a];
 
-		spot_tmp.specular = [r,g,b,a];
-
-		this.lights.spot_list.push(spot_tmp);
+		this.lights.spots.push(spot);
 	}
 
+	//Display values for Debugging
 	console.log("--- Parse Lights ---")
-	for(i = 0; i < this.lights.omni_list.length; i++) {
-		console.log("Read omni item id " + this.lights.omni_list[i].id + " (enabled = "
-																																		+ this.lights.omni_list[i].enabled + ")" +
-								" location = [" + this.lights.omni_list[i].location + "]" +
-								" ambient = [" + this.lights.omni_list[i].ambient + "]" +
-								" diffuse = [" + this.lights.omni_list[i].diffuse + "]" +
-								" specular = [" + this.lights.omni_list[i].specular + "]");
+	for(i = 0; i < this.lights.omnis.length; i++) {
+		console.log("Omni id = " + this.lights.omnis[i].id +
+				" { enabled = " + this.lights.omnis[i].enabled + 
+				", location = [" + this.lights.omnis[i].location + "]" +
+				", ambient = [" + this.lights.omnis[i].ambient + "]" +
+				", diffuse = [" + this.lights.omnis[i].diffuse + "]" +
+				", specular = [" + this.lights.omnis[i].specular + "] }");
 	}
 
-
-	for(i = 0; i < this.lights.spot_list.length; i++) {
-		console.log("Read spot item id " + this.lights.spot_list[i].id + " (enabled = " + this.lights.spot_list[i].enabled + ")" +
-								" target = [" + this.lights.spot_list[i].target + "]" +
-								" location = [" + this.lights.spot_list[i].location + "]" +
-								" ambient = [" + this.lights.spot_list[i].ambient + "]" +
-								" diffuse = [" + this.lights.spot_list[i].diffuse + "]" +
-								" specular = [" + this.lights.spot_list[i].specular + "]");
+	for(i = 0; i < this.lights.spots.length; i++) {
+		console.log("Spot id = " + this.lights.spots[i].id +
+				" { enabled = " + this.lights.spots[i].enabled +
+				", target = [" + this.lights.spots[i].target + "]" +
+				", location = [" + this.lights.spots[i].location + "]" +
+				", ambient = [" + this.lights.spots[i].ambient + "]" +
+				", diffuse = [" + this.lights.spots[i].diffuse + "]" +
+				", specular = [" + this.lights.spots[i].specular + "] }");
 	}
 	console.log("");
 }
@@ -581,28 +632,63 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 // --- Parse Textures ---
 MySceneGraph.prototype.parseTextures = function(rootElement) {
 
-	var elems =  rootElement.getElementsByTagName('textures');
-
-	// iterate over every element
-	var n_textures = elems.length;
+	var elems = rootElement.getElementsByTagName('textures');
+	
+	if (elems == null || elems.length != 1) { // erro nenhum ou mais do que um textures - reporta e termina
+		return "either zero or more than one 'textures' element found.";
+	}
 
 	var textures = elems[0];
-	var texture = textures.getElementsByTagName('texture');
+	
+	if (textures != rootElement.children[4]) // erro na ordem dos elementos do ficheiro - reporta e termina
+		return "element 'textures' doesn't respect the order in the DSX file.";	
 
-	for (var i = 0; i < n_textures; i++)
-	{
-
-		var texture_i = texture[i];
-
-		texture[i].file = this.reader.getString(texture_i, 'file');
-		texture[i].length_s = this.reader.getFloat(texture_i, 'length_s');
-		texture[i].length_t = this.reader.getFloat(texture_i, 'length_t');
-
-		console.log("Read texture item id= " + texture[i].id +
-								" file = " + texture[i].file +
-								" length_s = " + texture[i].length_s +
-								" length_t = " + texture[i].length_t);
+	var texture_list = textures.getElementsByTagName('texture');
+	
+	if(texture_list == null || texture_list.length < 1) {
+		return "There must be at least one 'texture' element in 'textures'.";
 	}
+	
+	this.textures = [];
+
+	for (var i = 0; i < texture_list.length; i++)
+	{
+		var t = texture_list[i];
+		var texture = new Object;
+
+		texture.id = this.parseStringAttr(t, 'id');
+		if(this.error != null) return this.error;
+		
+		//check for duplicate ids
+		this.textures.forEach(function(x){
+			if (x.id == texture.id) {
+				this.error = "Duplicate entry of texture id (id=" + x.id +").";
+				return;
+			}
+		}, this);
+			
+		texture.file = this.parseStringAttr(t, 'file');
+		if(this.error != null) return this.error;
+		
+		texture.length_s = this.parseFloatAttr(t, 'length_s');
+		if(this.error != null) return this.error;
+		
+		texture.length_t = this.parseFloatAttr(t, 'length_t');
+		if(this.error != null) return this.error;
+		
+		this.textures.push(texture);
+	}
+	
+	//Display values for Debugging
+	console.log("--- Parse Textures ---");
+	for(i = 0; i < this.textures.length; i++) {
+		var x = this.textures[i];
+		console.log("Texture id= " + x.id +
+				" { file = " + x.file +
+				", length_s = " + x.length_s +
+				", length_t = " + x.length_t + " }");
+	}
+	console.log("");
 }
 
 //--- Parse Materials ---

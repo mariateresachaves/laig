@@ -700,6 +700,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		return "materials element is missing.";
 	}
 
+	//checks number of 'materials' elements in root (ignores 'materials' in components)
 	var materials;
 	var count = 0;
 
@@ -729,7 +730,16 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		var m = new Object;
 
 		//Id
-		m.id = this.reader.getString(material, 'id', true);
+		m.id = this.parseStringAttr(material, 'id');
+		if(this.error != null) return this.error;
+		
+		//check for duplicate ids
+		this.materials.forEach(function(x){
+			if (x.id == material.id) {
+				this.error = "Duplicate entry of material id (id=" + x.id +").";
+				return;
+			}
+		}, this);
 
 		//Emission
 		elems = material.getElementsByTagName('emission');
@@ -739,10 +749,14 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		}
 		var emission = elems[0];
 
-		var r = this.reader.getFloat(emission, 'r', true);
-		var g = this.reader.getFloat(emission, 'g', true);
-		var b = this.reader.getFloat(emission, 'b', true);
-		var a = this.reader.getFloat(emission, 'a', true);
+		var r = this.parseFloatAttr(emission, 'r');
+		if(this.error != null) return this.error;		
+		var g = this.parseFloatAttr(emission, 'g');
+		if(this.error != null) return this.error;		
+		var b = this.parseFloatAttr(emission, 'b');
+		if(this.error != null) return this.error;
+		var a = this.parseFloatAttr(emission, 'a');
+		if(this.error != null) return this.error;
 
 		m.emission = [r,g,b,a];
 
@@ -754,10 +768,14 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		}
 		var ambient = elems[0];
 
-		r = this.reader.getFloat(ambient, 'r', true);
-		g = this.reader.getFloat(ambient, 'g', true);
-		b = this.reader.getFloat(ambient, 'b', true);
-		a = this.reader.getFloat(ambient, 'a', true);
+		var r = this.parseFloatAttr(emission, 'r');
+		if(this.error != null) return this.error;		
+		var g = this.parseFloatAttr(emission, 'g');
+		if(this.error != null) return this.error;		
+		var b = this.parseFloatAttr(emission, 'b');
+		if(this.error != null) return this.error;
+		var a = this.parseFloatAttr(emission, 'a');
+		if(this.error != null) return this.error;
 
 		m.ambient = [r,g,b,a];
 
@@ -769,10 +787,14 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		}
 		var diffuse = elems[0];
 
-		r = this.reader.getFloat(diffuse, 'r', true);
-		g = this.reader.getFloat(diffuse, 'g', true);
-		b = this.reader.getFloat(diffuse, 'b', true);
-		a = this.reader.getFloat(diffuse, 'a', true);
+		var r = this.parseFloatAttr(emission, 'r');
+		if(this.error != null) return this.error;		
+		var g = this.parseFloatAttr(emission, 'g');
+		if(this.error != null) return this.error;		
+		var b = this.parseFloatAttr(emission, 'b');
+		if(this.error != null) return this.error;
+		var a = this.parseFloatAttr(emission, 'a');
+		if(this.error != null) return this.error;
 
 		m.diffuse = [r,g,b,a];
 
@@ -784,10 +806,14 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		}
 		var specular = elems[0];
 
-		r = this.reader.getFloat(specular, 'r', true);
-		g = this.reader.getFloat(specular, 'g', true);
-		b = this.reader.getFloat(specular, 'b', true);
-		a = this.reader.getFloat(specular, 'a', true);
+		var r = this.parseFloatAttr(emission, 'r');
+		if(this.error != null) return this.error;		
+		var g = this.parseFloatAttr(emission, 'g');
+		if(this.error != null) return this.error;		
+		var b = this.parseFloatAttr(emission, 'b');
+		if(this.error != null) return this.error;
+		var a = this.parseFloatAttr(emission, 'a');
+		if(this.error != null) return this.error;
 
 		m.specular = [r,g,b,a];
 
@@ -799,21 +825,23 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		}
 		var shininess = elems[0];
 
-		m.shininess = this.reader.getFloat(shininess, 'value', true);
+		m.shininess = this.parseFloatAttr(shininess, 'value');
 
 		this.materials.push(m);
 	}
 
-	console.log("Materials:\n\n");
+	//Display values for Debugging
+	console.log("--- Parse Materials ---");
 	this.materials.forEach(function(material) {
 		console.log("Material id = " + material.id +
-				"\nEmission = [" + material.emission[0] + ", " + material.emission[1] + ", " + material.emission[2] + ", " + material.emission[3] + "]" +
-				"\nAmbient = [" + material.ambient[0] + ", " + material.ambient[1] + ", " + material.ambient[2] + ", " + material.ambient[3] + "]" +
-				"\nDiffuse = [" + material.diffuse[0] + ", " + material.diffuse[1] + ", " + material.diffuse[2] + ", " + material.diffuse[3] + "]" +
-				"\nSpecular = [" + material.specular[0] + ", " + material.specular[1] + ", " + material.specular[2] + ", " + material.specular[3] + "]" +
-				"\nShininess = " + material.shininess + "\n\n"
+				" { emission = [" + material.emission[0] + ", " + material.emission[1] + ", " + material.emission[2] + ", " + material.emission[3] + "]" +
+				", ambient = [" + material.ambient[0] + ", " + material.ambient[1] + ", " + material.ambient[2] + ", " + material.ambient[3] + "]" +
+				", diffuse = [" + material.diffuse[0] + ", " + material.diffuse[1] + ", " + material.diffuse[2] + ", " + material.diffuse[3] + "]" +
+				", specular = [" + material.specular[0] + ", " + material.specular[1] + ", " + material.specular[2] + ", " + material.specular[3] + "]" +
+				", shininess = " + material.shininess + "}"
 				);
 	  });
+	console.log("");
 }
 
 //--- Parse Transformations ---

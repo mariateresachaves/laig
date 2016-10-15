@@ -109,7 +109,7 @@ MySceneGraph.prototype.onXMLReady=function()
 
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
 	// TODO: inserir no grafo os nós lidos no dsx
-	// this.scene.onGraphLoaded();
+	this.scene.onGraphLoaded();
 };
 
 // --- Parse Scene ---
@@ -326,7 +326,10 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 	a = this.parseFloatAttr(illumination_ambient, 'a');
 	if(this.error != null) return this.error;
 
-	this.illumination.background = [r,g,b,a];
+
+	// TODO: Alterei para colocar no grafo a cor do background
+	// this.illumination.background = [r,g,b,a];
+	this.scene.graph.background = [r,g,b,a];
 
 	//Display values for Debugging
 	console.log("--- Parse Illumination ---")

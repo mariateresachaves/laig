@@ -1541,12 +1541,18 @@ MySceneGraph.prototype.createGraph = function () {
 
 		console.log("------------------------");
 
-		// TODO: ---
+		// MATERIALS
+		for(m = 0; m < this.materials.length; m++) {
 
-		/*for(k = 0; k < this.components[i].children.length; k++)
-		{
+			for(k = 0; k < this.components[i].materials.length; k++) {
 
-		}*/
+					if(this.components[i].materials[k] == this.materials.id) {
+						// TODO: colocar no node o material que foi lido
+					}
+
+			}
+
+		}
 	}
 }
 

@@ -1,0 +1,115 @@
+<dsx>
+
+  <scene root="root_scene" axis_length="0.0" />
+
+  <views default="vd" >
+    <perspective id="vd" near="0.1" far="150.0" angle="45.0">
+        <from x="10.0" y="10.0" z="10.0" />
+        <to x="0.0" y="0.0" z="0.0" />
+    </perspective>
+    <perspective id="v2" near="0.1" far="150.0" angle="45.0">
+        <from x="-10.0" y="10.0" z="-10.0" />
+        <to x="0.0" y="0.0" z="0.0" />
+    </perspective>
+  </views>
+
+  <illumination doublesided="1" local="1" >
+      <ambient r="0.2" g="0.4" b="0.8" a="1.0" />
+      <background r="0.26" g="0.53" b="0.96" a="1.0" />
+  </illumination>
+
+  <lights>
+    <omni id="o1" enabled="1">
+      <position x="-20" y="30" z="40" w="1" />
+      <ambient r="0" g="0" b="0" a="1" />
+      <diffuse r="1" g="0.3" b="0.2" a="1" />
+      <specular r="1" g="0.3" b="0.2" a="1" />
+    </omni>
+
+    <omni id="o2" enabled="1">
+      <position x="0" y="50" z="0" w="1" />
+      <ambient r="0.3" g="0.7" b="0.9" a="1" />
+      <diffuse r="0.3" g="0.7" b="0.9" a="1" />
+      <specular r="0.3" g="0.7" b="0.9" a="1" />
+    </omni>
+
+    <omni id="o3" enabled="1">
+      <position x="20" y="5" z="20" w="1" />
+      <ambient r="0" g="0" b="0" a="0" />
+      <diffuse r="1" g="1" b="0.4" a="1" />
+      <specular r="1" g="1" b="0.4" a="1" />
+    </omni>
+
+    <spot id="spot1" enabled="1" angle="10" exponent="0.5">
+      <target x="0" y="0" z="0" />
+      <location x="-20" y="30" z="40" />
+      <ambient r="0" g="0" b="0" a="1" />
+      <diffuse r="1" g="0.3" b="0.2" a="1" />
+      <specular r="1" g="0.3" b="0.2" a="1" />
+    </spot>
+  </lights>
+
+  <textures>
+    <texture id="grass" file="../resources/images/grass.png" length_s="1.0" length_t="1.0" />
+    <texture id="ball" file="../resources/images/ball.png" length_s="1.0" length_t="1.0" />
+    <texture id="cup" file="../resources/images/cup.png" length_s="1.0" length_t="1.0" />
+    <texture id="pool_stone" file="../resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
+    <texture id="pool_tile" file="../resources/images/pool_tile.png" length_s="1.0" length_t="1.0" />
+    <texture id="pool_towel" file="../resources/images/pool_towel.png" length_s="1.0" length_t="1.0" />
+  </textures>
+
+  <materials>
+    <material id="pool_water">
+      <emission r="0.0" g="0.0" b="0.0" a="0.0" />
+      <ambient r="0.5" g="0.5" b="0.5" a="1.0" />
+      <diffuse r="0.5" g="0.5" b="0.5" a="1.0" />
+      <specular r="0.0" g="0.0" b="0.0" a="0.0" />
+      <shininess value="1.0" />
+    </material>
+
+    <material id="float">
+      <emission r="0.0" g="0.0" b="0.0" a="0.0" />
+      <ambient r="1.0" g="1.0" b="0.0" a="1.0" />
+      <diffuse r="1.0" g="1.0" b="0.0" a="1.0" />
+      <specular r="0.0" g="0.0" b="0.0" a="0.0" />
+      <shininess value="1.0" />
+    </material>
+
+    <material id="pipe">
+      <emission r="0.0" g="0.0" b="0.0" a="0.0" />
+      <ambient r="0.8" g="0.0" b="1.0" a="1.0" />
+      <diffuse r="0.8" g="0.0" b="1.0" a="1.0" />
+      <specular r="0.0" g="0.0" b="0.0" a="0.0" />
+      <shininess value="1.0" />
+    </material>
+
+    <material id="table">
+      <emission r="0.0" g="0.0" b="0.0" a="0.0" />
+      <ambient r="1.0" g="1.0" b="1.0" a="1.0" />
+      <diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
+      <specular r="0.0" g="0.0" b="0.0" a="0.0" />
+      <shininess value="1.0" />
+    </material>
+
+    <material id="straw">
+      <emission r="0.0" g="0.0" b="0.0" a="0.0" />
+      <ambient r="1.0" g="0.35" b="0.0" a="1.0" />
+      <diffuse r="1.0" g="0.35" b="0.0" a="1.0" />
+      <specular r="0.0" g="0.0" b="0.0" a="0.0" />
+      <shininess value="1.0" />
+    </material>
+  </materials>
+
+  <transformations>
+    <transformation id="scene">
+  		<rotate axis="z" angle="0" />
+  	</transformation>
+  </transformations>
+
+  <primitives>
+    <primitive id="square">
+      <rectangle x1="-0.5" y1="-0.5" x2="0.5" y2="0.5" />
+    </primitive>
+  </primitives>
+
+</dsx>

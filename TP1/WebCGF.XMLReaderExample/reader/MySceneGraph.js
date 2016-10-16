@@ -1508,6 +1508,12 @@ MySceneGraph.prototype.createGraph = function () {
 
 		node.setTransformations(m);
 
+		console.log("--------- NODE ---------");
+
+		console.log(node.transformations);
+
+		console.log("------------------------");
+
 		// TODO: ---
 
 		/*for(k = 0; k < this.components[i].children.length; k++)

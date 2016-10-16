@@ -1146,6 +1146,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		var transformation = elems[0];
 		elems = transformation.getElementsByTagName('transformationref');
 
+		component.transformations = [];
+
 		if (elems != null  && elems.length == 1)
 		{
 			if (transformation.children.length != 1) { //erro transformationref tem que ser exclusiva - reporta e termina
@@ -1169,8 +1171,6 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		}
 		else
 		{
-			component.transformations = [];
-
 			for(j = 0; j < transformation.children.length; j++)
 			{
 				var t = transformation.children[j];
@@ -1490,15 +1490,15 @@ MySceneGraph.prototype.createGraph = function () {
 		{
 			switch (this.components[i].transformations[t].type) {
 				case "translate":
-					this.translateMatrix(m, this.components[i].component.transformations[t].x, this.components[i].component.transformations[t].y, this.components[i].component.transformations[t].z);
+					this.translateMatrix(m, this.components[i].transformations[t].x, this.components[i].transformations[t].y, this.components[i].transformations[t].z);
 					break;
 
 				case "rotate":
-					this.rotateMatrix(m, this.components[i].component.transformations[t].axis, this.components[i].component.transformations[t].angle);
+					this.rotateMatrix(m, this.components[i].transformations[t].axis, this.components[i].transformations[t].angle);
 					break;
 
 				case "scale":
-					this.scaleMatrix(m, this.components[i].component.transformations[t].x, this.components[i].component.transformations[t].y, this.components[i].component.transformations[t].z);
+					this.scaleMatrix(m, this.components[i].transformations[t].x, this.components[i].transformations[t].y, this.components[i].transformations[t].z);
 					break;
 
 				default:

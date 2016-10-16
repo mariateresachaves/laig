@@ -105,6 +105,8 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
+	this.createGraph();
+
 	this.loadedOk=true;
 
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
@@ -114,6 +116,10 @@ MySceneGraph.prototype.onXMLReady=function()
 
 // --- Parse Scene ---
 MySceneGraph.prototype.parseScene = function(rootElement) {
+
+	if (rootElement.nodeName != "dsx") {
+			return "Cannot find a dsx element.";
+	}
 
 	var elems =  rootElement.getElementsByTagName('scene');
 
@@ -304,6 +310,7 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 	var a = this.parseFloatAttr(illumination_ambient, 'a');
 	if(this.error != null) return this.error;
 
+	// this.illumination.ambient = [r,g,b,a];
 	this.scene.graph.ambient = [r,g,b,a];
 
 	elems = illumination.getElementsByTagName('background');
@@ -314,16 +321,16 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	var illumination_background = elems[0];
 
-	r = this.parseFloatAttr(illumination_ambient, 'r');
+	r = this.parseFloatAttr(illumination_background, 'r');
 	if(this.error != null) return this.error;
 
-	g = this.parseFloatAttr(illumination_ambient, 'g');
+	g = this.parseFloatAttr(illumination_background, 'g');
 	if(this.error != null) return this.error;
 
-	b = this.parseFloatAttr(illumination_ambient, 'b');
+	b = this.parseFloatAttr(illumination_background, 'b');
 	if(this.error != null) return this.error;
 
-	a = this.parseFloatAttr(illumination_ambient, 'a');
+	a = this.parseFloatAttr(illumination_background, 'a');
 	if(this.error != null) return this.error;
 
 	// this.illumination.background = [r,g,b,a];
@@ -333,8 +340,8 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 	console.log("--- Parse Illumination ---")
 	console.log("doublesided = " + this.illumination.doublesided);
 	console.log("local = " + this.illumination.local);
-	console.log("ambient = [" + this.illumination.ambient + "]")
-	console.log("background = ["+ this.illumination.background + "]");
+	console.log("ambient = [" + this.scene.graph.ambient + "]")
+	console.log("background = ["+ this.scene.graph.background + "]");
 	console.log("");
 }
 
@@ -1388,7 +1395,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
  * Callback to be executed on any read error
  */
 
-MySceneGraph.prototype.onXMLError=function (message) {
+MySceneGraph.prototype.onXMLError = function (message) {
 	console.error("XML Loading Error: "+message);
 	this.loadedOk=false;
 };
@@ -1466,4 +1473,66 @@ MySceneGraph.prototype.parseItemAttr = function(elem, attr, array) {
 	}
 
 	return e;
+}
+
+MySceneGraph.prototype.createGraph = function () {
+
+	for(i = 0; i < this.components.length; i++)
+	{
+
+		var node = new Node(this.components[i].id);
+
+		var m = mat4.create();
+		mat4.identity(m);
+
+		// transformations
+		for(t = 0; t < this.components[i].transformations.length; t++)
+		{
+			switch (this.components[i].transformations[t].type) {
+				case "translate":
+					this.translateMatrix(m, this.components[i].component.transformations[t].x, this.components[i].component.transformations[t].y, this.components[i].component.transformations[t].z);
+					break;
+
+				case "rotate":
+					this.rotateMatrix(m, this.components[i].component.transformations[t].axis, this.components[i].component.transformations[t].angle);
+					break;
+
+				case "scale":
+					this.scaleMatrix(m, this.components[i].component.transformations[t].x, this.components[i].component.transformations[t].y, this.components[i].component.transformations[t].z);
+					break;
+
+				default:
+					return "Not a valid transformation.";
+			}
+		}
+
+		node.setTransformations(m);
+
+		// TODO: ---
+
+		/*for(k = 0; k < this.components[i].children.length; k++)
+		{
+
+		}*/
+	}
+}
+
+MySceneGraph.prototype.translateMatrix = function(actual_matrix, x, y, z) {
+	mat4.translate(actual_matrix, actual_matrix, [x, y, z]);
+}
+
+MySceneGraph.prototype.rotateMatrix = function(actual_matrix, axis, angle) {
+	if(axis == "x" || axis == "X") {
+		mat4.rotateX(actual_matrix, actual_matrix, angle);
+	}
+	else if (axis == "y" || axis == "Y") {
+		mat4.rotateX(actual_matrix, actual_matrix, angle);
+	}
+	else if (axis == "z" || axis == "Z") {
+		mat4.rotateX(actual_matrix, actual_matrix, angle);
+	}
+}
+
+MySceneGraph.prototype.scaleMatrix = function(actual_matrix, x, y, z) {
+	mat4.scale(actual_matrix, actual_matrix, [x, y, z]);
 }

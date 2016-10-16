@@ -42,7 +42,7 @@
 
     <illumination doublesided="1" local="0" >
 
-        <ambient r="1.0" g="1.0" b="0.0" a="0.5" />
+        <ambient r="1.0" g="1.0" b="0.0" a="1.0" />
         <background r="0.0" g="0.0" b="0.0" a="0.0" />
 
     </illumination>

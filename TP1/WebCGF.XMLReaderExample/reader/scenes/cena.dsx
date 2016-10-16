@@ -1,6 +1,6 @@
 <dsx>
 
-	<scene root="root_scene" axis_length="0.0" />
+	<scene root="root_scene" axis_length="1.0" />
 
 	<views default="vd" >
 		<perspective id="vd" near="0.1" far="150.0" angle="45.0">
@@ -50,69 +50,13 @@
 	</lights>
 
 	<textures>
-  <texture id="forest" file="textures/hillGreen.png" length_s="0.2" length_t="0.33333" />
-
-	<texture id="stoneHouse" file="textures/wallStone.png" length_s="1" length_t="1" />
-
-	<texture id="wallHouse" file="textures/wallHouse.png" length_s="1" length_t="1" />
-
-	<texture id="towerStone" file="textures/stoneWall.png" length_s="1" length_t="1" />
-
-	<texture id="towerWall" file="textures/stoneWall.png" length_s="1" length_t="4" />
-
-	<texture id="roofHouse" file="textures/roof.png" length_s="1" length_t="1" />
-
-	<texture id="wood" file="textures/wood.png" length_s="1" length_t="1" />
-
-	<texture id="texWater" file="textures/water.png" length_s="0.5" length_t="10" />
-
-	<texture id="hillGreen" file="textures/hillGreen.png" length_s="1" length_t="1" />
-
-	<texture id="hillStep" file="textures/hillStep.png" length_s="0.4" length_t="1" />
-
-	<texture id="leafText" file="textures/Leaf_Floor_texture.png" length_s="1" length_t="1" />
-
-	<texture id="woodTree" file="textures/wood_texture.png" length_s="1" length_t="1" />
-
-	<texture id="woodTree2" file="textures/treeWood.png" length_s="1" length_t="1" />
-
-	<texture id="fireText" file="textures/fire.png" length_s="1" length_t="1" />
-
-	<texture id="woodFloor" file="textures/woodFloor.png" length_s="0.2" length_t="0.2" />
-
-	<texture id="doorText" file="textures/door.png" length_s="1" length_t="1" />
-
-	<texture id="windowText" file="textures/window.png" length_s="1" length_t="1" />
-
-	<texture id="pathTextX" file="textures/path.png" length_s="0.16667" length_t="1" />
-
-	<texture id="pathTextZ" file="textures/path.png" length_s="1" length_t="0.16667" />
-
-	<texture id="vaneText" file="textures/post.png" length_s="1" length_t="1" />
-
-	<texture id="sailText" file="textures/sail.png" length_s="1" length_t="1" />
-
-	<texture id="bridgeText" file="textures/brick.jpg" length_s="1" length_t="1" />
-
-	<texture id="snow" file="textures/snow.jpg" length_s="1" length_t="1" />
-
-	<texture id="iceBlock" file="textures/iceBlock.jpg" length_s="1" length_t="1" />
-
-	<texture id="water" file="textures/waterIce.jpg" length_s="1" length_t="1" />
-
-	<texture id="fish" file="textures/fish.jpg" length_s="1" length_t="1" />
-
-	<texture id="fishEye" file="textures/fishEye.jpg" length_s="1" length_t="1" />
-
-	<texture id="carrot" file="textures/carrot.jpg" length_s="1" length_t="1" />
-
-	<texture id="bear" file="textures/polar2.jpg" length_s="1" length_t="1" />
-		<!-- <texture id="grass" file="../resources/images/grass.png" length_s="1.0" length_t="1.0" /> -->
-		<!-- <texture id="ball" file="../resources/images/ball.png" length_s="1.0" length_t="1.0" /> -->
-		<!-- <texture id="cup" file="../resources/images/cup.png" length_s="1.0" length_t="1.0" /> -->
-		<!-- <texture id="pool_stone" file="../resources/images/pool_stone.png" length_s="1.0" length_t="1.0" /> -->
-		<!-- <texture id="pool_tile" file="../resources/images/pool_tile.png" length_s="1.0" length_t="1.0" /> -->
-		<!-- <texture id="pool_towel" file="../resources/images/pool_towel.png" length_s="1.0" length_t="1.0" /> -->
+		<texture id="grass" file="../resources/images/grass.png" length_s="1.0" length_t="1.0" />
+		<texture id="ball" file="../resources/images/ball.png" length_s="1.0" length_t="1.0" />
+		<texture id="cup" file="../resources/images/cup.png" length_s="1.0" length_t="1.0" />
+		<texture id="pool_stone" file="../resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
+		<texture id="pool_tile" file="../resources/images/pool_tile.png" length_s="1.0" length_t="1.0" />
+		<texture id="pool_towel" file="../resources/images/pool_towel.png" length_s="1.0" length_t="1.0" />
+		<texture id="wood" file="textures/wood.png" length_s="1.0" length_t="1.0" />
 	</textures>
 
 	<materials>
@@ -161,6 +105,10 @@
 		<transformation id="scene">
 			<rotate axis="z" angle="0" />
 		</transformation>
+		<transformation id="table_leg">
+			<translate x="0" y="0.5" z="0" />
+			<scale x="0.1" y="2" z="0.1" />
+		</transformation>
 	</transformations>
 
 	<primitives>
@@ -184,7 +132,158 @@
 			<texture id="none" />
 
 			<children>
+				<componentref id="table" />
+				<componentref id="floor" />
+			</children>
+
+		</component>
+		
+		<component id="floor">
+
+			<transformation>
+				<rotate axis="x" angle="-90" />
+				<scale x="10" y="10" z="10" />
+			</transformation>
+
+			<materials>
+				<material id="inherit" />
+			</materials>
+
+			<texture id="wood" />
+
+			<children>
+				<primitiveref id="square" />
+			</children>
+
+		</component>
+
+		<component id="table">
+
+			<transformation>
+			</transformation>
+
+			<materials>
+				<material id="table" />
+			</materials>
+
+			<texture id="wood" />
+
+			<children>
+				<componentref id="table_top" />
+				<componentref id="table_right_front_leg" />
+				<componentref id="table_left_front_leg" />
+				<componentref id="table_right_back_leg" />
+				<componentref id="table_left_back_leg" />
+			</children>
+
+		</component>
+
+		<component id="table_top">
+
+			<transformation>
+				<scale x="3" y="0.1" z="2" />
+				<translate x="0" y="2" z="0" />
+			</transformation>
+
+			<materials>
+				<material id="inherit" />
+			</materials>
+
+			<texture id="inherit" />
+
+			<children>
 				<componentref id="cube" />
+			</children>
+
+		</component>
+
+		<component id="table_leg">
+
+			<transformation>
+				<transformationref id="table_leg" />
+			</transformation>
+
+			<materials>
+				<material id="inherit" />
+			</materials>
+
+			<texture id="inherit" />
+
+			<children>
+				<componentref id="cube" />
+			</children>
+
+		</component>
+
+		<component id="table_right_front_leg">
+
+			<transformation>
+				<translate x="1.5" y="0" z="1" />
+			</transformation>
+
+			<materials>
+				<material id="inherit" />
+			</materials>
+
+			<texture id="inherit" />
+
+			<children>
+				<componentref id="table_leg" />
+			</children>
+
+		</component>
+
+		<component id="table_left_front_leg">
+
+			<transformation>
+				<translate x="-1.5" y="0" z="1" />
+			</transformation>
+
+			<materials>
+				<material id="inherit" />
+			</materials>
+
+			<texture id="inherit" />
+
+			<children>
+				<componentref id="table_leg" />
+			</children>
+
+		</component>
+
+		<component id="table_right_back_leg">
+
+			<transformation>
+				<translate x="1.5" y="0" z="-1" />
+			</transformation>
+
+			<materials>
+				<material id="inherit" />
+			</materials>
+
+			<texture id="inherit" />
+
+			<children>
+				<componentref id="table_leg" />
+			</children>
+
+		</component>
+
+
+		<component id="table_left_back_leg">
+
+			<transformation>
+				<translate x="-1.5" y="0" z="-1" />
+			</transformation>
+
+			<materials>
+				<material id="inherit" />
+			</materials>
+
+			<texture id="inherit" />
+
+			<children>
+				<componentref id="table_leg" />
 			</children>
 
 		</component>
@@ -270,8 +369,8 @@
 
 		<component id="square_top">
 
-			<transformation>
-				<rotate axis="x" angle="-90" />
+			<transformation>			
+				<rotate axis="x" angle="-90" />			
 				<translate x="0" y="0.5" z="0" />
 			</transformation>
 
@@ -289,8 +388,8 @@
 
 		<component id="square_left">
 
-			<transformation>
-				<rotate axis="y" angle="-90" />
+			<transformation>	
+				<rotate axis="y" angle="-90" />			
 				<translate x="-0.5" y="0" z="0" />
 			</transformation>
 
@@ -308,9 +407,9 @@
 
 		<component id="square_right">
 
-			<transformation>
-				<rotate axis="y" angle="90" />
-				<translate x="0.5" y="0" z="-0.5" />
+			<transformation>	
+				<rotate axis="y" angle="90" />			
+				<translate x="0.5" y="0" z="0" />
 			</transformation>
 
 			<materials>

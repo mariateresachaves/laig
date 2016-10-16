@@ -304,7 +304,7 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 	var a = this.parseFloatAttr(illumination_ambient, 'a');
 	if(this.error != null) return this.error;
 
-	this.illumination.ambient = [r,g,b,a];
+	this.scene.graph.ambient = [r,g,b,a];
 
 	elems = illumination.getElementsByTagName('background');
 
@@ -326,8 +326,6 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 	a = this.parseFloatAttr(illumination_ambient, 'a');
 	if(this.error != null) return this.error;
 
-
-	// TODO: Alterei para colocar no grafo a cor do background
 	// this.illumination.background = [r,g,b,a];
 	this.scene.graph.background = [r,g,b,a];
 
@@ -1330,7 +1328,15 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		for(k = 0; k < this.components[i].children.length; k++)
 		{
 			if(this.components[i].children[k].type == "primitive") {
-				// TODO
+				// check components child id
+				this.error = "Cannot find a primitive with id=" + this.components[i].children[k].id;
+				this.primitives.forEach(function(x){
+						if (x.id == this.components[i].children[k].id) {
+								this.error = null;
+								return;
+						}
+				}, this);
+				if(this.error != null) return this.error;
 			}
 			else {
 				// check components child id

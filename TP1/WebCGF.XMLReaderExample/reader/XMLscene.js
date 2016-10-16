@@ -45,10 +45,13 @@ XMLscene.prototype.setDefaultAppearance = function () {
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function ()
 {
-  // TODO: alterei aqui para ir buscar ao grafo a cor do background lida no dsx
 	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
 	this.lights[0].setVisible(true);
   this.lights[0].enable();
+
+	this.setAmbient(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
+  this.lights[1].setVisible(true);
+  this.lights[1].enable();
 };
 
 XMLscene.prototype.display = function () {

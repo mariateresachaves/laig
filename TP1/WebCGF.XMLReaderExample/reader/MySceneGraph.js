@@ -1510,22 +1510,19 @@ MySceneGraph.prototype.createGraph = function () {
 		for(t = 0; t < this.transformations.length; t++)
 		{
 			if(this.transformations[t].id == this.components[i].transformationref) {
-				
+
 				for(k = 0; k < this.transformations[t].list.length; k++) {
 
 					switch (this.transformations[t].list[k].type) {
 						case "translate":
-							console.log("SOU TRANSLATE");
 							this.translateMatrix(m, this.transformations[t].list[k].x, this.transformations[t].list[k].y, this.transformations[t].list[k].z);
 							break;
 
 						case "rotate":
-							console.log("SOU ROTATE");
 							this.rotateMatrix(m, this.transformations[t].list[k].axis, this.transformations[t].list[k].angle);
 							break;
 
 						case "scale":
-							console.log("SOU SCALE");
 							this.scaleMatrix(m, this.transformations[t].list[k].x, this.transformations[t].list[k].y, this.transformations[t].list[k].z);
 							break;
 

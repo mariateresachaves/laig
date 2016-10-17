@@ -50,13 +50,12 @@
 	</lights>
 
 	<textures>
-		<texture id="grass" file="../resources/images/grass.png" length_s="1.0" length_t="1.0" />
-		<texture id="ball" file="../resources/images/ball.png" length_s="1.0" length_t="1.0" />
-		<texture id="cup" file="../resources/images/cup.png" length_s="1.0" length_t="1.0" />
-		<texture id="pool_stone" file="../resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
-		<texture id="pool_tile" file="../resources/images/pool_tile.png" length_s="1.0" length_t="1.0" />
-		<texture id="water" file="../resources/images/water.png" length_s="1.0" length_t="1.0" />
-		<texture id="pool_towel" file="../resources/images/pool_towel.png" length_s="1.0" length_t="1.0" />
+		<texture id="grass" file="/resources/images/grass.png" length_s="1.0" length_t="1.0" />
+		<texture id="ball" file="/resources/images/ball.png" length_s="1.0" length_t="1.0" />
+		<texture id="pool_stone" file="/resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
+		<texture id="pool_tile" file="/resources/images/pool_tile.png" length_s="1.0" length_t="1.0" />
+		<texture id="water" file="/resources/images/water.png" length_s="1.0" length_t="1.0" />
+		<texture id="towel" file="resources/images/towel.jpg" length_s="1.0" length_t="1.0" />
 	</textures>
 
 	<materials>
@@ -67,7 +66,7 @@
 			<specular r="0.3" g="0.3" b="1" a="0.1" />
 			<shininess value="1.0" />
 		</material>
-		
+
 		<material id="pool_border">
 			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
 			<ambient r="1" g="1" b="1" a="1" />
@@ -75,7 +74,7 @@
 			<specular r="1" g="1" b="1" a="1" />
 			<shininess value="1.0" />
 		</material>
-		
+
 		<material id="plastic">
 			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
 			<ambient r="1" g="1" b="1" a="1" />
@@ -83,7 +82,7 @@
 			<specular r="1" g="1" b="1" a="1" />
 			<shininess value="10.0" />
 		</material>
-		
+
 		<material id="buoy">
 			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
 			<ambient r="1" g="0.2" b="0.2" a="1" />
@@ -131,7 +130,12 @@
 		</transformation>
 		<transformation id="table_leg">
 			<translate x="0" y="0.5" z="0" />
-			<scale x="0.1" y="2" z="0.1" />
+			<scale x="0.1" y="1" z="0.1" />
+		</transformation>
+		<transformation id="towel_trans">
+			<scale x="2.5" y="0.05" z="1.25" />
+			<rotate axis="y" angle="90" />
+			<translate x="3.5" y="0" z="-3" />
 		</transformation>
 	</transformations>
 
@@ -140,17 +144,17 @@
 			<rectangle x1="-0.5" y1="-0.5" x2="0.5" y2="0.5" />
 		</primitive>
 		<primitive id="sphere">
-            <sphere radius="1" slices="10" stacks="10" />            
+            <sphere radius="1" slices="10" stacks="10" />
         </primitive>
 		<primitive id="cylinder">
-            <cylinder base="1.0" top="1.0" height="1" slices="20" stacks="10" />            
+            <cylinder base="1.0" top="1.0" height="1" slices="20" stacks="10" />
         </primitive>
 		<primitive id="torus">
-            <torus inner="0.8" outer="1" slices="20" loops="20" />            
+            <torus inner="0.8" outer="1" slices="20" loops="20" />
         </primitive>
 	</primitives>
 
-	<components>	
+	<components>
 		<component id="root_scene">
 			<transformation>
 			</transformation>
@@ -160,7 +164,10 @@
 			<texture id="none" />
 			<children>
 				<componentref id="floor" />
+				<componentref id="table" />
 				<componentref id="pool" />
+				<componentref id="cup" />
+				<componentref id="towel" />
 			</children>
 		</component>
 
@@ -183,7 +190,7 @@
 				<componentref id="buoy2" />
 			</children>
 		</component>
-		
+
 		<component id="pool_border">
 			<transformation>
 			</transformation>
@@ -198,7 +205,7 @@
 				<componentref id="pool_border4" />
 			</children>
 		</component>
-		
+
 		<component id="pool_border1">
 			<transformation>
 				<translate x="0" y="0.5" z="0" />
@@ -213,7 +220,7 @@
 				<componentref id="cube" />
 			</children>
 		</component>
-		
+
 		<component id="pool_border2">
 			<transformation>
 				<translate x="0" y="0.5" z="0" />
@@ -229,7 +236,7 @@
 				<componentref id="cube" />
 			</children>
 		</component>
-		
+
 		<component id="pool_border3">
 			<transformation>
 				<translate x="0" y="0.5" z="0" />
@@ -245,7 +252,7 @@
 				<componentref id="cube" />
 			</children>
 		</component>
-		
+
 		<component id="pool_border4">
 			<transformation>
 				<translate x="0" y="0.5" z="0" />
@@ -259,8 +266,8 @@
 			<children>
 				<componentref id="cube" />
 			</children>
-		</component>		
-		
+		</component>
+
 		<component id="pool_wall1">
 			<transformation>
 				<scale x="3" y="1.5" z="1" />
@@ -274,7 +281,7 @@
 				<primitiveref id="square" />
 			</children>
 		</component>
-		
+
 		<component id="pool_wall2">
 			<transformation>
 				<scale x="5" y="1.5" z="1" />
@@ -289,7 +296,7 @@
 				<primitiveref id="square" />
 			</children>
 		</component>
-		
+
 		<component id="pool_wall3">
 			<transformation>
 				<scale x="5" y="1.5" z="1" />
@@ -304,7 +311,7 @@
 				<primitiveref id="square" />
 			</children>
 		</component>
-		
+
 		<component id="pool_wall4">
 			<transformation>
 				<scale x="3" y="1.5" z="1" />
@@ -319,7 +326,7 @@
 				<primitiveref id="square" />
 			</children>
 		</component>
-		
+
 		<component id="pool_bottom">
 			<transformation>
 				<scale x="3" y="5" z="1" />
@@ -334,7 +341,7 @@
 				<primitiveref id="square" />
 			</children>
 		</component>
-		
+
 		<component id="pool_water">
 			<transformation>
 				<scale x="3" y="5" z="1" />
@@ -362,8 +369,8 @@
 			<children>
 				<primitiveref id="sphere" />
 			</children>
-		</component>			
-		
+		</component>
+
 		<component id="buoy1">
 			<transformation>
 				<scale x="0.5" y="0.5" z="0.5" />
@@ -378,10 +385,10 @@
 				<primitiveref id="cylinder" />
 			</children>
 		</component>
-		
+
 		<component id="buoy2">
-			<transformation>			
-				<scale x="0.05" y="0.05" z="1" />				
+			<transformation>
+				<scale x="0.05" y="0.05" z="1" />
 				<translate x="0.5" y="-0.16" z="0.5" />
 			</transformation>
 			<materials>
@@ -391,7 +398,7 @@
 			<children>
 				<primitiveref id="cylinder" />
 			</children>
-		</component>	
+		</component>
 
 		<component id="floor">
 			<transformation>
@@ -466,11 +473,15 @@
 
 		<component id="table">
 			<transformation>
+				<translate x="-3" y="0" z="-3" />
 			</transformation>
+
 			<materials>
 				<material id="table" />
 			</materials>
+
 			<texture id="none" />
+
 			<children>
 				<componentref id="table_top" />
 				<componentref id="table_right_front_leg" />
@@ -482,8 +493,8 @@
 
 		<component id="table_top">
 			<transformation>
-				<scale x="3" y="0.1" z="2" />
-				<translate x="0" y="2" z="0" />
+				<scale x="1.5" y="0.1" z="1" />
+				<translate x="0" y="1" z="0" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -509,7 +520,7 @@
 
 		<component id="table_right_front_leg">
 			<transformation>
-				<translate x="1.5" y="0" z="1" />
+				<translate x="0.75" y="0" z="0.5" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -522,7 +533,7 @@
 
 		<component id="table_left_front_leg">
 			<transformation>
-				<translate x="-1.5" y="0" z="1" />
+				<translate x="-0.75" y="0" z="0.5" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -535,7 +546,7 @@
 
 		<component id="table_right_back_leg">
 			<transformation>
-				<translate x="1.5" y="0" z="-1" />
+				<translate x="0.75" y="0" z="-0.5" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -549,7 +560,7 @@
 
 		<component id="table_left_back_leg">
 			<transformation>
-				<translate x="-1.5" y="0" z="-1" />
+				<translate x="-0.75" y="0" z="-0.5" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -557,6 +568,41 @@
 			<texture id="inherit" />
 			<children>
 				<componentref id="table_leg" />
+			</children>
+		</component>
+
+		<component id="cup">
+			<transformation>
+				<scale x="0.5" y="0.5" z="0.5" />
+				<translate x="-3" y="0" z="-3" />
+			</transformation>
+
+			<materials>
+				<material id="pipe" />
+			</materials>
+
+			<texture id="none" />
+
+			<children>
+				<primitiveref id="cylinder" />
+			</children>
+
+		</component>
+
+		<component id="towel">
+
+			<transformation>
+				<transformationref id="towel_trans" />
+			</transformation>
+
+			<materials>
+				<material id="inherit" />
+			</materials>
+
+			<texture id="towel" />
+
+			<children>
+				<componentref id="cube" />
 			</children>
 		</component>
 
@@ -619,8 +665,8 @@
 		</component>
 
 		<component id="square_top">
-			<transformation>			
-				<rotate axis="x" angle="-90" />			
+			<transformation>
+				<rotate axis="x" angle="-90" />
 				<translate x="0" y="0.5" z="0" />
 			</transformation>
 			<materials>
@@ -633,8 +679,8 @@
 		</component>
 
 		<component id="square_left">
-			<transformation>	
-				<rotate axis="y" angle="-90" />			
+			<transformation>
+				<rotate axis="y" angle="-90" />
 				<translate x="-0.5" y="0" z="0" />
 			</transformation>
 			<materials>
@@ -647,8 +693,8 @@
 		</component>
 
 		<component id="square_right">
-			<transformation>	
-				<rotate axis="y" angle="90" />			
+			<transformation>
+				<rotate axis="y" angle="90" />
 				<translate x="0.5" y="0" z="0" />
 			</transformation>
 			<materials>

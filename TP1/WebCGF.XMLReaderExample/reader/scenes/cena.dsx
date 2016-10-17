@@ -1,6 +1,6 @@
 <dsx>
 
-	<scene root="root_scene" axis_length="1.0" />
+	<scene root="root_scene" axis_length="0" />
 
 	<views default="vd" >
 		<perspective id="vd" near="0.1" far="150.0" angle="45.0">
@@ -50,12 +50,12 @@
 	</lights>
 
 	<textures>
-		<texture id="grass" file="/resources/images/grass.png" length_s="1.0" length_t="1.0" />
-		<texture id="ball" file="/resources/images/ball.png" length_s="1.0" length_t="1.0" />
-		<texture id="pool_stone" file="/resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
-		<texture id="pool_tile" file="/resources/images/pool_tile.png" length_s="1.0" length_t="1.0" />
-		<texture id="water" file="/resources/images/water.png" length_s="1.0" length_t="1.0" />
-		<texture id="towel" file="resources/images/towel.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="grass" file="../resources/images/grass.png" length_s="1.0" length_t="1.0" />
+		<texture id="ball" file="../resources/images/ball.png" length_s="1.0" length_t="1.0" />
+		<texture id="pool_stone" file="../resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
+		<texture id="pool_tile" file="../resources/images/pool_tile.png" length_s="1.0" length_t="1.0" />
+		<texture id="water" file="../resources/images/water.png" length_s="1.0" length_t="1.0" />
+		<texture id="towel" file="../resources/images/towel.jpg" length_s="1.0" length_t="1.0" />
 	</textures>
 
 	<materials>
@@ -134,8 +134,8 @@
 		</transformation>
 		<transformation id="towel_trans">
 			<scale x="2.5" y="0.05" z="1.25" />
-			<rotate axis="y" angle="90" />
-			<translate x="3.5" y="0" z="-3" />
+			<rotate axis="y" angle="75" />
+			<translate x="3.2" y="0" z="-3" />
 		</transformation>
 	</transformations>
 
@@ -166,8 +166,9 @@
 				<componentref id="floor" />
 				<componentref id="table" />
 				<componentref id="pool" />
-				<componentref id="cup" />
+				<!--<componentref id="cup" />-->
 				<componentref id="towel" />
+				<componentref id="ball2" />
 			</children>
 		</component>
 
@@ -185,7 +186,7 @@
 				<componentref id="pool_wall4" />
 				<componentref id="pool_bottom" />
 				<componentref id="pool_water" />
-				<componentref id="ball" />
+				<componentref id="ball1" />
 				<componentref id="buoy1" />
 				<componentref id="buoy2" />
 			</children>
@@ -359,8 +360,6 @@
 
 		<component id="ball">
 			<transformation>
-				<scale x="0.2" y="0.2" z="0.2" />
-				<translate x="0.7" y="-0.06" z="-1.2" />
 			</transformation>
 			<materials>
 				<material id="plastic" />
@@ -368,6 +367,35 @@
 			<texture id="ball" />
 			<children>
 				<primitiveref id="sphere" />
+			</children>
+		</component>
+		
+		<component id="ball1">
+			<transformation>
+				<scale x="0.2" y="0.2" z="0.2" />
+				<translate x="0.7" y="-0.06" z="-1.2" />
+			</transformation>
+			<materials>
+				<material id="inherit" />
+			</materials>
+			<texture id="none" />
+			<children>
+				<componentref id="ball" />
+			</children>
+		</component>
+		
+		<component id="ball2">
+			<transformation>
+				<scale x="0.2" y="0.2" z="0.2" />
+				<rotate axis="y" angle="90" />
+				<translate x="-3" y="0.15" z="1.5" />
+			</transformation>
+			<materials>
+				<material id="inherit" />
+			</materials>
+			<texture id="none" />
+			<children>
+				<componentref id="ball" />
 			</children>
 		</component>
 
@@ -576,31 +604,23 @@
 				<scale x="0.5" y="0.5" z="0.5" />
 				<translate x="-3" y="0" z="-3" />
 			</transformation>
-
 			<materials>
 				<material id="pipe" />
 			</materials>
-
 			<texture id="none" />
-
 			<children>
 				<primitiveref id="cylinder" />
 			</children>
-
 		</component>
 
 		<component id="towel">
-
 			<transformation>
 				<transformationref id="towel_trans" />
 			</transformation>
-
 			<materials>
 				<material id="inherit" />
 			</materials>
-
 			<texture id="towel" />
-
 			<children>
 				<componentref id="cube" />
 			</children>

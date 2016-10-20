@@ -169,7 +169,7 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 	this.views.default = this.parseStringAttr(views, 'default');
 	if(this.error != null) return this.error;
 
-	this.views.list = [];
+	this.views.list = new Object;
 
 	var num_perspectives = views.children.length;
 	var perspectives = views.getElementsByTagName('perspective');
@@ -186,18 +186,12 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 		var p = perspectives[i];
 		var perspective = new Object;
 
-		perspective.id = this.parseStringAttr(p, "id");
+		var perspective_id = this.parseStringAttr(p, "id");
 		if(this.error != null) return this.error;
 
 		//check for duplicate ids
-		this.views.list.forEach(function(x){
-			if (x.id == perspective.id) {
-				this.error = "Duplicate entry of perspective id (id=" + x.id +").";
-				return;
-			}
-		}, this);
-
-		if(this.error != null) return this.error;
+		if(!(perspective_id in this.views.list))
+			return "Duplicate entry of perspective id (id=" + perspective_id +").";
 
 		perspective.near = this.parseFloatAttr(p, "near");
 		if(this.error != null) return this.error;
@@ -241,18 +235,12 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 		perspective.to = [x,y,z];
 
-		this.views.list.push(perspective);
+		this.views.list[perspective_id] = perspective;
 	}
 
 	//check default view
-	this.error = "Cannot find default view (id=" + this.views.default + ").";
-	this.views.list.forEach(function(x){
-		if (x.id == this.views.default) {
-			this.error = null;
-			return;
-		}
-	}, this);
-	if(this.error != null) return this.error;
+	if(!(this.views.default in this.views.list))
+		return "Cannot find default view (id=" + this.views.default + ").";
 
 	//Display values for Debugging
 	console.log("--- Parse Views ---");

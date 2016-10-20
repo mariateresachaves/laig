@@ -631,23 +631,19 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 		return "There must be at least one 'texture' element in 'textures'.";
 	}
 
-	this.textures = [];
+	this.textures = new Object;
 
 	for (var i = 0; i < texture_list.length; i++)
 	{
 		var t = texture_list[i];
 		var texture = new Object;
 
-		texture.id = this.parseStringAttr(t, 'id');
+		var texture_id = this.parseStringAttr(t, 'id');
 		if(this.error != null) return this.error;
 
 		//check for duplicate ids
-		this.textures.forEach(function(x){
-			if (x.id == texture.id) {
-				this.error = "Duplicate entry of texture id (id=" + x.id +").";
-				return;
-			}
-		}, this);
+		if(texture_id in this.textures)
+			return "Duplicate entry of texture id (id=" + texture_id +").";
 
 		texture.file = this.parseStringAttr(t, 'file');
 		if(this.error != null) return this.error;
@@ -658,14 +654,14 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 		texture.length_t = this.parseFloatAttr(t, 'length_t');
 		if(this.error != null) return this.error;
 
-		this.textures.push(texture);
+		this.textures[texture_id] = texture;
 	}
 
 	//Display values for Debugging
 	console.log("--- Parse Textures ---");
-	for(i = 0; i < this.textures.length; i++) {
+	for(i in this.textures) {
 		var x = this.textures[i];
-		console.log("Texture id = " + x.id +
+		console.log("Texture id = " + i +
 				" { file = " + x.file +
 				", length_s = " + x.length_s +
 				", length_t = " + x.length_t + " }");

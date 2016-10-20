@@ -5,7 +5,7 @@ function MySceneGraph(filename, scene) { // filename: path
 	// Establish bidirectional references between scene and graph
 	this.scene = scene;
 	this.error = null;
-	scene.graph=this;
+	scene.graph = this;
 
 	// File reading
 	this.reader = new CGFXMLreader(); // ferramenta que le o ficheiro xml
@@ -741,7 +741,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		return "zero 'material' element found..";
 	}
 
-	this.materials = [];
+	this.materials = new Object;
 
 	// iterate over every material
 	for (var i = 0; i < materialsList.length; i++)
@@ -750,16 +750,14 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		var m = new Object;
 
 		//Id
-		m.id = this.parseStringAttr(material, 'id');
+		var id = this.parseStringAttr(material, 'id');
 		if(this.error != null) return this.error;
 
 		//check for duplicate ids
-		this.materials.forEach(function(x){
-			if (x.id == material.id) {
-				this.error = "Duplicate entry of material id (id=" + x.id +").";
-				return;
-			}
-		}, this);
+		if (id in this.materials) {
+			this.error = "Duplicate entry of material id (id=" + id +").";
+			return;
+		}
 
 		//Emission
 		elems = material.getElementsByTagName('emission');
@@ -788,13 +786,13 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		}
 		var ambient = elems[0];
 
-		var r = this.parseFloatAttr(emission, 'r');
+		var r = this.parseFloatAttr(ambient, 'r');
 		if(this.error != null) return this.error;
-		var g = this.parseFloatAttr(emission, 'g');
+		var g = this.parseFloatAttr(ambient, 'g');
 		if(this.error != null) return this.error;
-		var b = this.parseFloatAttr(emission, 'b');
+		var b = this.parseFloatAttr(ambient, 'b');
 		if(this.error != null) return this.error;
-		var a = this.parseFloatAttr(emission, 'a');
+		var a = this.parseFloatAttr(ambient, 'a');
 		if(this.error != null) return this.error;
 
 		m.ambient = [r,g,b,a];
@@ -807,13 +805,13 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		}
 		var diffuse = elems[0];
 
-		var r = this.parseFloatAttr(emission, 'r');
+		var r = this.parseFloatAttr(diffuse, 'r');
 		if(this.error != null) return this.error;
-		var g = this.parseFloatAttr(emission, 'g');
+		var g = this.parseFloatAttr(diffuse, 'g');
 		if(this.error != null) return this.error;
-		var b = this.parseFloatAttr(emission, 'b');
+		var b = this.parseFloatAttr(diffuse, 'b');
 		if(this.error != null) return this.error;
-		var a = this.parseFloatAttr(emission, 'a');
+		var a = this.parseFloatAttr(diffuse, 'a');
 		if(this.error != null) return this.error;
 
 		m.diffuse = [r,g,b,a];
@@ -826,13 +824,13 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		}
 		var specular = elems[0];
 
-		var r = this.parseFloatAttr(emission, 'r');
+		var r = this.parseFloatAttr(specular, 'r');
 		if(this.error != null) return this.error;
-		var g = this.parseFloatAttr(emission, 'g');
+		var g = this.parseFloatAttr(specular, 'g');
 		if(this.error != null) return this.error;
-		var b = this.parseFloatAttr(emission, 'b');
+		var b = this.parseFloatAttr(specular, 'b');
 		if(this.error != null) return this.error;
-		var a = this.parseFloatAttr(emission, 'a');
+		var a = this.parseFloatAttr(specular, 'a');
 		if(this.error != null) return this.error;
 
 		m.specular = [r,g,b,a];
@@ -847,20 +845,21 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 		m.shininess = this.parseFloatAttr(shininess, 'value');
 
-		this.materials.push(m);
+		this.materials[id] = m;
 	}
 
 	//Display values for Debugging
 	console.log("--- Parse Materials ---");
-	this.materials.forEach(function(material) {
-		console.log("Material id = " + material.id +
-				" { emission = [" + material.emission[0] + ", " + material.emission[1] + ", " + material.emission[2] + ", " + material.emission[3] + "]" +
-				", ambient = [" + material.ambient[0] + ", " + material.ambient[1] + ", " + material.ambient[2] + ", " + material.ambient[3] + "]" +
-				", diffuse = [" + material.diffuse[0] + ", " + material.diffuse[1] + ", " + material.diffuse[2] + ", " + material.diffuse[3] + "]" +
-				", specular = [" + material.specular[0] + ", " + material.specular[1] + ", " + material.specular[2] + ", " + material.specular[3] + "]" +
-				", shininess = " + material.shininess + "}"
+	for(id in this.materials) {
+		console.log("Material id = " + id +
+				" { emission = [" + this.materials[id].emission + "]" +
+				", ambient = [" + this.materials[id].ambient + "]" +
+				", diffuse = [" + this.materials[id].diffuse + "]" +
+				", specular = [" + this.materials[id].specular + "]" +
+				", shininess = " + this.materials[id].shininess + "}"
 				);
-	  });
+	}
+
 	console.log("");
 }
 
@@ -1254,7 +1253,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			// check if material with this id exists
 	    this.error = "Cannot find a material with id=" + id;
 	    this.materials.forEach(function(x){
-	        if (x.id == id) {
+	        if (x.id == id || id == "inherit") {
 	            this.error = null;
 	            return;
 	        }
@@ -1337,7 +1336,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			if(this.components[i].children[k].type == "primitive") {
 				// check components child id
 				this.error = "Cannot find a primitive with id=" + this.components[i].children[k].id;
-				this.primitives.forEach(function(x){
+				this.primitives.forEach(function(x) {
 						if (x.id == this.components[i].children[k].id) {
 								this.error = null;
 								return;
@@ -1535,23 +1534,23 @@ MySceneGraph.prototype.createGraph = function () {
 
 		node.setTransformations(m);
 
-		console.log("--------- NODE" + i + " ---------");
+		console.log("--------- NODE " + i + " TRANSF ---------");
 
 		console.log(node.transformations);
 
 		console.log("------------------------");
 
 		// MATERIALS
-		for(m = 0; m < this.materials.length; m++) {
 
-			for(k = 0; k < this.components[i].materials.length; k++) {
+		for(k = 0; k < this.components[i].materials.length; k++) {
 
-					if(this.components[i].materials[k] == this.materials.id) {
-						// TODO: colocar no node o material que foi lido
-					}
+			var ref = this.components[i].materials[k];
+			var curr = this.materials[ref.id];
 
-			}
+			console.log("COMPONENT MATERIAL ID: " + this.components[i].materials[k]);
+			console.log("MATERIAL ID: " + curr);
 
+			node.addMaterial(curr);
 		}
 	}
 }

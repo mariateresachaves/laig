@@ -105,7 +105,7 @@ MySceneGraph.prototype.onXMLReady=function()
 		return;
 	}
 
-	this.createGraph();
+	this.drawGraph();
 
 	this.loadedOk=true;
 
@@ -755,8 +755,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 		//check for duplicate ids
 		if (id in this.materials) {
-			this.error = "Duplicate entry of material id (id=" + id +").";
-			return;
+			return "Duplicate entry of material id (id=" + id +").";
 		}
 
 		//Emission
@@ -1109,64 +1108,77 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('components');
 
-	if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um components - reporta e termina
+	if (elems == null  || elems.length != 1) //erro nenhum ou mais do que um components - reporta e termina
 		return "zero or more than one 'components' element found.";
-	}
 
 	var components = elems[0];
 
 	var componentsList = components.getElementsByTagName('component');
-	if (componentsList == null  || componentsList.length == 0) { //erro nenhuma component - reporta e termina
+	if (componentsList == null  || componentsList.length == 0) //erro nenhuma component - reporta e termina
 		return "no 'component' element found.";
-	}
 
-	if (componentsList.length != components.children.length) { //erro elemento 'component' nao encontrado - reporta e termina
+	if (componentsList.length != components.children.length) //erro elemento 'component' nao encontrado - reporta e termina
 		return "non 'component' element found.";
-	}
 
-	this.components = [];
+	this.components = new Object;
 
 	for(i = 0; i < componentsList.length; i++)
 	{
 		var c = componentsList[i];
 		var component = new Object;
+		var m = mat4.create();
+		mat4.identity(m);
 
 		//id
-		component.id = this.parseStringAttr(c, "id");
+		var id = this.parseStringAttr(c, "id");
 		if(this.error != null) return this.error;
+
+		if(id in this.components)
+			return "Duplicate entry of component id (id=" + id +").";
+
+		var node = new Node(id);
 
 		//transformation
 		elems = c.getElementsByTagName('transformation');
 
-		if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um transformation - reporta e termina
-			return "zero or more than one 'transformation' element found in component " + component.id;
-		}
+		if (elems == null  || elems.length != 1) //erro nenhum ou mais do que um transformation - reporta e termina
+			return "zero or more than one 'transformation' element found in component " + id;
 
 		var transformation = elems[0];
 		elems = transformation.getElementsByTagName('transformationref');
 
-		component.transformations = [];
-
 		if (elems != null  && elems.length == 1)
 		{
-			if (transformation.children.length != 1) { //erro transformationref tem que ser exclusiva - reporta e termina
-				return "'transformationref' must be exclusive in " + component.id;
-			}
+			if (transformation.children.length != 1) //erro transformationref tem que ser exclusiva - reporta e termina
+				return "'transformationref' must be exclusive in component " + id;
 
-			component.transformationref = this.parseStringAttr(elems[0], "id");
+			var transformationref = this.parseStringAttr(elems[0], "id");
 			if(this.error != null) return this.error;
 
 			// check if tansformation with this id exists
-	    this.error = "Cannot find a transformation with id=" + component.transformationref;
-	    this.transformations.forEach(function(x){
-	        if (x.id == component.transformationref) {
-	            this.error = null;
-	            return;
-	        }
-	    }, this);
-	    if(this.error != null) return this.error;
+			if(!(transformationref in this.transformations))
+				return "Cannot find a transformation with id=" + transformationref;
 
-			console.log("transformationref id=" + component.transformationref);
+
+			for(k = 0; k < this.transformations[transformationref].list.length) {
+
+					switch (this.transformations[transformationref].list[k].type) {
+						case "translate":
+							this.translateMatrix(m, this.transformations[transformationref].list[k].x, this.transformations[transformationref].list[k].y, this.transformations[transformationref].list[k].z);
+							break;
+
+						case "rotate":
+							this.rotateMatrix(m, this.transformations[transformationref].list[k].axis, this.transformations[transformationref].list[k].angle);
+							break;
+
+						case "scale":
+							this.scaleMatrix(m, this.transformations[transformationref].list[k].x, this.transformations[transformationref].list[k].y, this.transformations[transformationref].list[k].z);
+							break;
+
+						default:
+							return "Not a valid transformation.";
+					}
+			}
 		}
 		else
 		{
@@ -1189,6 +1201,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 						subtransformation.z = this.parseFloatAttr(t, 'z');
 						if(this.error != null) return this.error;
 
+						this.translateMatrix(m, subtransformation.x, subtransformation.y, subtransformation.z);
+
 						break;
 			    case "rotate":
 			    	subtransformation.type = "rotate";
@@ -1199,6 +1213,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 						var a = this.parseFloatAttr(t, 'angle');
 						subtransformation.angle = degToRad*a;
 						if(this.error != null) return this.error;
+
+						this.rotateMatrix(m, subtransformation.axis, subtransformation.angle);
 
 			    	break;
 			    case "scale":
@@ -1213,90 +1229,80 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 						subtransformation.z = this.parseFloatAttr(t, 'z');
 						if(this.error != null) return this.error;
 
+						this.scaleMatrix(m, subtransformation.x, subtransformation.y, subtransformation.z);
+
 			        break;
 			    default:
 			    	return "element found is not 'translate', 'rotate' or 'scale'.";
 			    }
-
-				component.transformations.push(subtransformation);
 			}
 		}
+
+		node.setTransformations(m);
 
 		//materials
 		elems = c.getElementsByTagName('materials');
 
-		if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um materials - reporta e termina
-			return "zero or more than one 'materials' element found in component " + component.id;
-		}
+		if (elems == null  || elems.length != 1) //erro nenhum ou mais do que um materials - reporta e termina
+			return "zero or more than one 'materials' element found in component " + id;
 
 		var materials = elems[0];
 
 		var materialsList = materials.getElementsByTagName('material');
 
-		if (materialsList == null  || materialsList.length == 0) { //erro nenhum material - reporta e termina
-			return "zero 'material' elements found in component " + component.id;
-		}
+		if (materialsList == null  || materialsList.length == 0)//erro nenhum material - reporta e termina
+			return "zero 'material' elements found in component " + id;
 
-		if (materialsList.length != materials.children.length) { //erro elemento nao 'material' encontrado - reporta e termina
+		if (materialsList.length != materials.children.length) //erro elemento nao 'material' encontrado - reporta e termina
 			return "non 'material' element found.";
-		}
-
-		component.materials = [];
 
 		for(j = 0; j < materialsList.length; j++)
 		{
 			var material = materialsList[j];
 
-			var id = this.parseStringAttr(material, "id");
+			var materialid = this.parseStringAttr(material, "id");
 			if(this.error != null) return this.error;
 
-			// check if material with this id exists
-	    this.error = "Cannot find a material with id=" + id;
-	    this.materials.forEach(function(x){
-	        if (x.id == id || id == "inherit") {
-	            this.error = null;
-	            return;
-	        }
-	    }, this);
-	    if(this.error != null) return this.error;
+	    if(materialid == "inherit")
+				node.addMaterial("inherit");
 
-			component.materials.push(id);
+			else if(!(materialid in this.materials)) // check if material with this id exists
+				return "Cannot find a material with id=" + materialid;
+
+			else
+				node.addMaterial(this.materials[materialid]);
 		}
 
 		//texture
 		elems = c.getElementsByTagName('texture');
 
-		if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um texture - reporta e termina
-			return "zero or more than one 'texture' element found in component " + component.id;
-		}
+		if (elems == null  || elems.length != 1) //erro nenhum ou mais do que um texture - reporta e termina
+			return "zero or more than one 'texture' element found in component " + id;
 
 		var texture = elems[0];
 
-		component.textureid = this.parseStringAttr(texture, "id");
+		var textureid = this.parseStringAttr(texture, "id");
 		if(this.error != null) return this.error;
 
-		if(component.textureid != "inherit" && component.textureid != "none") {
-			// check if texture with this id exists
-			this.error = "Cannot find a texture with id=" + component.textureid;
-			this.textures.forEach(function(x){
-					if (x.id == component.textureid) {
-							this.error = null;
-							return;
-					}
-			}, this);
-			if(this.error != null) return this.error;
-		}
+		if(textureid == "inherit")
+			node.setTexture("inherit");
+
+		else if(textureid == "none")
+			node.setTexture("none");
+
+		else if(!(textureid in this.textures))
+			return "Cannot find a texture with id=" + textureid;
+
+		else
+			node.setTexture(this.textures[textureid]);
 
 		//children
 		elems = c.getElementsByTagName('children');
 
-		if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um children - reporta e termina
-			return "zero or more than one 'children' element found in component " + component.id;
-		}
+		if (elems == null  || elems.length != 1) //erro nenhum ou mais do que um children - reporta e termina
+			return "zero or more than one 'children' element found in component " + id;
 
 		var children = elems[0].children;
-
-		component.children = [];
 
 		for(j = 0; j < children.length; j++)
 		{
@@ -1318,47 +1324,42 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		    	child.id = this.parseStringAttr(c, "id");
 					if(this.error != null) return this.error;
 
+					if(!(child.id in this.primitives))
+						return "Cannot find a primitive with id=" + child.id;
+
 					break;
 		    default:
-		    	return "element found in " + component.id + " is not 'componentref' or 'primitiveref' (" + c.nodeName +")."  ;
-		    }
+		    	return "element found in " + id + " is not 'componentref' or 'primitiveref' (" + c.nodeName +")."  ;
+	    }
 
-			component.children.push(child);
+			node.addChildren(child);
+
 		}
 
-		this.components.push(component);
+		this.components[id] = node;
 	}
 
-	for(i = 0; i < this.components.length; i++)
-	{
-		for(k = 0; k < this.components[i].children.length; k++)
-		{
-			if(this.components[i].children[k].type == "primitive") {
-				// check components child id
-				this.error = "Cannot find a primitive with id=" + this.components[i].children[k].id;
-				this.primitives.forEach(function(x) {
-						if (x.id == this.components[i].children[k].id) {
-								this.error = null;
-								return;
-						}
-				}, this);
-				if(this.error != null) return this.error;
+	for(id in this.components) {
+
+		for(k = 0; k < this.components[id].children.length; k++) {
+
+			if(this.components[id].children[k].type == "primitive") {
+
+				if(!(this.components[id].children[k].id in this.primitives))
+					return "Cannot find a primitive with id=" + this.components[id].children[k].id;
+
+			} else {
+
+				if(!(this.components[id].children[k].id in this.components))
+					return "Cannot find a component with id=" + this.components[id].children[k].id;
+
 			}
-			else {
-				// check components child id
-				this.error = "Cannot find a component with id=" + this.components[i].children[k].id;
-				this.components.forEach(function(x){
-						if (x.id == this.components[i].children[k].id) {
-								this.error = null;
-								return;
-						}
-				}, this);
-				if(this.error != null) return this.error;
-			}
+
 		}
+
 	}
 
-	console.log("Components ("+ this.components.length + "):\n\n");
+	/*console.log("Components ("+ this.components.length + "):\n\n");
 	this.components.forEach(function(c) {
 		//id
 		console.log("Component " + c.id);
@@ -1386,7 +1387,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		c.children.forEach(function(ch) {
 			console.log(ch.type + ": id=" + ch.id );
 		});
-	});
+	});*/
 
 }
 
@@ -1474,7 +1475,7 @@ MySceneGraph.prototype.parseItemAttr = function(elem, attr, array) {
 	return e;
 }
 
-MySceneGraph.prototype.createGraph = function () {
+MySceneGraph.prototype.drawGraph = function () {
 
 	for(i = 0; i < this.components.length; i++)
 	{

@@ -919,18 +919,16 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('primitives');
 
-	if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um primitives - reporta e termina
+	if (elems == null  || elems.length != 1) //erro nenhum ou mais do que um primitives - reporta e termina
 		return "zero or more than one 'primitives' element found.";
-	}
 
 	primitives = elems[0];
 
 	var primitivesList = primitives.getElementsByTagName('primitive');
-	if (primitivesList == null  || primitivesList.length == 0) { //erro nenhuma primitive - reporta e termina
+	if (primitivesList == null  || primitivesList.length == 0) //erro nenhuma primitive - reporta e termina
 		return "no 'primitive' element found.";
-	}
 
-	this.primitives = [];
+	this.primitives = new Object;
 
 	for(i = 0; i < primitivesList.length; i++)
 	{
@@ -938,21 +936,16 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 		var primitive = new Object;
 
 		//Id
-		primitive.id = this.parseStringAttr(p, 'id');
+		var primitive_id = this.parseStringAttr(p, 'id');
 		if(this.error != null) return this.error;
 
 		//check for duplicate ids
-		this.primitives.forEach(function(x){
-			if (x.id == primitive.id) {
-				this.error = "Duplicate entry of primitive id (id=" + x.id +").";
-				return;
-			}
-		}, this);
+		if (primitive_id in this.primitives)
+			return "Duplicate entry of primitive id (id=" + x.id +").";
 
 		//Geometric Figure
-		if (p.children == null  || p.children.length != 1) { //erro primitive vazia - reporta e termina
+		if (p.children == null  || p.children.length != 1) //erro primitive vazia - reporta e termina
 			return "'primitive' element with id="+ primitive.id +" is empty.";
-		}
 
 		var figure = p.children[0];
 
@@ -1027,31 +1020,33 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere' or torus.";
 	    }
 
-		this.primitives.push(primitive);
+		this.primitives[primitive_id] = primitive;
 	}
 
 	//Display values for Debugging
 	console.log("--- Parse Primitives ---");
-	this.primitives.forEach(function(p) {
+	for(id in this.primitives) {
+		var p = this.primitives[id];
 		switch(p.type)
 		{
 	    case "rectangle":
-	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", x1 = "+ p.x1 + ", y1 = " + p.y1 + ", x2 = " + p.x2 + ", y2 = " + p.y2 + " }");
+	    	console.log("Primitive id = " + id + " { type = " + p.type + ", x1 = "+ p.x1 + ", y1 = " + p.y1 + ", x2 = " + p.x2 + ", y2 = " + p.y2 + " }");
 	        break;
 	    case "triangle":
-	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", x1 = "+ p.x1 + ", y1 = " + p.y1 + ", z1 = " + p.z1 + ", x2 = " + p.x2 + ", y2 = " + p.y2 + ", z2 = " + p.z2 + ", x3 = " + p.x3 + ", y3 = " + p.y3 + ", z3 = " + p.z3 + " }");
+	    	console.log("Primitive id = " + id + " { type = " + p.type + ", x1 = "+ p.x1 + ", y1 = " + p.y1 + ", z1 = " + p.z1 + ", x2 = " + p.x2 + ", y2 = " + p.y2 + ", z2 = " + p.z2 + ", x3 = " + p.x3 + ", y3 = " + p.y3 + ", z3 = " + p.z3 + " }");
 	        break;
 	    case "cylinder":
-	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", base="+ p.base + ", top = " + p.top + ", height = " + p.height + ", slices = " + p.slices + ", stacks = " + p.stacks + " }");
+	    	console.log("Primitive id = " + id + " { type = " + p.type + ", base="+ p.base + ", top = " + p.top + ", height = " + p.height + ", slices = " + p.slices + ", stacks = " + p.stacks + " }");
 	        break;
 	    case "sphere":
-	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", radius = "+ p.radius + ", slices = " + p.slices + ", stacks = " + p.stacks + " }");
+	    	console.log("Primitive id = " + id + " { type = " + p.type + ", radius = "+ p.radius + ", slices = " + p.slices + ", stacks = " + p.stacks + " }");
 	        break;
 	    case "torus":
-	    	console.log("Primitive id = " + p.id + " { type = " + p.type + ", inner = "+ p.inner + ", outer = " + p.outer + ", slices = " + p.slices + ", loops = " + p.loops + " }");
+	    	console.log("Primitive id = " + id + " { type = " + p.type + ", inner = "+ p.inner + ", outer = " + p.outer + ", slices = " + p.slices + ", loops = " + p.loops + " }");
 	        break;
 	    }
-	});
+	}
+	console.log("");
 }
 
 //--- Parse Components ---
@@ -1110,25 +1105,24 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			if(!(transformationref in this.transformations))
 				return "Cannot find a transformation with id=" + transformationref;
 
-
 			for(k = 0; k < this.transformations[transformationref].list.length; k++) {
 
-					switch (this.transformations[transformationref].list[k].type) {
-						case "translate":
-							this.translateMatrix(m, this.transformations[transformationref].list[k].x, this.transformations[transformationref].list[k].y, this.transformations[transformationref].list[k].z);
-							break;
+				switch (this.transformations[transformationref].list[k].type) {
+					case "translate":
+						this.translateMatrix(m, this.transformations[transformationref].list[k].x, this.transformations[transformationref].list[k].y, this.transformations[transformationref].list[k].z);
+						break;
 
-						case "rotate":
-							this.rotateMatrix(m, this.transformations[transformationref].list[k].axis, this.transformations[transformationref].list[k].angle);
-							break;
+					case "rotate":
+						this.rotateMatrix(m, this.transformations[transformationref].list[k].axis, this.transformations[transformationref].list[k].angle);
+						break;
 
-						case "scale":
-							this.scaleMatrix(m, this.transformations[transformationref].list[k].x, this.transformations[transformationref].list[k].y, this.transformations[transformationref].list[k].z);
-							break;
+					case "scale":
+						this.scaleMatrix(m, this.transformations[transformationref].list[k].x, this.transformations[transformationref].list[k].y, this.transformations[transformationref].list[k].z);
+						break;
 
-						default:
-							return "Not a valid transformation.";
-					}
+					default:
+						return "Not a valid transformation.";
+				}
 			}
 		}
 		else
@@ -1300,46 +1294,34 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 					return "Cannot find a primitive with id=" + this.components[id].children[k].id;
 
 			} else {
-
 				if(!(this.components[id].children[k].id in this.components))
 					return "Cannot find a component with id=" + this.components[id].children[k].id;
-
 			}
-
 		}
-
 	}
+	
+	if (!(this.root in this.components))
+		return "Cannot find root component with id = " + this.root;
 
-	/*console.log("Components ("+ this.components.length + "):\n\n");
-	this.components.forEach(function(c) {
-		//id
-		console.log("Component " + c.id);
-		//transformations
-		if (c.transformationref != null)
-			console.log("transformationref id=" + c.transformationref);
-		else{
-			console.log("transformations: ");
-			c.transformations.forEach(function(t) {
-				if (t.type == "rotate")
-					console.log(t.type + ": axis=" + t.axis + " angle=" + t.angle );
-				else
-					console.log(t.type + ": x=" + t.x + ": y=" + t.y + " z=" + t.z );
-			});
-		}
-		//materials
+	console.log("--- Parse Components ---");
+	for (id in this.components){
+		var c =  this.components[id];
+		
+		console.log("Component id = " + id);
+		
+		console.log("transformations = " + c.transformations);
+		
 		console.log("materials:");
 		c.materials.forEach(function(m_id) {
-			console.log("material id=" + m_id );
+			console.log("	{ emission = [" + m_id.emission + "], ambient = [" + m_id.ambient + "], diffuse = [" + m_id.diffuse + "], specular = [" + m_id.specular+ "], shininess = [" + m_id.shininess + "] }" );
 		});
-		//texture
-		console.log("texture id=" + c.textureid );
-		//children
+		
 		console.log("children: ");
 		c.children.forEach(function(ch) {
-			console.log(ch.type + ": id=" + ch.id );
+			console.log("	" + ch.type + " id = " + ch.id );
 		});
-	});*/
-
+	}
+	console.log("");
 }
 
 /*

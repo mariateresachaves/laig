@@ -674,9 +674,8 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('materials');
 
-	if (elems == null) { // erro não existe nenhum materials - reporta e termina
+	if (elems == null) // erro não existe nenhum materials - reporta e termina
 		return "materials element is missing.";
-	}
 
 	//checks number of 'materials' elements in root (ignores 'materials' in components)
 	var materials;
@@ -689,15 +688,13 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		}
 	}
 
-	if (count != 1) { // erro tem mais do que um materials - reporta e termina
+	if (count != 1) // erro tem mais do que um materials - reporta e termina
 		return "zero or more than one 'materials' element found.";
-	}
 
 	var materialsList = materials.getElementsByTagName('material');
 
-	if (materialsList == null  || materialsList.length==0) {
+	if (materialsList == null  || materialsList.length==0)
 		return "zero 'material' element found..";
-	}
 
 	this.materials = new Object;
 
@@ -712,16 +709,15 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		if(this.error != null) return this.error;
 
 		//check for duplicate ids
-		if (id in this.materials) {
+		if (id in this.materials)
 			return "Duplicate entry of material id (id=" + id +").";
-		}
 
 		//Emission
 		elems = material.getElementsByTagName('emission');
 
-		if (elems == null  || elems.length != 1) {
+		if (elems == null  || elems.length != 1)
 			return "either zero or more than one 'emission' element found.";
-		}
+
 		var emission = elems[0];
 
 		var r = this.parseFloatAttr(emission, 'r');
@@ -738,9 +734,9 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		//Ambient
 		elems = material.getElementsByTagName('ambient');
 
-		if (elems == null  || elems.length != 1) {
+		if (elems == null  || elems.length != 1)
 			return "zero or more than one 'ambient' element found.";
-		}
+
 		var ambient = elems[0];
 
 		var r = this.parseFloatAttr(ambient, 'r');
@@ -757,9 +753,9 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		//Diffuse
 		elems = material.getElementsByTagName('diffuse');
 
-		if (elems == null  || elems.length != 1) {
+		if (elems == null  || elems.length != 1)
 			return "zero or more than one 'diffuse' element found.";
-		}
+
 		var diffuse = elems[0];
 
 		var r = this.parseFloatAttr(diffuse, 'r');
@@ -776,9 +772,9 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		//Specular
 		elems = material.getElementsByTagName('specular');
 
-		if (elems == null  || elems.length != 1) {
+		if (elems == null  || elems.length != 1)
 			return "zero or more than one 'specular' element found.";
-		}
+
 		var specular = elems[0];
 
 		var r = this.parseFloatAttr(specular, 'r');
@@ -795,9 +791,9 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		//Shininess
 		elems = material.getElementsByTagName('shininess');
 
-		if (elems == null  || elems.length != 1) {
+		if (elems == null  || elems.length != 1)
 			return "zero or more than one 'shininess' element found.";
-		}
+
 		var shininess = elems[0];
 
 		m.shininess = this.parseFloatAttr(shininess, 'value');
@@ -825,18 +821,17 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('transformations');
 
-	if (elems == null  || elems.length != 1) { //erro nenhum ou mais do que um 'transformations - reporta e termina
+	if (elems == null  || elems.length != 1) //erro nenhum ou mais do que um 'transformations - reporta e termina
 		return "zero or more than one 'transformations' element found.";
-	}
 
 	transformations = elems[0];
 
 	var transformationsList = transformations.getElementsByTagName('transformation');
-	if (transformationsList == null  || transformationsList.length == 0) { //erro nenhum 'transformation' - reporta e termina
-		return "no 'transformation' element found.";
-	}
 
-	this.transformations = [];
+	if (transformationsList == null  || transformationsList.length == 0) //erro nenhum 'transformation' - reporta e termina
+		return "no 'transformation' element found.";
+
+	this.transformations = new Object;
 
 	for(i = 0; i < transformationsList.length; i++)
 	{
@@ -844,23 +839,18 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 		var transformation = new Object;
 
 		//Id
-		transformation.id = this.parseStringAttr(t, 'id');
+		var transformation_id = this.parseStringAttr(t, 'id');
 		if(this.error != null) return this.error;
 
 		//check for duplicate ids
-		this.transformations.forEach(function(x){
-			if (x.id == transformation.id) {
-				this.error = "Duplicate entry of transformation id (id=" + x.id +").";
-				return;
-			}
-		}, this);
+		if(transformation_id in this.transformations)
+			return "Duplicate entry of transformation id (id=" + transformation_id +").";
 
 		//Transformations
 		var singleTransformationList = t.children;
 
-		if (singleTransformationList == null  || singleTransformationList.length == 0) { //erro nenhuma transformation - reporta e termina
+		if (singleTransformationList == null  || singleTransformationList.length == 0) //erro nenhuma transformation - reporta e termina
 			return "no 'translate', 'rotate' or 'scale' element found.";
-		}
 
 		transformation.list = [];
 
@@ -904,20 +894,23 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 			transformation.list.push(singletransformation);
 		}
 
-		this.transformations.push(transformation);
+		this.transformations[transformation_id] = transformation;
 	}
 
 	//Display values for Debugging
 	console.log("--- Parse Transformations ---");
-	this.transformations.forEach(function(t) {
-		console.log("Transformation id = " + t.id + " (" + t.list.length + " subtransformations):");
+	for(i in this.transformations) {
+		t = this.transformations[i];
+
+		console.log("Transformation id = " + i + " (" + t.list.length + " subtransformations):");
+
 		t.list.forEach(function(s){
 			if(s.type == "rotate")
 				console.log("	" + s.type + ": axis=" + s.axis + ", angle=" + s.angle);
 			else
 				console.log("	" + s.type + ": [" + s.x + "," + s.y + "," + s.z + "]");
 		});
-	});
+	}
 	console.log("");
 }
 

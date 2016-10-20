@@ -117,15 +117,13 @@ MySceneGraph.prototype.onXMLReady=function()
 // --- Parse Scene ---
 MySceneGraph.prototype.parseScene = function(rootElement) {
 
-	if (rootElement.nodeName != "dsx") {
+	if (rootElement.nodeName != "dsx")
 			return "Cannot find a dsx element.";
-	}
 
 	var elems =  rootElement.getElementsByTagName('scene');
 
-	if (elems == null || elems.length != 1) { // erro nennhuma ou mais do que um scene - reporta e termina
+	if (elems == null || elems.length != 1) // erro nennhuma ou mais do que um scene - reporta e termina
 		return "Either zero or more than one 'scene' element found.";
-	}
 
 	var scene = elems[0];
 
@@ -155,9 +153,8 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('views');
 
-	if (elems == null || elems.length != 1) { // erro nenhuma ou mais do que um views - reporta e termina
+	if (elems == null || elems.length != 1) // erro nenhuma ou mais do que um views - reporta e termina
 		return "views zero or more than one 'views' element found.";
-	}
 
 	var views = elems[0];
 
@@ -190,7 +187,7 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 		if(this.error != null) return this.error;
 
 		//check for duplicate ids
-		if(!(perspective_id in this.views.list))
+		if(perspective_id in this.views.list)
 			return "Duplicate entry of perspective id (id=" + perspective_id +").";
 
 		perspective.near = this.parseFloatAttr(p, "near");
@@ -245,8 +242,8 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 	//Display values for Debugging
 	console.log("--- Parse Views ---");
 	console.log("{default = " + this.views.default + "}");
-	for(i = 0; i < this.views.list.length; i++) {
-		console.log("Item id = " + this.views.list[i].id +
+	for(i in this.views.list) {
+		console.log("Item id = " + i +
 				" { near = " + this.views.list[i].near +
 				", far = " + this.views.list[i].far +
 				", angle = " + this.views.list[i].angle +
@@ -261,9 +258,8 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('illumination');
 
-	if (elems == null || elems.length != 1) { // erro nenhum ou mais do que um illumination - reporta e termina
+	if (elems == null || elems.length != 1) // erro nenhum ou mais do que um illumination - reporta e termina
 		return "either zero or more than one 'illumination' element found.";
-	}
 
 	var illumination = elems[0];
 
@@ -280,9 +276,8 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	elems = illumination.getElementsByTagName('ambient');
 
-	if(elems == null || elems.length != 1) {
+	if(elems == null || elems.length != 1)
 		return "missing ambient element.";
-	}
 
 	var illumination_ambient = elems[0];
 
@@ -303,9 +298,8 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	elems = illumination.getElementsByTagName('background');
 
-	if(elems == null || elems.length != 1) {
+	if(elems == null || elems.length != 1)
 		return "missing background element.";
-	}
 
 	var illumination_background = elems[0];
 
@@ -338,9 +332,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('lights');
 
-	if (elems == null || elems.length != 1) { // erro nenhum ou mais do que um lights - reporta e termina
+	if (elems == null || elems.length != 1) // erro nenhum ou mais do que um lights - reporta e termina
 		return "either zero or more than one 'lights' element found.";
-	}
 
 	var lights = elems[0];
 
@@ -348,21 +341,19 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		return "element 'lights' doesn't respect the order in the DSX file.";
 
 	this.lights = new Object;
-	this.lights.omnis = [];
-	this.lights.spots = [];
+	this.lights.omnis = new Object;
+	this.lights.spots = new Object;
 
 	var omnis = lights.getElementsByTagName('omni');
 	var spots = lights.getElementsByTagName('spot');
 
 	var num_elems = omnis.length + spots.length;
 
-	if(num_elems == 0) {
+	if(num_elems == 0)
 		return "missing omnis or spots elements.";
-	}
 
-	if(num_elems != lights.children.length) {
+	if(num_elems != lights.children.length)
 		return "Found elements that are neither omni nor spot."
-	}
 
 	// OMNIS
 	for (var i = 0; i < omnis.length; i++)
@@ -370,25 +361,20 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		var o = omnis[i];
 		var omni = new Object;
 
-		omni.id = this.parseStringAttr(o, "id");
+		var omni_id = this.parseStringAttr(o, "id");
 		if(this.error != null) return this.error;
 
 		//check for duplicate ids
-		this.lights.omnis.forEach(function(x){
-			if (x.id == omni.id) {
-				this.error = "Duplicate entry of omni id (id=" + x.id +").";
-				return;
-			}
-		}, this);
+		if(omni_id in this.lights.omnis)
+			return "Duplicate entry of omni id (id=" + omni_id +").";
 
 		omni.enabled = this.parseIntegerAttrAsBoolean(o, 'enabled');
 		if(this.error != null) return this.error;
 
 		elems = o.getElementsByTagName('location');
 
-		if(elems.length != 1) {
+		if(elems.length != 1)
 			return "missing location element in omni.";
-		}
 
 		var o_location = elems[0];
 
@@ -408,9 +394,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 		elems = o.getElementsByTagName('ambient');
 
-		if(elems.length != 1) {
+		if(elems.length != 1)
 			return "missing ambient element in omni.";
-		}
 
 		var ambient = elems[0];
 
@@ -430,9 +415,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 		elems = o.getElementsByTagName('diffuse');
 
-		if(elems.length != 1) {
+		if(elems.length != 1)
 			return "missing diffuse element in omni.";
-		}
 
 		var diffuse = elems[0];
 
@@ -452,9 +436,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 		elems = o.getElementsByTagName('specular');
 
-		if(elems.length != 1) {
+		if(elems.length != 1)
 			return "missing specular element in omni.";
-		}
 
 		var specular = elems[0];
 
@@ -472,7 +455,7 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 		omni.specular = [r,g,b,a];
 
-		this.lights.omnis.push(omni);
+		this.lights.omnis[omni_id] = omni;
 	}
 
 	//SPOTS
@@ -481,16 +464,12 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		var s = spots[i];
 		var spot = new Object;
 
-		spot.id = this.parseStringAttr(s, "id");
+		var spot_id = this.parseStringAttr(s, "id");
 		if(this.error != null) return this.error;
 
 		//check for duplicate ids
-		this.lights.spots.forEach(function(x){
-			if (x.id == spot.id) {
-				this.error = "Duplicate entry of spot id (id=" + x.id +").";
-				return;
-			}
-		}, this);
+		if(spot_id in this.lights.spots)
+			return "Duplicate entry of spot id (id=" + spots_id +").";
 
 		spot.enabled = this.parseIntegerAttrAsBoolean(s, 'enabled');
 		if(this.error != null) return this.error;
@@ -505,9 +484,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		//target
 		elems = s.getElementsByTagName('target');
 
-		if(elems.length != 1) {
+		if(elems.length != 1)
 			return "missing target element in spot.";
-		}
 
 		var target = elems[0];
 
@@ -525,9 +503,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		//location
 		elems = s.getElementsByTagName('location');
 
-		if(elems.length != 1) {
+		if(elems.length != 1)
 			return "missing location element in spot.";
-		}
 
 		var location = elems[0];
 
@@ -545,9 +522,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		//ambient
 		elems = s.getElementsByTagName('ambient');
 
-		if(elems.length != 1) {
+		if(elems.length != 1)
 			return "missing ambient element in spot.";
-		}
 
 		var ambient = elems[0];
 
@@ -568,9 +544,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		//diffuse
 		elems = s.getElementsByTagName('diffuse');
 
-		if(elems.length != 1) {
+		if(elems.length != 1)
 			return "missing diffuse element in spot.";
-		}
 
 		var diffuse = elems[0];
 
@@ -591,9 +566,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 		//specular
 		elems = s.getElementsByTagName('specular');
 
-		if(elems.length != 1) {
+		if(elems.length != 1)
 			return "missing specular element in spot.";
-		}
 
 		var specular = elems[0];
 
@@ -611,13 +585,13 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 
 		spot.specular = [r,g,b,a];
 
-		this.lights.spots.push(spot);
+		this.lights.spots[spot_id] = spot;
 	}
 
 	//Display values for Debugging
 	console.log("--- Parse Lights ---")
-	for(i = 0; i < this.lights.omnis.length; i++) {
-		console.log("Omni id = " + this.lights.omnis[i].id +
+	for(i in this.lights.omnis) {
+		console.log("Omni id = " + i +
 				" { enabled = " + this.lights.omnis[i].enabled +
 				", location = [" + this.lights.omnis[i].location + "]" +
 				", ambient = [" + this.lights.omnis[i].ambient + "]" +
@@ -625,8 +599,8 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 				", specular = [" + this.lights.omnis[i].specular + "] }");
 	}
 
-	for(i = 0; i < this.lights.spots.length; i++) {
-		console.log("Spot id = " + this.lights.spots[i].id +
+	for(i in this.lights.spots) {
+		console.log("Spot id = " + i +
 				" { enabled = " + this.lights.spots[i].enabled +
 				", target = [" + this.lights.spots[i].target + "]" +
 				", location = [" + this.lights.spots[i].location + "]" +
@@ -1148,7 +1122,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 				return "Cannot find a transformation with id=" + transformationref;
 
 
-			for(k = 0; k < this.transformations[transformationref].list.length) {
+			for(k = 0; k < this.transformations[transformationref].list.length; k++) {
 
 					switch (this.transformations[transformationref].list[k].type) {
 						case "translate":

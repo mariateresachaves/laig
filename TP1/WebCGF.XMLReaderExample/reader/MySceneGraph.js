@@ -1136,46 +1136,43 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 				{
 			    case "translate":
 			    	subtransformation.type = "translate";
-
-						subtransformation.x = this.parseFloatAttr(t, 'x');
-						if(this.error != null) return this.error;
-
+			    	
+			    	subtransformation.x = this.parseFloatAttr(t, 'x');
+			    	if(this.error != null) return this.error;
+			    	
 			    	subtransformation.y = this.parseFloatAttr(t, 'y');
-						if(this.error != null) return this.error;
-
-						subtransformation.z = this.parseFloatAttr(t, 'z');
-						if(this.error != null) return this.error;
-
-						this.translateMatrix(m, subtransformation.x, subtransformation.y, subtransformation.z);
-
-						break;
+			    	if(this.error != null) return this.error;
+			    	
+			    	subtransformation.z = this.parseFloatAttr(t, 'z');
+			    	if(this.error != null) return this.error;
+			    	
+			    	this.translateMatrix(m, subtransformation.x, subtransformation.y, subtransformation.z);
+			    	break;
 			    case "rotate":
 			    	subtransformation.type = "rotate";
-
-						subtransformation.axis = this.parseItemAttr(t, 'axis', ['x','y','z']);
-						if(this.error != null) return this.error;
-
-						var a = this.parseFloatAttr(t, 'angle');
-						subtransformation.angle = degToRad*a;
-						if(this.error != null) return this.error;
-
-						this.rotateMatrix(m, subtransformation.axis, subtransformation.angle);
-
+			    	
+			    	subtransformation.axis = this.parseItemAttr(t, 'axis', ['x','y','z']);
+			    	if(this.error != null) return this.error;
+			    	
+			    	var a = this.parseFloatAttr(t, 'angle');
+			    	subtransformation.angle = degToRad*a;
+			    	if(this.error != null) return this.error;
+			    	
+			    	this.rotateMatrix(m, subtransformation.axis, subtransformation.angle);
 			    	break;
 			    case "scale":
 			    	subtransformation.type = "scale";
-
-						subtransformation.x = this.parseFloatAttr(t, 'x');
-						if(this.error != null) return this.error;
+			    	
+			    	subtransformation.x = this.parseFloatAttr(t, 'x');
+			    	if(this.error != null) return this.error;
 
 			    	subtransformation.y = this.parseFloatAttr(t, 'y');
-						if(this.error != null) return this.error;
+			    	if(this.error != null) return this.error;
 
-						subtransformation.z = this.parseFloatAttr(t, 'z');
-						if(this.error != null) return this.error;
+			    	subtransformation.z = this.parseFloatAttr(t, 'z');
+			    	if(this.error != null) return this.error;
 
-						this.scaleMatrix(m, subtransformation.x, subtransformation.y, subtransformation.z);
-
+					this.scaleMatrix(m, subtransformation.x, subtransformation.y, subtransformation.z);
 			        break;
 			    default:
 			    	return "element found is not 'translate', 'rotate' or 'scale'.";
@@ -1302,6 +1299,14 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 	
 	if (!(this.root in this.components))
 		return "Cannot find root component with id = " + this.root;
+	
+	var rootMaterials = this.components[this.root].materials;
+	for (i = 0; i < rootMaterials.length; i++)
+	{
+		if (rootMaterials[i] == "inherit")
+			return "Root component cannot inherit material";		
+	}
+		
 
 	console.log("--- Parse Components ---");
 	for (id in this.components){
@@ -1313,7 +1318,10 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		
 		console.log("materials:");
 		c.materials.forEach(function(m_id) {
-			console.log("	{ emission = [" + m_id.emission + "], ambient = [" + m_id.ambient + "], diffuse = [" + m_id.diffuse + "], specular = [" + m_id.specular+ "], shininess = [" + m_id.shininess + "] }" );
+			if (m_id == "inherit")
+				console.log("	<inherit>");
+			else
+				console.log("	{ emission = [" + m_id.emission + "], ambient = [" + m_id.ambient + "], diffuse = [" + m_id.diffuse + "], specular = [" + m_id.specular+ "], shininess = [" + m_id.shininess + "] }" );
 		});
 		
 		console.log("children: ");

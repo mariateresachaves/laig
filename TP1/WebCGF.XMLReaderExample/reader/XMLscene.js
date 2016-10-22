@@ -47,11 +47,11 @@ XMLscene.prototype.onGraphLoaded = function ()
 {
 	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
 	this.lights[0].setVisible(true);
-  this.lights[0].enable();
-
+	this.lights[0].enable();
+	
 	this.setAmbient(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
-  this.lights[1].setVisible(true);
-  this.lights[1].enable();
+	this.lights[1].setVisible(true);
+	this.lights[1].enable();
 };
 
 XMLscene.prototype.display = function () {

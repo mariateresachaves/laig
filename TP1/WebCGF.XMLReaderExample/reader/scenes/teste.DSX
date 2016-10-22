@@ -261,6 +261,7 @@
 
           <materials>
               <material id="A" />
+              <material id="inherit" />
           </materials>
 
             <texture id="texture 2" />

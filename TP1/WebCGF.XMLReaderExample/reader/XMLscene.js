@@ -52,6 +52,8 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.setAmbient(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
 	this.lights[1].setVisible(true);
 	this.lights[1].enable();
+
+  this.initializePrimitives();
 };
 
 XMLscene.prototype.display = function () {
@@ -81,6 +83,8 @@ XMLscene.prototype.display = function () {
 	if (this.graph.loadedOk)
 	{
 		this.lights[0].update();
+
+    this.drawComponent(this.graph.root, null, null);
 	};
 };
 
@@ -88,8 +92,11 @@ XMLscene.prototype.display = function () {
 XMLscene.prototype.drawComponent = function (componentID, parentMaterialID, parentTextureID)
 {
 	var component = this.graph.components[componentID];
+  console.log(componentID + " " + component );
 
 	var materialID = component.materials[0];
+	console.log("material length = " + component.materials.length);
+
 	if (materialID == "inherit") materialID = parentMaterialID;
 
 	var textureID = component.texture;
@@ -98,9 +105,9 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterialID, pare
 	for (i = 0; i < component.children.length; i++)
 	{
 		if (component.children[i].type == "component")
-			this.drawComponent(component.children[i], materialID, textureID);
+			this.drawComponent(component.children[i].id, materialID, textureID);
 		else
-			this.drawPrimitive(component.children[i], materialID, textureID);
+			this.drawPrimitive(component.children[i].id, materialID, textureID);
 	}
 }
 
@@ -135,9 +142,37 @@ XMLscene.prototype.initializePrimitives = function ()
 	}
 }
 
+//--- Iniatize Textures ---
+XMLscene.prototype.initializeTextures = function () {
+  this.textures = new Object;
+
+	for( var textureID in this.graph.textures )
+	{
+		var t = this.graph.textures[textureID];
+
+		this.textures[textureID] = new CGFtexture(t.file);
+	}
+}
+
 //--- Draw Primitives ---
-XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
+XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterialID, parentTextureID)
 {
+	var m = this.graph.materials[parentMaterialID];
+
+    var material = new CGFappearance(this);
+    material.setEmission(m.emission[0], m.emission[1], m.emission[2], m.emission[3]);
+    material.setAmbient(m.ambient[0], m.ambient[1], m.ambient[2], m.ambient[3]);
+    material.setDiffuse(m.diffuse[0], m.diffuse[1], m.diffuse[2], m.diffuse[3]);
+    material.setSpecular(m.specular[0], m.specular[1], m.specular[2], m.specular[3]);
+    material.setShininess(m.shininess);
+
+    if(parentTextureID != "none"){
+    	//material.setTexture(this.textures[parentTextureID]);
+    	material.loadTexture(this.graph.textures[parentTextureID].file);
+    }
+
+    material.apply();
+
 	var primitive = this.primitives[primitiveID];
 	primitive.display();
 }

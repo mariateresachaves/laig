@@ -1321,7 +1321,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			if (m_id == "inherit")
 				console.log("	<inherit>");
 			else
-				console.log("	{ emission = [" + m_id.emission + "], ambient = [" + m_id.ambient + "], diffuse = [" + m_id.diffuse + "], specular = [" + m_id.specular+ "], shininess = [" + m_id.shininess + "] }" );
+				console.log("	{ emission = [" + m_id.emission + "], ambient = [" + m_id.ambient + "], diffuse = [" + m_id.diffuse + "], specular = [" + m_id.specular+ "], shininess = " + m_id.shininess + " }" );
 		});
 		
 		console.log("children: ");

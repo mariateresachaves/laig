@@ -83,3 +83,61 @@ XMLscene.prototype.display = function () {
 		this.lights[0].update();
 	};
 };
+
+//--- Draw Components ---
+XMLscene.prototype.drawComponent = function (componentID, parentMaterialID, parentTextureID)
+{
+	var component = this.graph.components[componentID];
+	
+	var materialID = component.materials[0];
+	if (materialID == "inherit") materialID = parentMaterialID;
+	
+	var textureID = component.texture;
+	if (textureID == "inherit") textureID = parentTextureID;
+	
+	for (i = 0; i < component.children.length; i++)
+	{
+		if (component.children[i].type == "component")
+			this.drawComponent(component.children[i], materialID, textureID);
+		else
+			this.drawPrimitive(component.children[i], materialID, textureID);
+	}
+}
+
+//--- Iniatize Primitives ---
+XMLscene.prototype.initializePrimitives = function ()
+{
+	this.primitives = new Object;
+	
+	for( var primitiveID in this.graph.primitives )
+	{
+		var p = this.graph.primitives[primitiveID];
+		
+		switch (p.type){
+		case "rectangle":
+			var primitive = new Rectangle(this.scene, p.x1, p.y1, p.x2, p.y2);
+			break;
+		case "triangle":
+			var primitive = new Triangle(this.scene, p.x1, p.y1, p.z1, p.x2, p.y2, p.z2, p.x3, p.y3, p.z3);
+			break;
+		case "cylinder":
+			var primitive = new Cylinder(this.scene, p.base, p.top, p.height, p.slices, p.stacks);
+			break;
+		case "sphere":
+			var primitive = new Sphere(this.scene, p.radius, p.slices, p.stacks);
+			break;
+		case "torus":
+			var primitive = new Torus(this.scene, p.inner, p.outer, p.slices, p.loops);
+			break;
+		}
+		
+		this.primitives[primitiveID] = primitive;
+	}
+}
+
+//--- Draw Primitives ---
+XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
+{
+	var primitive = this.primitives[primitiveID];
+	primitive.display();
+}

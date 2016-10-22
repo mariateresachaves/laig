@@ -48,12 +48,10 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
 	this.lights[0].setVisible(true);
 	this.lights[0].enable();
-	
+
 	this.setAmbient(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
 	this.lights[1].setVisible(true);
 	this.lights[1].enable();
-	
-	this.initializePrimitives();
 };
 
 XMLscene.prototype.display = function () {
@@ -83,8 +81,6 @@ XMLscene.prototype.display = function () {
 	if (this.graph.loadedOk)
 	{
 		this.lights[0].update();
-		
-		this.drawComponent(this.graph.root, null, null);
 	};
 };
 
@@ -92,89 +88,56 @@ XMLscene.prototype.display = function () {
 XMLscene.prototype.drawComponent = function (componentID, parentMaterialID, parentTextureID)
 {
 	var component = this.graph.components[componentID];
-	console.log(componentID + " " + component );
-	
-	var materialID = component.materials[0];
-	console.log("material length = " + component.materials.length);
 
+	var materialID = component.materials[0];
 	if (materialID == "inherit") materialID = parentMaterialID;
 
-	
 	var textureID = component.texture;
 	if (textureID == "inherit") textureID = parentTextureID;
-	
+
 	for (i = 0; i < component.children.length; i++)
 	{
 		if (component.children[i].type == "component")
-			this.drawComponent(component.children[i].id, materialID, textureID);
+			this.drawComponent(component.children[i], materialID, textureID);
 		else
-			this.drawPrimitive(component.children[i].id, materialID, textureID);
+			this.drawPrimitive(component.children[i], materialID, textureID);
 	}
-}
-
-//--- Draw Primitives ---
-XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterialID, parentTextureID)
-{
-	var m = this.graph.materials[parentMaterialID];
-	
-    var material = new CGFappearance(this);
-    material.setEmission(m.emission[0], m.emission[1], m.emission[2], m.emission[3]);
-    material.setAmbient(m.ambient[0], m.ambient[1], m.ambient[2], m.ambient[3]);
-    material.setDiffuse(m.diffuse[0], m.diffuse[1], m.diffuse[2], m.diffuse[3]);
-    material.setSpecular(m.specular[0], m.specular[1], m.specular[2], m.specular[3]);
-    material.setShininess(m.shininess);
-    
-    if(parentTextureID != "none"){    	
-    	//material.setTexture(this.textures[parentTextureID]);
-    	material.loadTexture(this.graph.textures[parentTextureID].file);
-    }
-    
-    material.apply();
-	
-	var primitive = this.primitives[primitiveID];
-	primitive.display();
 }
 
 //--- Iniatize Primitives ---
 XMLscene.prototype.initializePrimitives = function ()
 {
 	this.primitives = new Object;
-	
+
 	for( var primitiveID in this.graph.primitives )
 	{
 		var p = this.graph.primitives[primitiveID];
-		
+
 		switch (p.type){
 		case "rectangle":
-			var primitive = new Rectangle(this.scene, p.x1, p.y1, p.x2, p.y2);
+			var primitive = new MyQuad(this.scene, p.x1, p.y1, p.x2, p.y2);
 			break;
 		case "triangle":
-			var primitive = new Triangle(this.scene, p.x1, p.y1, p.z1, p.x2, p.y2, p.z2, p.x3, p.y3, p.z3);
+			var primitive = new MyTriangle(this.scene, p.x1, p.y1, p.z1, p.x2, p.y2, p.z2, p.x3, p.y3, p.z3);
 			break;
 		case "cylinder":
-			var primitive = new Cylinder(this.scene, p.base, p.top, p.height, p.slices, p.stacks);
+			var primitive = new MyCylinder(this.scene, p.base, p.top, p.height, p.slices, p.stacks);
 			break;
 		case "sphere":
-			var primitive = new Sphere(this.scene, p.radius, p.slices, p.stacks);
+			var primitive = new MySemisphere(this.scene, p.radius, p.slices, p.stacks);
 			break;
 		case "torus":
-			var primitive = new Torus(this.scene, p.inner, p.outer, p.slices, p.loops);
+			var primitive = new MyTorus(this.scene, p.inner, p.outer, p.slices, p.loops);
 			break;
 		}
-		
+
 		this.primitives[primitiveID] = primitive;
 	}
 }
 
-//--- Iniatize Primitives ---
-XMLscene.prototype.initializeTextures = function ()
+//--- Draw Primitives ---
+XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
 {
-	this.textures = new Object;
-	
-	for( var textureID in this.graph.textures )
-	{
-		var t = this.graph.textures[textureID];
-		
-		this.textures[textureID] = new CGFtexture(t.file);
-	}
+	var primitive = this.primitives[primitiveID];
+	primitive.display();
 }

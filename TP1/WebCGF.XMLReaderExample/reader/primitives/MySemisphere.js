@@ -2,9 +2,9 @@
  * MySemisphere
  * @constructor
  */
- function MySemisphere(scene, slices, stacks) {
+ function MySemisphere(scene, radius, slices, stacks) {
  	CGFobject.call(this,scene);
-	
+
 	this.slices = slices;
 	this.stacks = stacks;
 
@@ -31,7 +31,7 @@
  			{
  				var x = Math.cos(alpha*i)*Math.cos(Math.asin(j/this.stacks));
  				var y = Math.sin(alpha*i)*Math.cos(Math.asin(j/this.stacks));
- 				
+
  				this.vertices.push(x);
 	 			this.vertices.push(y);
 	 			this.vertices.push(j/this.stacks);
@@ -65,7 +65,7 @@
 						this.indices.push(0 + i + this.slices*j);
 					}
 				}
- 			} 			
+ 			}
  		}
  		else
  		{

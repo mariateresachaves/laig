@@ -52,7 +52,7 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.setAmbient(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
 	this.lights[1].setVisible(true);
 	this.lights[1].enable();
-	
+
 	this.initializePrimitives();
 };
 
@@ -83,14 +83,67 @@ XMLscene.prototype.display = function () {
 	if (this.graph.loadedOk)
 	{
 		this.lights[0].update();
-		this.drawComponent(this.graph.root, null, null);
+    this.drawComponent(this.graph.root, "inherit", "inherit");
+		//this.drawComponent(this.graph.root, "inherit", "inherit");
 		//this.drawPrimitive('E', null, null);
 	};
 };
 
 //--- Draw Components ---
+/*XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parentTexture)
+{
+
+  if(componentID in this.primitives ) {
+
+    var component = this.graph.primitives[componentID];
+  	//	console.log(componentID + " " + component );
+
+  	var material = component.material;
+  	//console.log("material length = " + component.materials.length);
+
+  	if (material == "inherit") material = parentMaterial;
+
+  	var texture = component.texture;
+  	if (texture == "inherit") texture = parentTexture;
+
+    console.log(component.type + " - " + component.id);
+    this.drawPrimitive(component.id, material, texture);
+  }
+  else {
+
+    var component = this.graph.components[componentID];
+  	//	console.log(componentID + " " + component );
+
+  	var material = component.material;
+  	//console.log("material length = " + component.materials.length);
+
+  	if (material == "inherit") material = parentMaterial;
+
+  	var texture = component.texture;
+  	if (texture == "inherit") texture = parentTexture;
+
+    for (i = 0; i < component.children.length; i++)
+  	{
+        console.log(component.children[i].type + " - " + component.children[i].id);
+    		this.drawComponent(component.children[i].id, material, texture);
+  	}
+  }
+
+
+
+  return;
+
+}*/
+
 XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parentTexture)
 {
+  console.log("ID RECEBIDO NO DRAWCOMPONENT: " + componentID);
+
+  if(this.graph.components[componentID].children[0].id in this.primitives ){
+  	this.drawPrimitive(this.graph.components[componentID].children[0].id, this.graph.components[componentID].material, this.graph.components[componentID].texture);
+    return;
+ 	}
+
 	var component = this.graph.components[componentID];
 	//	console.log(componentID + " " + component );
 
@@ -102,24 +155,25 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 	var texture = component.texture;
 	if (texture == "inherit") texture = parentTexture;
 
-	for (i = 0; i < component.children.length; i++)
-	{
-		if (component.children[i].type == "component")
-			this.drawComponent(component.children[i].id, material, texture);
-		else
-			this.drawPrimitive(component.children[i].id, material, texture);
+  for (i = 0; i < component.children.length; i++){
+
+      console.log(component.children[i].type + " - " + component.children[i].id);
+  		this.drawComponent(component.children[i].id, material, texture);
 	}
+
 }
 
 //--- Draw Primitives ---
 XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
 {
+  console.log("ID RECEBIDO NO DRAWPRIMITIVE: " + primitiveID);
+
     /*if(parentTexture != "none"){
     	//material.setTexture(this.textures[parentTextureID]);
     	material.loadTexture(parentTexture.file);
     }*/
 
-	parentMaterial.apply();
+	//parentMaterial.apply();
 
 	this.primitives[primitiveID].display();
 }

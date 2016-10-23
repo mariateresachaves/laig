@@ -11,6 +11,11 @@ XMLscene.prototype.init = function (application) {
 
     this.enableTextures(true);
 
+    this.cameras = [];
+    this.camera_index = 0;
+    this.camera_changed = false;
+    this.num_cameras = 0;
+
     this.initCameras();
 
     this.myInterface = new MyInterface(this);
@@ -85,11 +90,53 @@ XMLscene.prototype.onGraphLoaded = function ()
 
     i++;
   }
+
+  for(perspective in this.graph.views.list) {
+    var p = this.graph.views.list[perspective];
+
+    if(p == 'default')
+      this.camera_index = this.num_cameras;
+
+    this.cameras[this.num_cameras] = new CFGcamera(p.near, p.far, p.angle, vec3.fromValues(p.from[0], p.from[1], p.from[2]),
+                                                            vec3.fromValues(p.to[0], p.to[1], p.to[2]));
+  }
+
 };
 
 XMLscene.prototype.updateLights = function() {
 	for (i = 0; i < this.lights.length; i++)
 		this.lights[i].update();
+};
+
+XMLscene.prototype.changeCamera = function() {
+  this.index++;
+  this.changeCamera = true;
+
+  /*var flag = false;
+
+  for(perspective in this.graph.views.list) {
+    var p = this.graph.views.list[perspective];
+
+    if(this.actual_camara == null) {
+      this.camera.angle = p.angle;
+    	this.camera.near = p.near;
+    	this.camera.far = p.far;
+    	this.camera.setPosition(vec3.fromValues(p.from[0], p.from[1], p.from[2]));
+    	this.camera.setTarget(vec3.fromValues(p.to[0], p.to[1], p.to[2]));
+    }
+
+    if(perspective == this.actual_camara)
+      flag = true;
+
+    if(flag) {
+      this.camera.angle = p.angle;
+      this.camera.near = p.near;
+      this.camera.far = p.far;
+      this.camera.setPosition(vec3.fromValues(p.from[0], p.from[1], p.from[2]));
+      this.camera.setTarget(vec3.fromValues(p.to[0], p.to[1], p.to[2]));
+    }
+  }*/
+
 };
 
 XMLscene.prototype.display = function () {
@@ -124,26 +171,36 @@ XMLscene.prototype.display = function () {
 		//this.drawComponent(this.graph.root, null, null);
 		this.drawComponent(this.graph.root, "inherit", "inherit");
 		//this.drawPrimitive('E', null, null);
+
+    var i = 0;
+
+    for(omni in this.graph.lights.omnis) {
+      if(this[omni])
+    		this.lights[i].enable();
+    	else
+    		this.lights[i].disable();
+
+      i++;
+    }
+    for(spot in this.graph.lights.spots) {
+      if(this[spot])
+    		this.lights[i].enable();
+    	else
+    		this.lights[i].disable();
+
+      i++;
+    }
 	};
 
-  var i = 0;
+  /*if(cameraChanged) {
+    cameraChanged = false;
 
-  for(omni in this.graph.lights.omnis) {
-    if(this[omni])
-  		this.lights[i].enable();
-  	else
-  		this.lights[i].disable();
+    if(this.camera_index == this.num_cameras)
+      this.camera_index = 0;
 
-    i++;
-  }
-  for(spot in this.graph.lights.spots) {
-    if(this[spot])
-  		this.lights[i].enable();
-  	else
-  		this.lights[i].disable();
+    this.camera = this.cameras[this.camera_index];
+  }*/
 
-    i++;
-  }
 };
 
 //--- Draw Components ---

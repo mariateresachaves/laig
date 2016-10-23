@@ -144,13 +144,13 @@
 			<rectangle x1="-0.5" y1="-0.5" x2="0.5" y2="0.5" />
 		</primitive>
 		<primitive id="sphere">
-            <sphere radius="1" slices="10" stacks="10" />
+            <sphere radius="1" slices="50" stacks="10" />
         </primitive>
 		<primitive id="cylinder">
-            <cylinder base="1.0" top="1.0" height="1" slices="20" stacks="10" />
+            <cylinder base="1.0" top="1.0" height="1" slices="25" stacks="10" />
         </primitive>
 		<primitive id="torus">
-            <torus inner="0.8" outer="1" slices="20" loops="20" />
+            <torus inner="0.4" outer="1" slices="50" loops="50" />
         </primitive>
 	</primitives>
 

@@ -1,8 +1,8 @@
 /**
- * MyQuad
+ * Rectangle
  * @constructor
  */
- function MyQuad(scene, x1, y1, x2, y2/*, minS, maxS, minT, maxT*/) {
+ function Rectangle(scene, x1, y1, x2, y2/*, minS, maxS, minT, maxT*/) {
  	CGFobject.call(this,scene);
 
     /*this.minS = minS;
@@ -19,10 +19,10 @@
  	this.initBuffers();
  };
 
- MyQuad.prototype = Object.create(CGFobject.prototype);
- MyQuad.prototype.constructor = MyQuad;
+ Rectangle.prototype = Object.create(CGFobject.prototype);
+ Rectangle.prototype.constructor = Rectangle;
 
- MyQuad.prototype.initBuffers = function() {
+ Rectangle.prototype.initBuffers = function() {
  	this.vertices = [
     this.x1, this.y1, 0,
   	this.x2, this.y1, 0,

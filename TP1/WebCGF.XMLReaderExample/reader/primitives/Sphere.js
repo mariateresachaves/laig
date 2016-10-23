@@ -1,20 +1,21 @@
 /**
- * MySemisphere
+ * Sphere
  * @constructor
  */
- function MySemisphere(scene, radius, slices, stacks) {
+ function Sphere(scene, radius, slices, stacks) {
  	CGFobject.call(this,scene);
 
-	this.slices = slices;
+ 	this.radius = radius;
+ 	this.slices = slices;
 	this.stacks = stacks;
 
  	this.initBuffers();
  };
 
- MySemisphere.prototype = Object.create(CGFobject.prototype);
- MySemisphere.prototype.constructor = MySemisphere;
+ Sphere.prototype = Object.create(CGFobject.prototype);
+ Sphere.prototype.constructor = Sphere;
 
- MySemisphere.prototype.initBuffers = function() {
+ Sphere.prototype.initBuffers = function() {
 
  	this.vertices = [];
  	this.normals = [];
@@ -29,12 +30,13 @@
  		{
  			for(i = 0; i < this.slices; i++)
  			{
- 				var x = Math.cos(alpha*i)*Math.cos(Math.asin(j/this.stacks));
- 				var y = Math.sin(alpha*i)*Math.cos(Math.asin(j/this.stacks));
+ 				var x = this.radius * Math.cos(alpha*i) * Math.cos(Math.asin(j/this.stacks));
+ 				var y = this.radius * Math.sin(alpha*i) * Math.cos(Math.asin(j/this.stacks));
+ 				var z = this.radius * j/this.stacks;
 
  				this.vertices.push(x);
 	 			this.vertices.push(y);
-	 			this.vertices.push(j/this.stacks);
+	 			this.vertices.push(z);
 
 	 			this.normals.push(x);
 	 			this.normals.push(y);
@@ -71,7 +73,7 @@
  		{
  			this.vertices.push(0);
 	 		this.vertices.push(0);
-	 		this.vertices.push(1);
+	 		this.vertices.push(this.radius);
 
 	 		this.normals.push(0);
 	 		this.normals.push(0);

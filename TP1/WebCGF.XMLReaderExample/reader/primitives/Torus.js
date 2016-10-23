@@ -1,66 +1,62 @@
 /**
- * MyTriangle
+ * Torus
+ * 
  * @constructor
  */
- function MyTorus(scene, r_inner, r_outer, slices, loops) {
- 	CGFobject.call(this,scene);
+function Torus(scene, innerRadius, outerRadius, slices, loops) {
+	CGFobject.call(this,scene);
 
-  this.r_inner = r_inner;
-  this.r_outer = r_outer;
-  this.slices = slices;
-  this.loops = loops;
+	this.innerRadius = innerRadius;
+	this.outerRadius = outerRadius;
+	this.slices = slices;
+	this.loops = loops;
 
  	this.initBuffers();
- };
+};
 
- MyTorus.prototype = Object.create(CGFobject.prototype);
- MyTorus.prototype.constructor = MyTorus;
+Torus.prototype = Object.create(CGFobject.prototype);
+Torus.prototype.constructor = Torus;
 
- MyTorus.prototype.initBuffers = function() {
-  this.vertices = [];
-  this.normals = [];
-  this.indices = [];
-  this.texCoords = [];
+Torus.prototype.initBuffers = function()
+{
+	this.vertices = [];
+	this.normals = [];
+	this.indices = [];
+	this.texCoords = [];
 
-  var r_alpha = 2 * Math.PI / this.slices;
-  var h_alpha = 2 * Math.PI / this.loops;
-  var current_rotation = 0;
-  var current_loop, r, normals_dist;
+	var alpha = 2 * Math.PI / this.loops;
+	var beta = 2 * Math.PI / this.slices;
+	var R = this.outerRadius;
+	var r = this.innerRadius;
 
-  for(i = 0; i < this.slices + 1; i++) {
-    current_loop = 0;
-
-    for(j = 0; j < this.loops + 1; j++) {
-      r = this.r_outer+this.r_inner*Math.cos(current_loop);
-
-      normals_dist = Math.sqrt(Math.pow(Math.cos(current_rotation)*Math.cos(current_loop), 2)+
-                               Math.pow(Math.sin(current_rotation)*Math.cos(current_loop), 2)+
-                               Math.pow(Math.sin(current_loop), 2));
-
-      // Normals
-      this.normals.push(Math.cos(current_rotation)*Math.cos(current_loop)/normals_dist);
- 			this.normals.push(Math.sin(current_rotation)*Math.cos(current_loop)/normals_dist);
- 			this.normals.push(Math.sin(current_loop)/normals_dist);
-
-      // Vertices
-      this.vertices.push(r*Math.cos(current_rotation));
-      this.vertices.push(r*Math.sin(current_rotation));
-      this.vertices.push(this.r_inner*Math.sin(current_loop));
-
-      // Textures
-      this.texCoords.push(i/this.slices, j/this.loops);
-
-      // Indices
-      if(i > 0 && j > 0)
+	for(i = 0; i <= this.loops; i++)
+	{
+		for(j = 0; j <= this.slices; j++)
+		{
+			var x = (R + r * Math.cos(beta*j) ) * Math.cos(alpha*i);
+			var y = (R + r * Math.cos(beta*j) ) * Math.sin(alpha*i);
+			var z = -r * Math.sin(beta*j);			
+			this.vertices.push(x, y, z);
+			
+			var nx = Math.cos(beta*j) * Math.cos(alpha*i);
+			var ny = Math.cos(beta*j) * Math.sin(alpha*i);
+			var nz = -Math.sin(beta*j);
+			this.normals.push(nx, ny, nz);
+			
+			if (i != this.loops && j != this.slices)
 			{
-				this.indices.push((this.slices+1)*(i)+(j),(this.slices+1)*(i)+(j-1),(this.slices+1)*(i-1)+(j-1));
-				this.indices.push((this.slices+1)*(i)+(j),(this.slices+1)*(i-1)+(j-1),(this.slices+1)*(i-1)+(j));
+				var i0 = (this.slices + 1) * i + j;
+				var i1 = i0 + 1;
+				var i2 = (this.slices + 1) * (i + 1) + j;
+				var i3 = i2 + 1;
+				
+				this.indices.push(i0, i1, i3, i3, i2, i0);
 			}
-
-    }
-  }
-
-
+	
+			this.texCoords.push(i/this.slices, j/this.loops);
+		}
+	}
+	
  	this.primitiveType = this.scene.gl.TRIANGLES;
  	this.initGLBuffers();
- };
+};

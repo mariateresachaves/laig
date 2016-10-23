@@ -13,7 +13,7 @@ XMLscene.prototype.init = function (application) {
 
     this.initCameras();
 
-    this.myInterface = new MyInterface();
+    this.myInterface = new MyInterface(this);
 
     this.LUZ_0=true;
     this.LUZ_1=true;

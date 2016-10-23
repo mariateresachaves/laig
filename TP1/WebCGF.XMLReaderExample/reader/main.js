@@ -29,11 +29,11 @@ main=function()
     var myScene = new XMLscene();
     //var myInterface = new CGFinterface(); // controlos, botoes...
 
-    var myInterface = new MyInterface();
-
     app.init();
 
     app.setScene(myScene);
+
+    var myInterface = new MyInterface(myScene);
     app.setInterface(myInterface);
 
     myInterface.setActiveCamera(myScene.camera);

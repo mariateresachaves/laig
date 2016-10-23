@@ -4,7 +4,9 @@
  */
 
 
-function MyInterface() {
+function MyInterface(scene) {
+	this.scene = scene;
+
 	//call CGFinterface constructor
 	CGFinterface.call(this);
 

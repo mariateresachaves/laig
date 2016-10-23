@@ -9,6 +9,8 @@ XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.init = function (application) {
     CGFscene.prototype.init.call(this, application);
 
+    this.enableTextures(true);
+    
     this.initCameras();
 
     this.initLights();
@@ -17,17 +19,17 @@ XMLscene.prototype.init = function (application) {
 
     this.gl.clearDepth(100.0);
     this.gl.enable(this.gl.DEPTH_TEST);
-	  this.gl.enable(this.gl.CULL_FACE);
+    this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
-
-	  this.axis=new CGFaxis(this);
+    
+    this.axis=new CGFaxis(this);
 };
 
-XMLscene.prototype.initLights = function () {
-
+XMLscene.prototype.initLights = function ()
+{
 	this.lights[0].setPosition(2, 3, 3, 1);
-  this.lights[0].setDiffuse(1.0,1.0,1.0,1.0);
-  this.lights[0].update();
+	this.lights[0].setDiffuse(1.0,1.0,1.0,1.0);
+	this.lights[0].update();
 };
 
 XMLscene.prototype.initCameras = function () {
@@ -83,8 +85,8 @@ XMLscene.prototype.display = function () {
 	if (this.graph.loadedOk)
 	{
 		this.lights[0].update();
-    this.drawComponent(this.graph.root, "inherit", "inherit");
-		//this.drawComponent(this.graph.root, "inherit", "inherit");
+		//this.drawComponent(this.graph.root, null, null);
+		this.drawComponent(this.graph.root, null, null);
 		//this.drawPrimitive('E', null, null);
 	};
 };
@@ -92,62 +94,45 @@ XMLscene.prototype.display = function () {
 //--- Draw Components ---
 XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parentTexture)
 {
-  if(this.graph.components[componentID].children[0].id in this.primitives ){
-  	this.drawPrimitive(this.graph.components[componentID].children[0].id, this.graph.components[componentID].material, this.graph.components[componentID].texture);
-    return;
- 	}
+	/*if(this.graph.components[componentID].children[0].id in this.primitives ){
+		this.drawPrimitive(this.graph.components[componentID].children[0].id, this.graph.components[componentID].material, this.graph.components[componentID].texture);
+		return;
+ 	}*/
 
 	var component = this.graph.components[componentID];
-	//	console.log(componentID + " " + component );
 
-	var material = component.material;
-	//console.log("material length = " + component.materials.length);
-
+	var material = component.getMaterial();
 	if (material == "inherit") material = parentMaterial;
 
 	var texture = component.texture;
 	if (texture == "inherit") texture = parentTexture;
-
-  var i = 0;
-
-  for (; i < component.children.length; i++) {
-    //console.log(component.children[i].type + " - " + component.children[i].id);
-		this.drawComponent(component.children[i].id, material, texture);
+	
+	for (var i = 0; i < component.children.length; i++)
+	{
+		if (component.children[i].type === "component")
+			this.drawComponent(component.children[i].id, material, texture);
+		else
+			this.drawPrimitive(component.children[i].id, material, texture);
 	}
-
 }
 
 //--- Draw Primitives ---
 XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
 {
-
-  /*if(parentTexture != "none"){
-  	//material.setTexture(this.textures[parentTextureID]);
-  	material.loadTexture(parentTexture.file);
-  }*/
-
-  var material = new CGFappearance(this);
-
-  if(parentMaterial != "inherit") {
-
-    material.setEmission(parentMaterial.emission[0], parentMaterial.emission[1], parentMaterial.emission[2], parentMaterial.emission[3]);
-    material.setAmbient(parentMaterial.ambient[0], parentMaterial.ambient[1], parentMaterial.ambient[2], parentMaterial.ambient[3]);
-    material.setDiffuse(parentMaterial.diffuse[0], parentMaterial.diffuse[1], parentMaterial.diffuse[2], parentMaterial.diffuse[3]);
-    material.setSpecular(parentMaterial.specular[0], parentMaterial.specular[1], parentMaterial.specular[2], parentMaterial.specular[3]);
-    material.setShininess(parentMaterial.shininess);
-
-    parentMaterial.apply();
-
-  }
-
-  if(parentTexture != "inherit" && parentTexture != "none") {
-
-    material.loadTexture(parentTexture.file);
-
-  }
-
+	if(parentTexture == "none"){
+		parentMaterial.setTexture(null);
+		//parentMaterial.setTextureWrap('REPEAT', 'REPEAT');
+	}
+	else{
+		parentMaterial.setTexture(parentTexture);
+		//parentMaterial.setTextureWrap('REPEAT', 'REPEAT');
+	}
+	
+	parentMaterial.apply();
+	
 	this.primitives[primitiveID].display();
 }
+
 
 //--- Iniatize Primitives ---
 XMLscene.prototype.initializePrimitives = function ()

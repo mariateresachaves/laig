@@ -3,7 +3,7 @@ function Node(id, scene) {
   this.scene = scene;
   this.texture = "none";
   this.materials = [];
-  this.material;
+  this.materialpos = 0;
   this.transformations = mat4.create();
   mat4.identity(this.transformations);
   this.children = [];
@@ -12,8 +12,13 @@ function Node(id, scene) {
 Node.prototype = Object.create(Object.prototype);
 Node.prototype.constructor = Node;
 
-Node.prototype.setTexture = function(t) {
-  this.texture = t;
+Node.prototype.setTexture = function(t)
+{
+	if (t === "inherit" || t === "none")
+		this.texture = t;
+	else{
+		this.texture = new CGFtexture(this.scene, t.file, 1, 1);
+	}
 }
 
 Node.prototype.addMaterial = function(m)
@@ -32,10 +37,24 @@ Node.prototype.addMaterial = function(m)
 	this.material = this.materials[0];
 }
 
-Node.prototype.setTransformations = function (t) {
+Node.prototype.getMaterial = function()
+{
+	return this.materials[this.materialpos];
+}
+
+Node.prototype.nextMaterial = function()
+{
+	this.materialpos++;
+	if (this.materialpos === this.materials.length)
+		this.materialpos = 0;
+}
+
+Node.prototype.setTransformations = function(t)
+{
   this.transformations = t;
 };
 
-Node.prototype.addChildren = function(c) {
+Node.prototype.addChildren = function(c)
+{
   this.children.push(c);
 }

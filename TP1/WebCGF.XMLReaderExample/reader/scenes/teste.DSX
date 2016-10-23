@@ -104,8 +104,9 @@
         <!-- objetos respetivos podem a violar esta regra.         -->
         <!-- Nao necessario aplicar fatores de escala em  -->
         <!-- quadricas (esfera, ciclindro...) -->
-        <texture id="texture 1" file="filename" length_s="1.0" length_t="0.5" />
-        <texture id="texture 2" file="filename" length_s="1.0" length_t="0.5" />
+        <texture id="texture 1" file="./resources/images/grass.png" length_s="1.0" length_t="0.5" />
+        <texture id="texture 2" file="./resources/images/pool_stone.png" length_s="1.0" length_t="0.5" />
+        <texture id="texture 3" file="./resources/images/towel.jpg" length_s="1.0" length_t="0.5" />
 
     </textures>
 
@@ -115,11 +116,11 @@
         <!-- Deve existir um ou mais blocos "material" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
         <material id="A" >
-            <emission r="1" g="0.5" b="0.5" a="0" />
-            <ambient r="0.5" g="0.5" b="0.5" a="0.5" />
-            <diffuse r="0.5" g="0.5" b="0.5" a="0.5" />
-            <specular r="0.5" g="0.5" b="0.5" a="0.5" />
-            <shininess value="0.2" />
+            <emission r="0.1" g="0.1" b="0.1" a="0" />
+            <ambient r="0.7" g="0.7" b="0.7" a="0.7" />
+            <diffuse r="0.7" g="0.7" b="0.7" a="0.7" />
+            <specular r="0.7" g="0.7" b="0.5" a="0.5" />
+            <shininess value="10" />
         </material>
 		<material id="B" >
             <emission r="0.3" g="0.5" b="0.5" a="0" />
@@ -151,8 +152,11 @@
         <!-- Os identificadores "id" nao podem ser repetidos -->
 
         <transformation id="A">
-           <!-- instrucoes a usar sem limite nem ordem -->
-           <!-- deve existir pelo menos uma transformacao -->
+        
+           <!-- deve existir pelo menos uma instrução de transformacao; -->
+           <!-- podem ser usadas tantas instrucoes quantas as -->
+           <!-- necessárias, mas escritas pela mesma ordem que -->
+           <!-- seria usada na sua escrita diretamente em código WebGL -->
 
            <translate x="15.5" y="-15.5" z="-100.1" />
            <rotate axis="x" angle="30.1" />
@@ -192,10 +196,10 @@
             <triangle x1="-10.1" y1="-1.1" z1="-1.1" x2="-5.1" y2="-1.1" z2="-1.1" x3="-0.1" y3="-1.1" z3="-1.1" />
         </primitive>
         <primitive id="C">
-            <cylinder base="0" top="5.5" height="12.5" slices="50" stacks="20" />
+            <cylinder base="0" top="2.5" height="2.5" slices="50" stacks="20" />
         </primitive>
         <primitive id="D">
-            <sphere radius="12.5" slices="50" stacks="10" />
+            <sphere radius="0.5" slices="50" stacks="20" />
         </primitive>
         <primitive id="E">
             <torus inner="0.5" outer="2.5" slices="50" loops="50" />
@@ -206,7 +210,7 @@
 
     <components>
 
-        <component id="componentA">
+        <component id="A">
 
             <!-- bloco "transformation" obrigatorio -->
             <transformation>
@@ -240,7 +244,7 @@
             <!-- id="none" remove a textura recebida do pai -->
             <!-- a textura declarada sobrepoe a textura recebida do -->
             <!-- objecto "pai" -->
-            <texture id="texture 2" />
+            <texture id="inherit" />
 
             <!-- bloco "children" obrigatorio num "component" -->
             <children>
@@ -261,12 +265,47 @@
               <material id="A" />
           </materials>
 
-            <texture id="texture 2" />
+            <texture id="texture 3" />
 
             <children>
-              <componentref id="componentA" />
+              <componentref id="A" />
+              <componentref id="C" />
+              <componentref id="D" />
             </children>
         </component>
+        
+        <component id="C">
+          <transformation>
+              <transformationref id="B" />
+          </transformation>
+
+          <materials>
+              <material id="A" />
+          </materials>
+
+            <texture id="none" />
+
+            <children>
+              <primitiveref id="C" />
+            </children>
+        </component>
+        
+        <component id="D">
+          <transformation>
+              <transformationref id="B" />
+          </transformation>
+
+          <materials>
+              <material id="A" />
+          </materials>
+
+            <texture id="texture 1" />
+
+            <children>
+            	<primitiveref id="A" />
+            </children>
+        </component>
+        
     </components>
 
 </dsx>

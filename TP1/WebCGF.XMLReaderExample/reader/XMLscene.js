@@ -155,10 +155,15 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 	var texture = component.texture;
 	if (texture == "inherit") texture = parentTexture;
 
+  console.log("TENHO " + component.children.length + " FILHOS");
+
   for (i = 0; i < component.children.length; i++){
+
+    console.log("I -> " + i);
 
       console.log(component.children[i].type + " - " + component.children[i].id);
   		this.drawComponent(component.children[i].id, material, texture);
+      console.log("--------------> Terminei <--------------");
 	}
 
 }

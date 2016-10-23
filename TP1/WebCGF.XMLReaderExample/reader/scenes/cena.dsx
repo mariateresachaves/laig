@@ -501,7 +501,7 @@
 
 		<component id="table">
 			<transformation>
-				<translate x="-3" y="0" z="-3" />
+				<translate x="-3" y="0" z="-3.5" />
 			</transformation>
 			<materials>
 				<material id="table" />
@@ -545,7 +545,7 @@
 
 		<component id="table_right_front_leg">
 			<transformation>
-				<translate x="0.75" y="0" z="0.5" />
+				<translate x="0.5" y="0" z="0.3" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -558,7 +558,7 @@
 
 		<component id="table_left_front_leg">
 			<transformation>
-				<translate x="-0.75" y="0" z="0.5" />
+				<translate x="-0.5" y="0" z="0.3" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -571,7 +571,7 @@
 
 		<component id="table_right_back_leg">
 			<transformation>
-				<translate x="0.75" y="0" z="-0.5" />
+				<translate x="0.5" y="0" z="-0.3" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -585,7 +585,7 @@
 
 		<component id="table_left_back_leg">
 			<transformation>
-				<translate x="-0.75" y="0" z="-0.5" />
+				<translate x="-0.5" y="0" z="-0.3" />
 			</transformation>
 			<materials>
 				<material id="inherit" />

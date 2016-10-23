@@ -41,22 +41,17 @@
 	  0, 0, 1,
 	  0, 0, 1
   ]
-  
+
+  var deltaX = this.x2 - this.x1;
+	var deltaY = this.y2 - this.y1;
+
   this.texCoords = [
-	  0, 1,
-	  1, 1,
-	  0, 0,
-	  1, 0
+    0, deltaY,
+    0, 0,
+    deltaX, 0,
+		deltaX, deltaY
   ]
-
-   /*this.texCoords = [
-    this.minS, this.maxT, //(0,1)
-    this.maxS,  this.maxT, //(1,1)
-    this.minS,  this.minT,
-    this.maxS,  this.minT
-
-  ]*/
-
+  
  	this.primitiveType = this.scene.gl.TRIANGLES;
  	this.initGLBuffers();
  };

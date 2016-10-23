@@ -13,6 +13,8 @@ XMLscene.prototype.init = function (application) {
 
     this.initCameras();
 
+    this.myInterface = new MyInterface();
+
     this.LUZ_0=true;
     this.LUZ_1=true;
     this.LUZ_2=true;
@@ -35,6 +37,58 @@ XMLscene.prototype.initLights = function ()
 	this.lights[0].setPosition(2, 3, 3, 1);
 	this.lights[0].setDiffuse(1.0,1.0,1.0,1.0);
 	this.lights[0].update();
+  /*
+  this.shader.bind();
+
+  for(omniID in this.graph.lights.omnis) {
+
+  }
+
+	// Positions for four lights
+	//this.lights[0].setPosition(4, 6, 1, 1);
+	this.lights[0].setPosition(0, 4.0, 7.5, 1.0);
+	this.lights[1].setPosition(10.5, 6.0, 1.0, 1.0);
+	this.lights[2].setPosition(10.5, 6.0, 5.0, 1.0);
+	this.lights[3].setPosition(4, 6.0, 5.0, 1.0);
+
+	// -------------------------lights[0]------------------------------------
+
+	this.lights[0].setAmbient(0, 0, 0, 1);
+	this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[0].setSpecular(1.0, 1.0, 0, 1.0);
+	this.lights[0].enable();
+
+
+	// --------------------------lights[1]-----------------------------------
+
+	this.lights[1].setAmbient(0, 0, 0, 1);
+	this.lights[1].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[1].enable();
+
+	// --------------------------lights[2]-----------------------------------
+
+	this.lights[2].setAmbient(0, 0, 0, 1);
+	this.lights[2].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[2].setSpecular(1.0, 1.0, 1.0, 1.0);
+	//Kc=0, Kl=1, Kq=0
+	this.lights[2].setConstantAttenuation(0); 	// -> kc
+	this.lights[2].setLinearAttenuation(1); 	// -> kl
+	this.lights[2].setQuadraticAttenuation(0); 	// -> kq
+	this.lights[2].enable();
+
+	// --------------------------lights[3]-----------------------------------
+
+	this.lights[3].setAmbient(0, 0, 0, 1);
+	this.lights[3].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[3].setSpecular(1.0, 1.0, 0, 1.0);
+	//Kc=0, Kl=0, Kq=1
+	this.lights[3].setConstantAttenuation(0); 		// -> kc
+	this.lights[3].setLinearAttenuation(0); 		// -> kl
+	this.lights[3].setQuadraticAttenuation(1); 		// -> kq
+	this.lights[3].enable();
+
+	this.shader.unbind();
+  */
 };
 
 XMLscene.prototype.initCameras = function () {
@@ -63,6 +117,19 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.lights[1].enable();
 
 	this.initializePrimitives();
+
+  for(l_o in this.graph.lights.omnis)
+    this[l_o] = true;
+
+  for(l_s in this.graph.lights.spots)
+    this[l_s] = true;
+
+  this.myInterface.onGraphLoaded();
+};
+
+XMLscene.prototype.updateLights = function() {
+	for (i = 0; i < this.lights.length; i++)
+		this.lights[i].update();
 };
 
 XMLscene.prototype.display = function () {
@@ -78,6 +145,8 @@ XMLscene.prototype.display = function () {
 
 	// Apply transformations corresponding to the camera position relative to the origin
 	this.applyViewMatrix();
+
+  this.updateLights();
 
 	// Draw axis
 	this.axis.display();
@@ -113,7 +182,7 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 
 	var texture = component.texture;
 	if (texture == "inherit") texture = parentTexture;
-	
+
 	this.pushMatrix();
 	this.multMatrix(component.transformations);
 
@@ -124,7 +193,7 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 		else
 			this.drawPrimitive(component.children[i].id, material, texture);
 	}
-	
+
 	this.popMatrix();
 }
 

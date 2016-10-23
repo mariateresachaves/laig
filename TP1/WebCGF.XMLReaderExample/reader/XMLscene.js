@@ -126,9 +126,10 @@ XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parent
   	material.loadTexture(parentTexture.file);
   }*/
 
-  if(parentMaterial != "inherit" && parentMaterial != "none") {
+  var material = new CGFappearance(this);
 
-    var material = new CGFappearance(this);
+  if(parentMaterial != "inherit") {
+
     material.setEmission(parentMaterial.emission[0], parentMaterial.emission[1], parentMaterial.emission[2], parentMaterial.emission[3]);
     material.setAmbient(parentMaterial.ambient[0], parentMaterial.ambient[1], parentMaterial.ambient[2], parentMaterial.ambient[3]);
     material.setDiffuse(parentMaterial.diffuse[0], parentMaterial.diffuse[1], parentMaterial.diffuse[2], parentMaterial.diffuse[3]);
@@ -136,6 +137,12 @@ XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parent
     material.setShininess(parentMaterial.shininess);
 
     parentMaterial.apply();
+
+  }
+
+  if(parentTexture != "inherit" && parentTexture != "none") {
+
+    material.loadTexture(parentTexture.file);
 
   }
 

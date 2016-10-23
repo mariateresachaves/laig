@@ -65,6 +65,8 @@ XMLscene.prototype.onGraphLoaded = function ()
 
   this.myInterface.onGraphLoaded();
 
+  var i = 0;
+
   for(omni in this.graph.lights.omnis) {
     var l = this.graph.lights.omnis[omni];
 
@@ -73,6 +75,8 @@ XMLscene.prototype.onGraphLoaded = function ()
     this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
   	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
   	this.lights[i].enable();
+
+    i++;
   }
 
   for(spot in this.graph.lights.spots) {
@@ -83,6 +87,8 @@ XMLscene.prototype.onGraphLoaded = function ()
     this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
   	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
   	this.lights[i].enable();
+
+    i++;
   }
 };
 

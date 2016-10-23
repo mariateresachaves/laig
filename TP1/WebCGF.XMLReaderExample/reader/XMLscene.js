@@ -10,8 +10,13 @@ XMLscene.prototype.init = function (application) {
     CGFscene.prototype.init.call(this, application);
 
     this.enableTextures(true);
-    
+
     this.initCameras();
+
+    this.LUZ_0=true;
+    this.LUZ_1=true;
+    this.LUZ_2=true;
+    this.LUZ_3=true;
 
     this.initLights();
 
@@ -21,7 +26,7 @@ XMLscene.prototype.init = function (application) {
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
-    
+
     this.axis=new CGFaxis(this);
 };
 
@@ -47,11 +52,13 @@ XMLscene.prototype.setDefaultAppearance = function () {
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function ()
 {
+  this.axis = new CGFaxis(this, this.graph.axis_length);
+
 	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
 	this.lights[0].setVisible(true);
 	this.lights[0].enable();
 
-	this.setAmbient(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
+	this.setGlobalAmbientLight(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
 	this.lights[1].setVisible(true);
 	this.lights[1].enable();
 
@@ -86,7 +93,7 @@ XMLscene.prototype.display = function () {
 	{
 		this.lights[0].update();
 		//this.drawComponent(this.graph.root, null, null);
-		this.drawComponent(this.graph.root, null, null);
+		this.drawComponent(this.graph.root, "inherit", "inherit");
 		//this.drawPrimitive('E', null, null);
 	};
 };
@@ -106,7 +113,7 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 
 	var texture = component.texture;
 	if (texture == "inherit") texture = parentTexture;
-	
+
 	for (var i = 0; i < component.children.length; i++)
 	{
 		if (component.children[i].type === "component")
@@ -127,9 +134,9 @@ XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parent
 		parentMaterial.setTexture(parentTexture);
 		//parentMaterial.setTextureWrap('REPEAT', 'REPEAT');
 	}
-	
+
 	parentMaterial.apply();
-	
+
 	this.primitives[primitiveID].display();
 }
 

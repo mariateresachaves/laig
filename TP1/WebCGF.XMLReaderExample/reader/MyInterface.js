@@ -24,8 +24,8 @@ MyInterface.prototype.onGraphLoaded = function () {
   for(omniID in this.scene.graph.lights.omnis)
     group_1.add(this.scene, omniID);
 
-  var group_2 = this.gui.addFolder("Spot Lights");
-  group_2.open();
+	var group_2 = this.gui.addFolder("Spot Lights");
+	group_2.open();
 
   for(spotID in this.scene.graph.lights.spots)
     group_2.add(this.scene, spotID);
@@ -40,15 +40,6 @@ MyInterface.prototype.onGraphLoaded = function () {
 MyInterface.prototype.init = function(application) {
 	// call CGFinterface init
 	CGFinterface.prototype.init.call(this, application);
-
-	// TESTE
-
-	var group=this.gui.addFolder("Luzes");
-	group.open();
-
-	group.add(this.scene, 'LUZ_1');
-	group.add(this.scene, 'LUZ_2');
-	group.add(this.scene, 'LUZ_3');
 
 	return true;
 };

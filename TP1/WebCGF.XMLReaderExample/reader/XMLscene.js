@@ -15,11 +15,6 @@ XMLscene.prototype.init = function (application) {
 
     this.myInterface = new MyInterface(this);
 
-    this.LUZ_0=true;
-    this.LUZ_1=true;
-    this.LUZ_2=true;
-    this.LUZ_3=true;
-
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     this.gl.clearDepth(100.0);

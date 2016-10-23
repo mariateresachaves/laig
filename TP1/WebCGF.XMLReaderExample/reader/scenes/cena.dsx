@@ -410,7 +410,7 @@
 			</materials>
 			<texture id="none" />
 			<children>
-				<primitiveref id="cylinder" />
+				<primitiveref id="torus" />
 			</children>
 		</component>
 

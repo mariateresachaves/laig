@@ -19,7 +19,7 @@ MyInterface.prototype.onGraphLoaded = function () {
   var group_1 = this.gui.addFolder("Omni Lights");
 	group_1.open();
 
-  for(omniID in this.scene.graph.lights.omnis)
+  for(omniID in this.scene.lights.omnis)
     group_1.add(this.scene, omniID);
 
   var group_2 = this.gui.addFolder("Spot Lights");

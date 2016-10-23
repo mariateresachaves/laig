@@ -104,7 +104,7 @@ MySceneGraph.prototype.onXMLReady=function()
 		this.onXMLError(error);
 		return;
 	}
-	
+
 	this.loadedOk=true;
 
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
@@ -796,7 +796,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 		var s = this.parseFloatAttr(shininess, 'value');
 		if(this.error != null) return this.error;
-		
+
 		m.setShininess(s);
 
 		this.materials[id] = m;
@@ -1091,7 +1091,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 		var transformation = elems[0];
 		elems = transformation.getElementsByTagName('transformationref');
-		
+
 		var m = mat4.create();
 
 		if (elems != null  && elems.length == 1)
@@ -1105,7 +1105,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			// check if tansformation with this id exists
 			if(!(transformationref in this.transformations))
 				return "Cannot find a transformation with id=" + transformationref;
-			
+
 			mat4.identity(m);
 
 			for(k = 0; k < this.transformations[transformationref].list.length; k++)
@@ -1132,7 +1132,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		else
 		{
 			mat4.identity(m);
-			
+
 			for(j = 0; j < transformation.children.length; j++)
 			{
 				var t = transformation.children[j];
@@ -1142,33 +1142,33 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 				{
 			    case "translate":
 			    	subtransformation.type = "translate";
-			    	
+
 			    	subtransformation.x = this.parseFloatAttr(t, 'x');
 			    	if(this.error != null) return this.error;
-			    	
+
 			    	subtransformation.y = this.parseFloatAttr(t, 'y');
 			    	if(this.error != null) return this.error;
-			    	
+
 			    	subtransformation.z = this.parseFloatAttr(t, 'z');
 			    	if(this.error != null) return this.error;
-			    	
+
 			    	this.translateMatrix(m, subtransformation.x, subtransformation.y, subtransformation.z);
 			    	break;
 			    case "rotate":
 			    	subtransformation.type = "rotate";
-			    	
+
 			    	subtransformation.axis = this.parseItemAttr(t, 'axis', ['x','y','z']);
 			    	if(this.error != null) return this.error;
-			    	
+
 			    	var a = this.parseFloatAttr(t, 'angle');
 			    	subtransformation.angle = degToRad*a;
 			    	if(this.error != null) return this.error;
-			    	
+
 			    	this.rotateMatrix(m, subtransformation.axis, subtransformation.angle);
 			    	break;
 			    case "scale":
 			    	subtransformation.type = "scale";
-			    	
+
 			    	subtransformation.x = this.parseFloatAttr(t, 'x');
 			    	if(this.error != null) return this.error;
 
@@ -1210,10 +1210,10 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 			var materialid = this.parseStringAttr(material, "id");
 			if (this.error != null) return this.error;
-			
+
 			if (materialid == "inherit")
 				node.addMaterial("inherit");
-			
+
 			else if(!(materialid in this.materials)) // check if material with this id exists
 				return "Cannot find a material with id=" + materialid;
 
@@ -1274,7 +1274,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		    default:
 		    	return "element found in " + id + " is not 'componentref' or 'primitiveref' (" + c.nodeName +").";
 		    }
-			
+
 			node.addChildren(child);
 		}
 
@@ -1296,26 +1296,26 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			}
 		}
 	}
-	
+
 	if (!(this.root in this.components))
 		return "Cannot find root component with id = " + this.root;
-	
+
 	var rootMaterials = this.components[this.root].materials;
 	for (i = 0; i < rootMaterials.length; i++)
 	{
 		if (rootMaterials[i] == "inherit")
-			return "Root component cannot inherit material";		
+			return "Root component cannot inherit material";
 	}
-	
+
 	//Display values for Debugging
 	console.log("--- Parse Components ---");
 	for (id in this.components){
 		var c =  this.components[id];
-		
+
 		console.log("Component id = " + id);
-		
+
 		console.log("transformations = " + c.transformations);
-		
+
 		console.log("materials:");
 		c.materials.forEach(function(m_id) {
 			if (m_id == "inherit")
@@ -1323,7 +1323,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			else
 				console.log("	{ emission = [" + m_id.emission + "], ambient = [" + m_id.ambient + "], diffuse = [" + m_id.diffuse + "], specular = [" + m_id.specular+ "], shininess = " + m_id.shininess + " }" );
 		});
-		
+
 		console.log("children: ");
 		c.children.forEach(function(ch) {
 			console.log("	" + ch.type + " id = " + ch.id );

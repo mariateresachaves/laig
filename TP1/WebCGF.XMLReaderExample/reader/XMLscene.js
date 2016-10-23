@@ -13,12 +13,12 @@ XMLscene.prototype.init = function (application) {
 
     this.initCameras();
 
-    this.myInterface = new MyInterface();
+    //this.myInterface = new MyInterface();
 
-    this.LUZ_0=true;
+    /*this.LUZ_0=true;
     this.LUZ_1=true;
     this.LUZ_2=true;
-    this.LUZ_3=true;
+    this.LUZ_3=true;*/
 
     this.initLights();
 
@@ -118,19 +118,19 @@ XMLscene.prototype.onGraphLoaded = function ()
 
 	this.initializePrimitives();
 
-  for(l_o in this.graph.lights.omnis)
+  /*for(l_o in this.graph.lights.omnis)
     this[l_o] = true;
 
   for(l_s in this.graph.lights.spots)
     this[l_s] = true;
 
-  this.myInterface.onGraphLoaded();
+  this.myInterface.onGraphLoaded();*/
 };
 
-XMLscene.prototype.updateLights = function() {
+/*XMLscene.prototype.updateLights = function() {
 	for (i = 0; i < this.lights.length; i++)
 		this.lights[i].update();
-};
+};*/
 
 XMLscene.prototype.display = function () {
 	// ---- BEGIN Background, camera and axis setup
@@ -146,7 +146,7 @@ XMLscene.prototype.display = function () {
 	// Apply transformations corresponding to the camera position relative to the origin
 	this.applyViewMatrix();
 
-  this.updateLights();
+  //this.updateLights();
 
 	// Draw axis
 	this.axis.display();

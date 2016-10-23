@@ -83,56 +83,45 @@ XMLscene.prototype.display = function () {
 	if (this.graph.loadedOk)
 	{
 		this.lights[0].update();
-		//this.drawComponent(this.graph.root, null, null);
-		this.primitives['torus'].display();
+		this.drawComponent(this.graph.root, null, null);
+		//this.drawPrimitive('E', null, null);
 	};
 };
 
 //--- Draw Components ---
-XMLscene.prototype.drawComponent = function (componentID, parentMaterialID, parentTextureID)
+XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parentTexture)
 {
 	var component = this.graph.components[componentID];
 	//	console.log(componentID + " " + component );
 
-	var materialID = component.materials[0];
+	var material = component.material;
 	//console.log("material length = " + component.materials.length);
 
-	if (materialID == "inherit") materialID = parentMaterialID;
+	if (material == "inherit") material = parentMaterial;
 
-	var textureID = component.texture;
-	if (textureID == "inherit") textureID = parentTextureID;
+	var texture = component.texture;
+	if (texture == "inherit") texture = parentTexture;
 
 	for (i = 0; i < component.children.length; i++)
 	{
 		if (component.children[i].type == "component")
-			this.drawComponent(component.children[i].id, materialID, textureID);
+			this.drawComponent(component.children[i].id, material, texture);
 		else
-			this.drawPrimitive(component.children[i].id, materialID, textureID);
+			this.drawPrimitive(component.children[i].id, material, texture);
 	}
 }
 
 //--- Draw Primitives ---
 XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
 {
-	//var m = this.graph.materials[parentMaterialID];
-	var m = parentMaterial;
-
-    var material = new CGFappearance(this);
-    material.setEmission(m.emission[0], m.emission[1], m.emission[2], m.emission[3]);
-    material.setAmbient(m.ambient[0], m.ambient[1], m.ambient[2], m.ambient[3]);
-    material.setDiffuse(m.diffuse[0], m.diffuse[1], m.diffuse[2], m.diffuse[3]);
-    material.setSpecular(m.specular[0], m.specular[1], m.specular[2], m.specular[3]);
-    material.setShininess(m.shininess);
-
-    if(parentTexture != "none"){
+    /*if(parentTexture != "none"){
     	//material.setTexture(this.textures[parentTextureID]);
     	material.loadTexture(parentTexture.file);
-    }
+    }*/
 
-    material.apply();
+	parentMaterial.apply();
 
-	var primitive = this.primitives[primitiveID];
-	primitive.display();
+	this.primitives[primitiveID].display();
 }
 
 //--- Iniatize Primitives ---

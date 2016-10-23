@@ -185,7 +185,7 @@
             <!--     rectangle, triangle, cylinder, sphere, torus -->
             <!-- os parametros devem ser interpretados, genericamente como-->
             <!-- em OpenGL/GLUT; o cilindro deve adicionalmente ter tampas -->
-            <rectangle x1="1.1" y1="-1.1" x2="-1.1" y2="-1.1" />
+            <rectangle x1="-1.1" y1="-1.1" x2="1.1" y2="1.1" />
         </primitive>
 
         <primitive id="B">
@@ -197,9 +197,9 @@
         <primitive id="D">
             <sphere radius="12.5" slices="50" stacks="10" />
         </primitive>
-        <!-- <primitive id="E">
-            <torus inner="5" outer="6.5" slices="20.5" loops="10" />
-        </primitive> -->
+        <primitive id="E">
+            <torus inner="0.5" outer="2.5" slices="50" loops="50" />
+        </primitive>
 
     </primitives>
 
@@ -232,6 +232,7 @@
             <!-- ultimo material da lista volta ao primeiro -->
             <materials>
                 <material id="A" />
+                <material id="inherit" />
             </materials>
 
             <!-- declaracao obrigatoria de texture -->
@@ -247,11 +248,8 @@
                 <!-- deve existir uma ou mais tags "componentref" e/ou -->
                 <!-- "primitiveref", identificando outros -->
                 <!-- componentes ou primitivas -->
-                <componentref id="B" />
                 <primitiveref id="E" />
-
             </children>
-
         </component>
 
         <component id="B">
@@ -261,7 +259,6 @@
 
           <materials>
               <material id="A" />
-              <material id="inherit" />
           </materials>
 
             <texture id="texture 2" />

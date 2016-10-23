@@ -1082,7 +1082,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		if(id in this.components)
 			return "Duplicate entry of component id (id=" + id +").";
 
-		var node = new Node(id);
+		var node = new Node(id, this.scene);
 
 		//transformation
 		elems = c.getElementsByTagName('transformation');

@@ -104,9 +104,7 @@ MySceneGraph.prototype.onXMLReady=function()
 		this.onXMLError(error);
 		return;
 	}
-
-	this.drawGraph();
-
+	
 	this.loadedOk=true;
 
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
@@ -654,7 +652,7 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 		texture.length_t = this.parseFloatAttr(t, 'length_t');
 		if(this.error != null) return this.error;
 
-		this.textures[texture_id] = texture;
+		this.textures[texture_id] = new CGFtexture(this.scene, texture.file, texture.length_s, texture.length_t);
 	}
 
 	//Display values for Debugging
@@ -702,7 +700,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 	for (var i = 0; i < materialsList.length; i++)
 	{
 		var material = materialsList[i];
-		var m = new Object;
+		var m = new CGFappearance(this.scene);
 
 		//Id
 		var id = this.parseStringAttr(material, 'id');
@@ -729,7 +727,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		var a = this.parseFloatAttr(emission, 'a');
 		if(this.error != null) return this.error;
 
-		m.emission = [r,g,b,a];
+		m.setEmission(r,g,b,a);
 
 		//Ambient
 		elems = material.getElementsByTagName('ambient');
@@ -748,7 +746,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		var a = this.parseFloatAttr(ambient, 'a');
 		if(this.error != null) return this.error;
 
-		m.ambient = [r,g,b,a];
+		m.setAmbient(r,g,b,a);
 
 		//Diffuse
 		elems = material.getElementsByTagName('diffuse');
@@ -767,7 +765,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		var a = this.parseFloatAttr(diffuse, 'a');
 		if(this.error != null) return this.error;
 
-		m.diffuse = [r,g,b,a];
+		m.setDiffuse(r,g,b,a);
 
 		//Specular
 		elems = material.getElementsByTagName('specular');
@@ -786,7 +784,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 		var a = this.parseFloatAttr(specular, 'a');
 		if(this.error != null) return this.error;
 
-		m.specular = [r,g,b,a];
+		m.setSpecular(r,g,b,a);
 
 		//Shininess
 		elems = material.getElementsByTagName('shininess');
@@ -796,7 +794,10 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 		var shininess = elems[0];
 
-		m.shininess = this.parseFloatAttr(shininess, 'value');
+		var s = this.parseFloatAttr(shininess, 'value');
+		if(this.error != null) return this.error;
+		
+		m.setShininess(s);
 
 		this.materials[id] = m;
 	}
@@ -1072,8 +1073,6 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 	{
 		var c = componentsList[i];
 		var component = new Object;
-		var m = mat4.create();
-		mat4.identity(m);
 
 		//id
 		var id = this.parseStringAttr(c, "id");
@@ -1092,6 +1091,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 		var transformation = elems[0];
 		elems = transformation.getElementsByTagName('transformationref');
+		
+		var m = mat4.create();
 
 		if (elems != null  && elems.length == 1)
 		{
@@ -1104,20 +1105,23 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			// check if tansformation with this id exists
 			if(!(transformationref in this.transformations))
 				return "Cannot find a transformation with id=" + transformationref;
+			
+			mat4.identity(m);
 
-			for(k = 0; k < this.transformations[transformationref].list.length; k++) {
-
-				switch (this.transformations[transformationref].list[k].type) {
+			for(k = 0; k < this.transformations[transformationref].list.length; k++)
+			{
+				var t = this.transformations[transformationref].list[k];
+				switch (t.type) {
 					case "translate":
-						this.translateMatrix(m, this.transformations[transformationref].list[k].x, this.transformations[transformationref].list[k].y, this.transformations[transformationref].list[k].z);
+						this.translateMatrix(m, t.x, t.y, t.z);
 						break;
 
 					case "rotate":
-						this.rotateMatrix(m, this.transformations[transformationref].list[k].axis, this.transformations[transformationref].list[k].angle);
+						this.rotateMatrix(m, t.axis, t.angle);
 						break;
 
 					case "scale":
-						this.scaleMatrix(m, this.transformations[transformationref].list[k].x, this.transformations[transformationref].list[k].y, this.transformations[transformationref].list[k].z);
+						this.scaleMatrix(m, t.x, t.y, t.z);
 						break;
 
 					default:
@@ -1127,6 +1131,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		}
 		else
 		{
+			mat4.identity(m);
+			
 			for(j = 0; j < transformation.children.length; j++)
 			{
 				var t = transformation.children[j];
@@ -1203,11 +1209,11 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			var material = materialsList[j];
 
 			var materialid = this.parseStringAttr(material, "id");
-			if(this.error != null) return this.error;
-
-	    if(materialid == "inherit")
+			if (this.error != null) return this.error;
+			
+			if (materialid == "inherit")
 				node.addMaterial("inherit");
-
+			
 			else if(!(materialid in this.materials)) // check if material with this id exists
 				return "Cannot find a material with id=" + materialid;
 
@@ -1255,38 +1261,32 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			{
 		    case "componentref":
 		    	child.type = "component";
-
 		    	child.id = this.parseStringAttr(c, "id");
-					if(this.error != null) return this.error;
-
-					  break;
+		    	if(this.error != null) return this.error;
+		    	break;
 		    case "primitiveref":
 		    	child.type = "primitive";
-
 		    	child.id = this.parseStringAttr(c, "id");
-					if(this.error != null) return this.error;
-
-					if(!(child.id in this.primitives))
-						return "Cannot find a primitive with id=" + child.id;
-
-					break;
+		    	if(this.error != null) return this.error;
+		    	if(!(child.id in this.primitives))
+		    		return "Cannot find a primitive with id=" + child.id;
+		    	break;
 		    default:
-		    	return "element found in " + id + " is not 'componentref' or 'primitiveref' (" + c.nodeName +")."  ;
-	    }
-
+		    	return "element found in " + id + " is not 'componentref' or 'primitiveref' (" + c.nodeName +").";
+		    }
+			
 			node.addChildren(child);
-
 		}
 
 		this.components[id] = node;
 	}
 
-	for(id in this.components) {
-
-		for(k = 0; k < this.components[id].children.length; k++) {
-
-			if(this.components[id].children[k].type == "primitive") {
-
+	for(id in this.components)
+	{
+		for(k = 0; k < this.components[id].children.length; k++)
+		{
+			if(this.components[id].children[k].type == "primitive")
+			{
 				if(!(this.components[id].children[k].id in this.primitives))
 					return "Cannot find a primitive with id=" + this.components[id].children[k].id;
 
@@ -1306,8 +1306,8 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		if (rootMaterials[i] == "inherit")
 			return "Root component cannot inherit material";		
 	}
-		
-
+	
+	//Display values for Debugging
 	console.log("--- Parse Components ---");
 	for (id in this.components){
 		var c =  this.components[id];
@@ -1416,87 +1416,6 @@ MySceneGraph.prototype.parseItemAttr = function(elem, attr, array) {
 	return e;
 }
 
-MySceneGraph.prototype.drawGraph = function () {
-
-	for(i = 0; i < this.components.length; i++)
-	{
-
-		var node = new Node(this.components[i].id);
-
-		var m = mat4.create();
-		mat4.identity(m);
-
-		// TRANSFORMATIONS
-		for(t = 0; t < this.components[i].transformations.length; t++)
-		{
-			switch (this.components[i].transformations[t].type) {
-				case "translate":
-					this.translateMatrix(m, this.components[i].transformations[t].x, this.components[i].transformations[t].y, this.components[i].transformations[t].z);
-					break;
-
-				case "rotate":
-					this.rotateMatrix(m, this.components[i].transformations[t].axis, this.components[i].transformations[t].angle);
-					break;
-
-				case "scale":
-					this.scaleMatrix(m, this.components[i].transformations[t].x, this.components[i].transformations[t].y, this.components[i].transformations[t].z);
-					break;
-
-				default:
-					return "Not a valid transformation.";
-			}
-		}
-
-		// TRANSFORMATIONREF
-		for(t = 0; t < this.transformations.length; t++)
-		{
-			if(this.transformations[t].id == this.components[i].transformationref) {
-
-				for(k = 0; k < this.transformations[t].list.length; k++) {
-
-					switch (this.transformations[t].list[k].type) {
-						case "translate":
-							this.translateMatrix(m, this.transformations[t].list[k].x, this.transformations[t].list[k].y, this.transformations[t].list[k].z);
-							break;
-
-						case "rotate":
-							this.rotateMatrix(m, this.transformations[t].list[k].axis, this.transformations[t].list[k].angle);
-							break;
-
-						case "scale":
-							this.scaleMatrix(m, this.transformations[t].list[k].x, this.transformations[t].list[k].y, this.transformations[t].list[k].z);
-							break;
-
-						default:
-							return "Not a valid transformation.";
-					}
-				}
-			}
-		}
-
-		node.setTransformations(m);
-
-		console.log("--------- NODE " + i + " TRANSF ---------");
-
-		console.log(node.transformations);
-
-		console.log("------------------------");
-
-		// MATERIALS
-
-		for(k = 0; k < this.components[i].materials.length; k++) {
-
-			var ref = this.components[i].materials[k];
-			var curr = this.materials[ref.id];
-
-			console.log("COMPONENT MATERIAL ID: " + this.components[i].materials[k]);
-			console.log("MATERIAL ID: " + curr);
-
-			node.addMaterial(curr);
-		}
-	}
-}
-
 MySceneGraph.prototype.translateMatrix = function(actual_matrix, x, y, z) {
 	mat4.translate(actual_matrix, actual_matrix, [x, y, z]);
 }
@@ -1506,10 +1425,10 @@ MySceneGraph.prototype.rotateMatrix = function(actual_matrix, axis, angle) {
 		mat4.rotateX(actual_matrix, actual_matrix, angle);
 	}
 	else if (axis == "y" || axis == "Y") {
-		mat4.rotateX(actual_matrix, actual_matrix, angle);
+		mat4.rotateY(actual_matrix, actual_matrix, angle);
 	}
 	else if (axis == "z" || axis == "Z") {
-		mat4.rotateX(actual_matrix, actual_matrix, angle);
+		mat4.rotateZ(actual_matrix, actual_matrix, angle);
 	}
 }
 

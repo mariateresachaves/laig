@@ -113,6 +113,9 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 
 	var texture = component.texture;
 	if (texture == "inherit") texture = parentTexture;
+	
+	this.pushMatrix();
+	this.multMatrix(component.transformations);
 
 	for (var i = 0; i < component.children.length; i++)
 	{
@@ -121,16 +124,20 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 		else
 			this.drawPrimitive(component.children[i].id, material, texture);
 	}
+	
+	this.popMatrix();
 }
 
 //--- Draw Primitives ---
 XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
 {
-	if(parentTexture == "none"){
+	if(parentTexture == "none")
+	{
 		parentMaterial.setTexture(null);
 		//parentMaterial.setTextureWrap('REPEAT', 'REPEAT');
 	}
-	else{
+	else
+	{
 		parentMaterial.setTexture(parentTexture);
 		//parentMaterial.setTextureWrap('REPEAT', 'REPEAT');
 	}

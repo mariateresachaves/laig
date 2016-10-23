@@ -129,13 +129,13 @@
 			<rotate axis="z" angle="0" />
 		</transformation>
 		<transformation id="table_leg">
-			<translate x="0" y="0.5" z="0" />
 			<scale x="0.1" y="1" z="0.1" />
+			<translate x="0" y="0.5" z="0" />
 		</transformation>
 		<transformation id="towel_trans">
-			<scale x="2.5" y="0.05" z="1.25" />
-			<rotate axis="y" angle="75" />
 			<translate x="3.2" y="0" z="-3" />
+			<rotate axis="y" angle="75" />					
+			<scale x="2.5" y="0.05" z="1.25" />
 		</transformation>
 	</transformations>
 
@@ -208,10 +208,10 @@
 		</component>
 
 		<component id="pool_border1">
-			<transformation>
-				<translate x="0" y="0.5" z="0" />
-				<scale x="3.4" y="0.05" z="0.3" />
+			<transformation
 				<translate x="0" y="0" z="-2.6" />
+				<scale x="3.4" y="0.05" z="0.3" />>
+				<translate x="0" y="0.5" z="0" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -224,10 +224,10 @@
 
 		<component id="pool_border2">
 			<transformation>
-				<translate x="0" y="0.5" z="0" />
-				<scale x="5.4" y="0.05" z="0.3" />
+				<translate x="-1.6" y="0" z="0" /
 				<rotate axis="y" angle="90" />
-				<translate x="-1.6" y="0" z="0" />
+				<scale x="5.4" y="0.05" z="0.3" />
+				<translate x="0" y="0.5" z="0" />>
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -239,11 +239,11 @@
 		</component>
 
 		<component id="pool_border3">
-			<transformation>
-				<translate x="0" y="0.5" z="0" />
-				<scale x="5.4" y="0.05" z="0.3" />
+			<transformation				>
+				<translate x="1.6" y="0" z="0" /
 				<rotate axis="y" angle="90" />
-				<translate x="1.6" y="0" z="0" />
+				<scale x="5.4" y="0.05" z="0.3" />
+				<translate x="0" y="0.5" z="0" />>
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -255,10 +255,10 @@
 		</component>
 
 		<component id="pool_border4">
-			<transformation>
-				<translate x="0" y="0.5" z="0" />
+			<transformation				>
+				<translate x="0" y="0" z="2.6" /
 				<scale x="3.4" y="0.05" z="0.3" />
-				<translate x="0" y="0" z="2.6" />
+				<translate x="0" y="0.5" z="0" />>
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -271,8 +271,8 @@
 
 		<component id="pool_wall1">
 			<transformation>
-				<scale x="3" y="1.5" z="1" />
-				<translate x="0" y="-0.75" z="-2.5" />
+				<translate x="0" y="-0.75" z="-2.5" /
+				<scale x="3" y="1.5" z="1" />>
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -285,9 +285,9 @@
 
 		<component id="pool_wall2">
 			<transformation>
-				<scale x="5" y="1.5" z="1" />
-				<rotate axis="y" angle="90" />
 				<translate x="-1.5" y="-0.75" z="0" />
+				<rotate axis="y" angle="90" />
+				<scale x="5" y="1.5" z="1" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -300,9 +300,9 @@
 
 		<component id="pool_wall3">
 			<transformation>
-				<scale x="5" y="1.5" z="1" />
-				<rotate axis="y" angle="-90" />
 				<translate x="1.5" y="-0.75" z="0" />
+				<rotate axis="y" angle="-90" />
+				<scale x="5" y="1.5" z="1" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -315,9 +315,9 @@
 
 		<component id="pool_wall4">
 			<transformation>
-				<scale x="3" y="1.5" z="1" />
-				<rotate axis="y" angle="180" />
 				<translate x="0" y="-0.75" z="2.5" />
+				<rotate axis="y" angle="180" />
+				<scale x="3" y="1.5" z="1" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -330,9 +330,9 @@
 
 		<component id="pool_bottom">
 			<transformation>
-				<scale x="3" y="5" z="1" />
-				<rotate axis="x" angle="-90" />
 				<translate x="0" y="-1.5" z="0" />
+				<rotate axis="x" angle="-90" />
+				<scale x="3" y="5" z="1" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -345,9 +345,9 @@
 
 		<component id="pool_water">
 			<transformation>
-				<scale x="3" y="5" z="1" />
-				<rotate axis="x" angle="-90" />
 				<translate x="0" y="-0.2" z="0" />
+				<rotate axis="x" angle="-90" />
+				<scale x="3" y="5" z="1" />
 			</transformation>
 			<materials>
 				<material id="water" />
@@ -372,8 +372,8 @@
 		
 		<component id="ball1">
 			<transformation>
-				<scale x="0.2" y="0.2" z="0.2" />
 				<translate x="0.7" y="-0.06" z="-1.2" />
+				<scale x="0.2" y="0.2" z="0.2" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -386,9 +386,9 @@
 		
 		<component id="ball2">
 			<transformation>
-				<scale x="0.2" y="0.2" z="0.2" />
-				<rotate axis="y" angle="90" />
 				<translate x="-3" y="0.15" z="1.5" />
+				<rotate axis="y" angle="90" />
+				<scale x="0.2" y="0.2" z="0.2" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -401,9 +401,9 @@
 
 		<component id="buoy1">
 			<transformation>
-				<scale x="0.5" y="0.5" z="0.5" />
-				<rotate axis="x" angle="90" />
 				<translate x="-0.5" y="-0.16" z="1" />
+				<rotate axis="x" angle="90" />
+				<scale x="0.5" y="0.5" z="0.5" />
 			</transformation>
 			<materials>
 				<material id="buoy" />
@@ -416,8 +416,8 @@
 
 		<component id="buoy2">
 			<transformation>
-				<scale x="0.05" y="0.05" z="1" />
 				<translate x="0.5" y="-0.16" z="0.5" />
+				<scale x="0.05" y="0.05" z="1" />
 			</transformation>
 			<materials>
 				<material id="plastic" />
@@ -430,8 +430,8 @@
 
 		<component id="floor">
 			<transformation>
-				<rotate axis="x" angle="-90" />
 				<scale x="3" y="1" z="5" />
+				<rotate axis="x" angle="-90" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -447,8 +447,8 @@
 
 		<component id="floor1">
 			<transformation>
-				<scale x="3" y="0.5" z="1" />
 				<translate x="0" y="0.75" z="0" />
+				<scale x="3" y="0.5" z="1" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -461,8 +461,8 @@
 
 		<component id="floor2">
 			<transformation>
-				<scale x="3" y="0.5" z="1" />
 				<translate x="0" y="-0.75" z="0" />
+				<scale x="3" y="0.5" z="1" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -503,13 +503,10 @@
 			<transformation>
 				<translate x="-3" y="0" z="-3" />
 			</transformation>
-
 			<materials>
 				<material id="table" />
 			</materials>
-
 			<texture id="none" />
-
 			<children>
 				<componentref id="table_top" />
 				<componentref id="table_right_front_leg" />
@@ -521,8 +518,8 @@
 
 		<component id="table_top">
 			<transformation>
-				<scale x="1.5" y="0.1" z="1" />
 				<translate x="0" y="1" z="0" />
+				<scale x="1.5" y="0.1" z="1" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -601,8 +598,8 @@
 
 		<component id="cup">
 			<transformation>
-				<scale x="0.5" y="0.5" z="0.5" />
 				<translate x="-3" y="0" z="-3" />
+				<scale x="0.5" y="0.5" z="0.5" />
 			</transformation>
 			<materials>
 				<material id="pipe" />
@@ -658,8 +655,8 @@
 
 		<component id="square_back">
 			<transformation>
-				<rotate axis="x" angle="180" />
 				<translate x="0" y="0" z="-0.5" />
+				<rotate axis="x" angle="180" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -672,8 +669,8 @@
 
 		<component id="square_bottom">
 			<transformation>
-				<rotate axis="x" angle="90" />
 				<translate x="0" y="-0.5" z="0" />
+				<rotate axis="x" angle="90" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -686,8 +683,8 @@
 
 		<component id="square_top">
 			<transformation>
-				<rotate axis="x" angle="-90" />
 				<translate x="0" y="0.5" z="0" />
+				<rotate axis="x" angle="-90" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -700,8 +697,8 @@
 
 		<component id="square_left">
 			<transformation>
-				<rotate axis="y" angle="-90" />
 				<translate x="-0.5" y="0" z="0" />
+				<rotate axis="y" angle="-90" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -714,8 +711,8 @@
 
 		<component id="square_right">
 			<transformation>
-				<rotate axis="y" angle="90" />
 				<translate x="0.5" y="0" z="0" />
+				<rotate axis="y" angle="90" />
 			</transformation>
 			<materials>
 				<material id="inherit" />

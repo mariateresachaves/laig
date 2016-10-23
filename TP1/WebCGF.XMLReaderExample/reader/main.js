@@ -15,7 +15,7 @@ serialInclude(['../lib/CGF.js',
 			   'XMLscene.js',
 			   'MySceneGraph.js',
 			   'Node.js',
-         'MyInterface.js',
+			   'MyInterface.js',
                'primitives/Cylinder.js',
                'primitives/Rectangle.js',
                'primitives/Sphere.js',
@@ -27,9 +27,9 @@ main=function()
 	// Standard application, scene and interface setup
     var app = new CGFapplication(document.body);
     var myScene = new XMLscene();
-    // var myInterface = new CGFinterface(); // controlos, botoes...
+    var myInterface = new CGFinterface(); // controlos, botoes...
 
-    var myInterface = new MyInterface();
+    //var myInterface = new MyInterface();
 
     app.init();
 
@@ -41,7 +41,7 @@ main=function()
 	// get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml
 	// or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor)
 
-	var filename=getUrlVars()['file'] || "teste.dsx";
+	var filename=getUrlVars()['file'] || "cena.dsx";
 
 	// create and load graph, and associate it to scene.
 	// Check console for loading errors

@@ -20,8 +20,6 @@ XMLscene.prototype.init = function (application) {
     this.LUZ_2=true;
     this.LUZ_3=true;
 
-    this.initLights();
-
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     this.gl.clearDepth(100.0);
@@ -30,65 +28,6 @@ XMLscene.prototype.init = function (application) {
     this.gl.depthFunc(this.gl.LEQUAL);
 
     this.axis=new CGFaxis(this);
-};
-
-XMLscene.prototype.initLights = function ()
-{
-	this.lights[0].setPosition(2, 3, 3, 1);
-	this.lights[0].setDiffuse(1.0,1.0,1.0,1.0);
-	this.lights[0].update();
-  /*
-  this.shader.bind();
-
-  for(omniID in this.graph.lights.omnis) {
-
-  }
-
-	// Positions for four lights
-	//this.lights[0].setPosition(4, 6, 1, 1);
-	this.lights[0].setPosition(0, 4.0, 7.5, 1.0);
-	this.lights[1].setPosition(10.5, 6.0, 1.0, 1.0);
-	this.lights[2].setPosition(10.5, 6.0, 5.0, 1.0);
-	this.lights[3].setPosition(4, 6.0, 5.0, 1.0);
-
-	// -------------------------lights[0]------------------------------------
-
-	this.lights[0].setAmbient(0, 0, 0, 1);
-	this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[0].setSpecular(1.0, 1.0, 0, 1.0);
-	this.lights[0].enable();
-
-
-	// --------------------------lights[1]-----------------------------------
-
-	this.lights[1].setAmbient(0, 0, 0, 1);
-	this.lights[1].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[1].enable();
-
-	// --------------------------lights[2]-----------------------------------
-
-	this.lights[2].setAmbient(0, 0, 0, 1);
-	this.lights[2].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[2].setSpecular(1.0, 1.0, 1.0, 1.0);
-	//Kc=0, Kl=1, Kq=0
-	this.lights[2].setConstantAttenuation(0); 	// -> kc
-	this.lights[2].setLinearAttenuation(1); 	// -> kl
-	this.lights[2].setQuadraticAttenuation(0); 	// -> kq
-	this.lights[2].enable();
-
-	// --------------------------lights[3]-----------------------------------
-
-	this.lights[3].setAmbient(0, 0, 0, 1);
-	this.lights[3].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[3].setSpecular(1.0, 1.0, 0, 1.0);
-	//Kc=0, Kl=0, Kq=1
-	this.lights[3].setConstantAttenuation(0); 		// -> kc
-	this.lights[3].setLinearAttenuation(0); 		// -> kl
-	this.lights[3].setQuadraticAttenuation(1); 		// -> kq
-	this.lights[3].enable();
-
-	this.shader.unbind();
-  */
 };
 
 XMLscene.prototype.initCameras = function () {
@@ -125,6 +64,26 @@ XMLscene.prototype.onGraphLoaded = function ()
     this[l_s] = true;
 
   this.myInterface.onGraphLoaded();
+
+  for(omni in this.graph.lights.omnis) {
+    var l = this.graph.lights.omnis[omni];
+
+    this.lights[i].setPosition(l.location[0], l.location[1], l.location[2], l.location[3]);
+    this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
+    this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
+  	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
+  	this.lights[i].enable();
+  }
+
+  for(spot in this.graph.lights.spots) {
+    var l = this.graph.lights.spots[spot];
+
+    this.lights[i].setPosition(l.location[0], l.location[1], l.location[2], l.location[3]);
+    this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
+    this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
+  	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
+  	this.lights[i].enable();
+  }
 };
 
 XMLscene.prototype.updateLights = function() {

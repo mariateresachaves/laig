@@ -111,7 +111,7 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
   var i = 0;
 
   for (; i < component.children.length; i++) {
-    console.log(component.children[i].type + " - " + component.children[i].id);
+    //console.log(component.children[i].type + " - " + component.children[i].id);
 		this.drawComponent(component.children[i].id, material, texture);
 	}
 
@@ -121,12 +121,23 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
 {
 
-    /*if(parentTexture != "none"){
-    	//material.setTexture(this.textures[parentTextureID]);
-    	material.loadTexture(parentTexture.file);
-    }*/
+  /*if(parentTexture != "none"){
+  	//material.setTexture(this.textures[parentTextureID]);
+  	material.loadTexture(parentTexture.file);
+  }*/
 
-	//parentMaterial.apply();
+  if(parentMaterial != "inherit" && parentMaterial != "none") {
+
+    var material = new CGFappearance(this);
+    material.setEmission(parentMaterial.emission[0], parentMaterial.emission[1], parentMaterial.emission[2], parentMaterial.emission[3]);
+    material.setAmbient(parentMaterial.ambient[0], parentMaterial.ambient[1], parentMaterial.ambient[2], parentMaterial.ambient[3]);
+    material.setDiffuse(parentMaterial.diffuse[0], parentMaterial.diffuse[1], parentMaterial.diffuse[2], parentMaterial.diffuse[3]);
+    material.setSpecular(parentMaterial.specular[0], parentMaterial.specular[1], parentMaterial.specular[2], parentMaterial.specular[3]);
+    material.setShininess(parentMaterial.shininess);
+
+    parentMaterial.apply();
+
+  }
 
 	this.primitives[primitiveID].display();
 }

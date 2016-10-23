@@ -90,55 +90,8 @@ XMLscene.prototype.display = function () {
 };
 
 //--- Draw Components ---
-/*XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parentTexture)
-{
-
-  if(componentID in this.primitives ) {
-
-    var component = this.graph.primitives[componentID];
-  	//	console.log(componentID + " " + component );
-
-  	var material = component.material;
-  	//console.log("material length = " + component.materials.length);
-
-  	if (material == "inherit") material = parentMaterial;
-
-  	var texture = component.texture;
-  	if (texture == "inherit") texture = parentTexture;
-
-    console.log(component.type + " - " + component.id);
-    this.drawPrimitive(component.id, material, texture);
-  }
-  else {
-
-    var component = this.graph.components[componentID];
-  	//	console.log(componentID + " " + component );
-
-  	var material = component.material;
-  	//console.log("material length = " + component.materials.length);
-
-  	if (material == "inherit") material = parentMaterial;
-
-  	var texture = component.texture;
-  	if (texture == "inherit") texture = parentTexture;
-
-    for (i = 0; i < component.children.length; i++)
-  	{
-        console.log(component.children[i].type + " - " + component.children[i].id);
-    		this.drawComponent(component.children[i].id, material, texture);
-  	}
-  }
-
-
-
-  return;
-
-}*/
-
 XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parentTexture)
 {
-  console.log("ID RECEBIDO NO DRAWCOMPONENT: " + componentID);
-
   if(this.graph.components[componentID].children[0].id in this.primitives ){
   	this.drawPrimitive(this.graph.components[componentID].children[0].id, this.graph.components[componentID].material, this.graph.components[componentID].texture);
     return;
@@ -155,15 +108,11 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 	var texture = component.texture;
 	if (texture == "inherit") texture = parentTexture;
 
-  console.log("TENHO " + component.children.length + " FILHOS");
+  var i = 0;
 
-  for (i = 0; i < component.children.length; i++){
-
-    console.log("I -> " + i);
-
-      console.log(component.children[i].type + " - " + component.children[i].id);
-  		this.drawComponent(component.children[i].id, material, texture);
-      console.log("--------------> Terminei <--------------");
+  for (; i < component.children.length; i++) {
+    console.log(component.children[i].type + " - " + component.children[i].id);
+		this.drawComponent(component.children[i].id, material, texture);
 	}
 
 }
@@ -171,7 +120,6 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 //--- Draw Primitives ---
 XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
 {
-  console.log("ID RECEBIDO NO DRAWPRIMITIVE: " + primitiveID);
 
     /*if(parentTexture != "none"){
     	//material.setTexture(this.textures[parentTextureID]);

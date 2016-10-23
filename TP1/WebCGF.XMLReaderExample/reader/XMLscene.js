@@ -74,7 +74,7 @@ XMLscene.prototype.onGraphLoaded = function ()
     this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
     this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
   	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
-  	this.lights[i].enable();
+    // this.lights[i].enable();
 
     i++;
   }
@@ -86,7 +86,7 @@ XMLscene.prototype.onGraphLoaded = function ()
     this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
     this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
   	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
-  	this.lights[i].enable();
+  	// this.lights[i].enable();
 
     i++;
   }
@@ -130,6 +130,25 @@ XMLscene.prototype.display = function () {
 		this.drawComponent(this.graph.root, "inherit", "inherit");
 		//this.drawPrimitive('E', null, null);
 	};
+
+  var i = 0;
+
+  for(omni in this.graph.lights.omnis) {
+    if(this[omni])
+  		this.lights[i].enable();
+  	else
+  		this.lights[i].disable();
+
+    i++;
+  }
+  for(spot in this.graph.lights.spots) {
+    if(this[spot])
+  		this.lights[i].enable();
+  	else
+  		this.lights[i].disable();
+
+    i++;
+  }
 };
 
 //--- Draw Components ---

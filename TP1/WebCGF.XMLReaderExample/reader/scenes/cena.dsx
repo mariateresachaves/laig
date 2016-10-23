@@ -134,7 +134,7 @@
 		</transformation>
 		<transformation id="towel_trans">
 			<translate x="3.2" y="0" z="-3" />
-			<rotate axis="y" angle="75" />					
+			<rotate axis="y" angle="75" />
 			<scale x="2.5" y="0.05" z="1.25" />
 		</transformation>
 	</transformations>
@@ -208,9 +208,9 @@
 		</component>
 
 		<component id="pool_border1">
-			<transformation
+			<transformation>
 				<translate x="0" y="0" z="-2.6" />
-				<scale x="3.4" y="0.05" z="0.3" />>
+				<scale x="3.4" y="0.05" z="0.3" />
 				<translate x="0" y="0.5" z="0" />
 			</transformation>
 			<materials>
@@ -224,10 +224,10 @@
 
 		<component id="pool_border2">
 			<transformation>
-				<translate x="-1.6" y="0" z="0" /
+				<translate x="-1.6" y="0" z="0" />
 				<rotate axis="y" angle="90" />
 				<scale x="5.4" y="0.05" z="0.3" />
-				<translate x="0" y="0.5" z="0" />>
+				<translate x="0" y="0.5" z="0" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -239,11 +239,11 @@
 		</component>
 
 		<component id="pool_border3">
-			<transformation				>
-				<translate x="1.6" y="0" z="0" /
+			<transformation>
+				<translate x="1.6" y="0" z="0" />
 				<rotate axis="y" angle="90" />
 				<scale x="5.4" y="0.05" z="0.3" />
-				<translate x="0" y="0.5" z="0" />>
+				<translate x="0" y="0.5" z="0" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -255,10 +255,10 @@
 		</component>
 
 		<component id="pool_border4">
-			<transformation				>
-				<translate x="0" y="0" z="2.6" /
+			<transformation>
+				<translate x="0" y="0" z="2.6" />
 				<scale x="3.4" y="0.05" z="0.3" />
-				<translate x="0" y="0.5" z="0" />>
+				<translate x="0" y="0.5" z="0" />
 			</transformation>
 			<materials>
 				<material id="inherit" />
@@ -271,7 +271,7 @@
 
 		<component id="pool_wall1">
 			<transformation>
-				<translate x="0" y="-0.75" z="-2.5" /
+				<translate x="0" y="-0.75" z="-2.5" />
 				<scale x="3" y="1.5" z="1" />>
 			</transformation>
 			<materials>
@@ -369,7 +369,7 @@
 				<primitiveref id="sphere" />
 			</children>
 		</component>
-		
+
 		<component id="ball1">
 			<transformation>
 				<translate x="0.7" y="-0.06" z="-1.2" />
@@ -383,7 +383,7 @@
 				<componentref id="ball" />
 			</children>
 		</component>
-		
+
 		<component id="ball2">
 			<transformation>
 				<translate x="-3" y="0.15" z="1.5" />

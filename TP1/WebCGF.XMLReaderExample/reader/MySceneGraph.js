@@ -1072,7 +1072,6 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 	for(i = 0; i < componentsList.length; i++)
 	{
 		var c = componentsList[i];
-		var component = new Object;
 
 		//id
 		var id = this.parseStringAttr(c, "id");
@@ -1081,7 +1080,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		if(id in this.components)
 			return "Duplicate entry of component id (id=" + id +").";
 
-		var node = new Node(id, this.scene);
+		var component = new Component(id, this.scene);
 
 		//transformation
 		elems = c.getElementsByTagName('transformation');
@@ -1186,7 +1185,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			}
 		}
 
-		node.setTransformations(m);
+		component.setTransformations(m);
 
 		//materials
 		elems = c.getElementsByTagName('materials');
@@ -1212,13 +1211,13 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			if (this.error != null) return this.error;
 
 			if (materialid == "inherit")
-				node.addMaterial("inherit");
+				component.addMaterial("inherit");
 
 			else if(!(materialid in this.materials)) // check if material with this id exists
 				return "Cannot find a material with id=" + materialid;
 
 			else
-				node.addMaterial(this.materials[materialid]);
+				component.addMaterial(this.materials[materialid]);
 		}
 
 		//texture
@@ -1233,16 +1232,16 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		if(this.error != null) return this.error;
 
 		if(textureid == "inherit")
-			node.setTexture("inherit");
+			component.setTexture("inherit");
 
 		else if(textureid == "none")
-			node.setTexture("none");
+			component.setTexture("none");
 
 		else if(!(textureid in this.textures))
 			return "Cannot find a texture with id=" + textureid;
 
 		else
-			node.setTexture(this.textures[textureid]);
+			component.setTexture(this.textures[textureid]);
 
 		//children
 		elems = c.getElementsByTagName('children');
@@ -1275,10 +1274,10 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		    	return "element found in " + id + " is not 'componentref' or 'primitiveref' (" + c.nodeName +").";
 		    }
 
-			node.addChildren(child);
+			component.addChildren(child);
 		}
 
-		this.components[id] = node;
+		this.components[id] = component;
 	}
 
 	for(id in this.components)

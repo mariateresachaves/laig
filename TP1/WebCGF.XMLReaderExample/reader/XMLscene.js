@@ -13,12 +13,9 @@ XMLscene.prototype.init = function (application) {
 
     this.cameras = [];
     this.camera_index = 0;
-    this.camera_changed = false;
-    this.num_cameras = 0;
 
-    this.initCameras();
-
-    this.myInterface = new MyInterface(this);
+    //this.initCameras();
+    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -30,9 +27,90 @@ XMLscene.prototype.init = function (application) {
     this.axis=new CGFaxis(this);
 };
 
-XMLscene.prototype.initCameras = function () {
-    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+//--- Iniatialize Cameras ---
+XMLscene.prototype.initCameras = function ()
+{	
+	var i = 0
+	for(perspective in this.graph.views.list) {
+		var p = this.graph.views.list[perspective];
+		
+		var camera = new CGFcamera(p.angle, p.near, p.far, vec3.fromValues(p.from[0], p.from[1], p.from[2]), vec3.fromValues(p.to[0], p.to[1], p.to[2]) );
+		
+		this.cameras.push(camera);
+		
+		if (perspective === this.graph.views.default)
+		{
+			this.camera_index = i;
+			this.camera = camera;
+			this.interface.setActiveCamera(this.camera);
+		}
+		
+		i++;
+	}
 };
+
+//--- Iniatialize Lights ---
+XMLscene.prototype.initLights = function ()
+{
+	var i = 0;
+	
+	for(omni in this.graph.lights.omnis)
+	{
+		var l = this.graph.lights.omnis[omni];
+
+		this.lights[i].setPosition(l.location[0], l.location[1], l.location[2], l.location[3]);
+		this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
+		this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
+		this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
+		// this.lights[i].enable();
+		
+	    i++;
+	}
+	
+	for(spot in this.graph.lights.spots)
+	{
+		var l = this.graph.lights.spots[spot];
+
+	    this.lights[i].setPosition(l.location[0], l.location[1], l.location[2], l.location[3]);
+	    this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
+	    this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
+	  	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
+	  	// this.lights[i].enable();
+
+	    i++;
+	}
+};
+
+//--- Iniatialize Primitives ---
+XMLscene.prototype.initializePrimitives = function ()
+{
+	this.primitives = new Object;
+
+	for( var primitiveID in this.graph.primitives )
+	{
+		var p = this.graph.primitives[primitiveID];
+
+		switch (p.type){
+		case "rectangle":
+			var primitive = new Rectangle(this, p.x1, p.y1, p.x2, p.y2);
+			break;
+		case "triangle":
+			var primitive = new Triangle(this, p.x1, p.y1, p.z1, p.x2, p.y2, p.z2, p.x3, p.y3, p.z3);
+			break;
+		case "cylinder":
+			var primitive = new Cylinder(this, p.base, p.top, p.height, p.slices, p.stacks);
+			break;
+		case "sphere":
+			var primitive = new Sphere(this, p.radius, p.slices, p.stacks);
+			break;
+		case "torus":
+			var primitive = new Torus(this, p.inner, p.outer, p.slices, p.loops);
+			break;
+		}
+
+		this.primitives[primitiveID] = primitive;
+	}
+}
 
 XMLscene.prototype.setDefaultAppearance = function () {
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
@@ -45,7 +123,7 @@ XMLscene.prototype.setDefaultAppearance = function () {
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function ()
 {
-  this.axis = new CGFaxis(this, this.graph.axis_length);
+	this.axis = new CGFaxis(this, this.graph.axis_length);
 
 	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
 	this.lights[0].setVisible(true);
@@ -56,51 +134,18 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.lights[1].enable();
 
 	this.initializePrimitives();
-
-  for(l_o in this.graph.lights.omnis)
-    this[l_o] = true;
-
-  for(l_s in this.graph.lights.spots)
-    this[l_s] = true;
-
-  this.myInterface.onGraphLoaded();
-
-  var i = 0;
-
-  for(omni in this.graph.lights.omnis) {
-    var l = this.graph.lights.omnis[omni];
-
-    this.lights[i].setPosition(l.location[0], l.location[1], l.location[2], l.location[3]);
-    this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
-    this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
-  	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
-    // this.lights[i].enable();
-
-    i++;
-  }
-
-  for(spot in this.graph.lights.spots) {
-    var l = this.graph.lights.spots[spot];
-
-    this.lights[i].setPosition(l.location[0], l.location[1], l.location[2], l.location[3]);
-    this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
-    this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
-  	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
-  	// this.lights[i].enable();
-
-    i++;
-  }
-
-  for(perspective in this.graph.views.list) {
-    var p = this.graph.views.list[perspective];
-
-    if(p == 'default')
-      this.camera_index = this.num_cameras;
-
-    this.cameras[this.num_cameras] = new CFGcamera(p.near, p.far, p.angle, vec3.fromValues(p.from[0], p.from[1], p.from[2]),
-                                                            vec3.fromValues(p.to[0], p.to[1], p.to[2]));
-  }
-
+	
+	for(l_o in this.graph.lights.omnis)
+		this[l_o] = true;
+	
+	for(l_s in this.graph.lights.spots)
+		this[l_s] = true;
+	
+	this.interface.onGraphLoaded();
+	
+	this.initLights();
+	
+	this.initCameras();
 };
 
 XMLscene.prototype.updateLights = function() {
@@ -108,35 +153,13 @@ XMLscene.prototype.updateLights = function() {
 		this.lights[i].update();
 };
 
-XMLscene.prototype.changeCamera = function() {
-  this.index++;
-  this.changeCamera = true;
-
-  /*var flag = false;
-
-  for(perspective in this.graph.views.list) {
-    var p = this.graph.views.list[perspective];
-
-    if(this.actual_camara == null) {
-      this.camera.angle = p.angle;
-    	this.camera.near = p.near;
-    	this.camera.far = p.far;
-    	this.camera.setPosition(vec3.fromValues(p.from[0], p.from[1], p.from[2]));
-    	this.camera.setTarget(vec3.fromValues(p.to[0], p.to[1], p.to[2]));
-    }
-
-    if(perspective == this.actual_camara)
-      flag = true;
-
-    if(flag) {
-      this.camera.angle = p.angle;
-      this.camera.near = p.near;
-      this.camera.far = p.far;
-      this.camera.setPosition(vec3.fromValues(p.from[0], p.from[1], p.from[2]));
-      this.camera.setTarget(vec3.fromValues(p.to[0], p.to[1], p.to[2]));
-    }
-  }*/
-
+XMLscene.prototype.changeCamera = function()
+{
+	this.camera_index++;
+	if (this.camera_index >= this.cameras.length)
+		this.camera_index = 0;
+	this.camera = this.cameras[this.camera_index];
+	this.interface.setActiveCamera(this.camera);
 };
 
 XMLscene.prototype.display = function () {
@@ -152,8 +175,8 @@ XMLscene.prototype.display = function () {
 
 	// Apply transformations corresponding to the camera position relative to the origin
 	this.applyViewMatrix();
-
-  this.updateLights();
+	
+	this.updateLights();
 
 	// Draw axis
 	this.axis.display();
@@ -171,46 +194,29 @@ XMLscene.prototype.display = function () {
 		//this.drawComponent(this.graph.root, null, null);
 		this.drawComponent(this.graph.root, "inherit", "inherit");
 		//this.drawPrimitive('E', null, null);
-
-    var i = 0;
-
-    for(omni in this.graph.lights.omnis) {
-      if(this[omni])
-    		this.lights[i].enable();
-    	else
-    		this.lights[i].disable();
-
-      i++;
-    }
-    for(spot in this.graph.lights.spots) {
-      if(this[spot])
-    		this.lights[i].enable();
-    	else
-    		this.lights[i].disable();
-
-      i++;
-    }
+		
+		var i = 0;
+		
+		for(omni in this.graph.lights.omnis) {
+			if(this[omni])
+				this.lights[i].enable();
+			else
+				this.lights[i].disable();
+			i++;
+		}
+		for(spot in this.graph.lights.spots) {
+			if(this[spot])
+				this.lights[i].enable();
+			else
+				this.lights[i].disable();
+			i++;
+		}
 	};
-
-  /*if(cameraChanged) {
-    cameraChanged = false;
-
-    if(this.camera_index == this.num_cameras)
-      this.camera_index = 0;
-
-    this.camera = this.cameras[this.camera_index];
-  }*/
-
 };
 
 //--- Draw Components ---
 XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parentTexture)
 {
-	/*if(this.graph.components[componentID].children[0].id in this.primitives ){
-		this.drawPrimitive(this.graph.components[componentID].children[0].id, this.graph.components[componentID].material, this.graph.components[componentID].texture);
-		return;
- 	}*/
-
 	var component = this.graph.components[componentID];
 
 	var material = component.getMaterial();
@@ -252,46 +258,11 @@ XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parent
 	this.primitives[primitiveID].display();
 }
 
-
-//--- Iniatize Primitives ---
-XMLscene.prototype.initializePrimitives = function ()
-{
-	this.primitives = new Object;
-
-	for( var primitiveID in this.graph.primitives )
+//--- Change Materials ---
+XMLscene.prototype.changeMaterials = function ()
+{	
+	for( var id in this.graph.components )
 	{
-		var p = this.graph.primitives[primitiveID];
-
-		switch (p.type){
-		case "rectangle":
-			var primitive = new Rectangle(this, p.x1, p.y1, p.x2, p.y2);
-			break;
-		case "triangle":
-			var primitive = new Triangle(this, p.x1, p.y1, p.z1, p.x2, p.y2, p.z2, p.x3, p.y3, p.z3);
-			break;
-		case "cylinder":
-			var primitive = new Cylinder(this, p.base, p.top, p.height, p.slices, p.stacks);
-			break;
-		case "sphere":
-			var primitive = new Sphere(this, p.radius, p.slices, p.stacks);
-			break;
-		case "torus":
-			var primitive = new Torus(this, p.inner, p.outer, p.slices, p.loops);
-			break;
-		}
-
-		this.primitives[primitiveID] = primitive;
-	}
-}
-
-//--- Iniatize Textures ---
-XMLscene.prototype.initializeTextures = function () {
-  this.textures = new Object;
-
-	for( var textureID in this.graph.textures )
-	{
-		var t = this.graph.textures[textureID];
-
-		this.textures[textureID] = new CGFtexture(t.file);
+		this.graph.components[id].nextMaterial();
 	}
 }

@@ -1,4 +1,4 @@
-function Node(id, scene) {
+function Component(id, scene) {
   this.id = id;
   this.scene = scene;
   this.texture = "none";
@@ -9,37 +9,37 @@ function Node(id, scene) {
   this.children = [];
 }
 
-Node.prototype = Object.create(Object.prototype);
-Node.prototype.constructor = Node;
+Component.prototype = Object.create(Object.prototype);
+Component.prototype.constructor = Node;
 
-Node.prototype.setTexture = function(t)
+Component.prototype.setTexture = function(t)
 {
 	this.texture = t;
 }
 
-Node.prototype.addMaterial = function(m)
+Component.prototype.addMaterial = function(m)
 {
 	this.materials.push(m);
 }
 
-Node.prototype.getMaterial = function()
+Component.prototype.getMaterial = function()
 {
 	return this.materials[this.materialpos];
 }
 
-Node.prototype.nextMaterial = function()
+Component.prototype.nextMaterial = function()
 {
 	this.materialpos++;
 	if (this.materialpos === this.materials.length)
 		this.materialpos = 0;
 }
 
-Node.prototype.setTransformations = function(t)
+Component.prototype.setTransformations = function(t)
 {
 	this.transformations = t;
 };
 
-Node.prototype.addChildren = function(c)
+Component.prototype.addChildren = function(c)
 {
-  this.children.push(c);
+	this.children.push(c);
 }

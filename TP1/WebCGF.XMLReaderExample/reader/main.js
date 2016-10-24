@@ -14,7 +14,7 @@ function getUrlVars() {
 serialInclude(['../lib/CGF.js',
 			   'XMLscene.js',
 			   'MySceneGraph.js',
-			   'Node.js',
+			   'Component.js',
 			   'MyInterface.js',
                'primitives/Cylinder.js',
                'primitives/Rectangle.js',
@@ -27,13 +27,14 @@ main=function()
 	// Standard application, scene and interface setup
     var app = new CGFapplication(document.body);
     var myScene = new XMLscene();
-    var myInterface = new CGFinterface(); // controlos, botoes...
+    var myInterface = new MyInterface(myScene); // controlos, botoes...
 
     app.init();
 
     app.setScene(myScene);
     app.setInterface(myInterface);
 
+    //myScene.setInterface(myInterface);
     myInterface.setActiveCamera(myScene.camera);
 
 	// get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml

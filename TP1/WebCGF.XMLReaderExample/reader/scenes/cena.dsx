@@ -7,8 +7,12 @@
 			<from x="10.0" y="10.0" z="10.0" />
 			<to x="0.0" y="0.0" z="0.0" />
 		</perspective>
-		<perspective id="v2" near="0.1" far="150.0" angle="45.0">
-			<from x="-10.0" y="10.0" z="-10.0" />
+		<perspective id="top" near="0.1" far="150.0" angle="45.0">
+			<from x="1.0" y="50.0" z="0.0" />
+			<to x="0.0" y="0.0" z="0.0" />
+		</perspective>
+		<perspective id="long" near="0.1" far="150.0" angle="30.0">
+			<from x="0.0" y="25.0" z="25.0" />
 			<to x="0.0" y="0.0" z="0.0" />
 		</perspective>
 	</views>
@@ -505,6 +509,9 @@
 			</transformation>
 			<materials>
 				<material id="table" />
+				<material id="buoy" />
+				<material id="plastic" />
+				<material id="water" />
 			</materials>
 			<texture id="none" />
 			<children>

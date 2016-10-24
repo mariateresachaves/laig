@@ -942,7 +942,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 
 		//check for duplicate ids
 		if (primitive_id in this.primitives)
-			return "Duplicate entry of primitive id (id=" + x.id +").";
+			return "Duplicate entry of primitive id (id=" + primitive_id +").";
 
 		//Geometric Figure
 		if (p.children == null  || p.children.length != 1) //erro primitive vazia - reporta e termina

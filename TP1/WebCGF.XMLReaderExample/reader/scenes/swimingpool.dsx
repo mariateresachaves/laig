@@ -165,7 +165,7 @@
 			<materials>
 				<material id="table" />
 			</materials>
-			<texture id="none" />
+			<texture id="towel" />
 			<children>
 				<componentref id="floor" />
 				<componentref id="table" />
@@ -411,6 +411,9 @@
 			</transformation>
 			<materials>
 				<material id="buoy" />
+				<material id="plastic" />
+				<material id="water" />
+				<material id="float" />
 			</materials>
 			<texture id="none" />
 			<children>
@@ -425,6 +428,9 @@
 			</transformation>
 			<materials>
 				<material id="plastic" />
+				<material id="buoy" />
+				<material id="water" />
+				<material id="float" />
 			</materials>
 			<texture id="none" />
 			<children>

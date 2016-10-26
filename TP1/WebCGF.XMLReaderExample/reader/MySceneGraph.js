@@ -643,8 +643,9 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 		if(texture_id in this.textures)
 			return "Duplicate entry of texture id (id=" + texture_id +").";
 
-		texture.file = this.parseStringAttr(t, 'file');
+		var file = this.parseStringAttr(t, 'file');
 		if(this.error != null) return this.error;
+		texture.CGFtexture = new CGFtexture(this.scene, file);
 
 		texture.length_s = this.parseFloatAttr(t, 'length_s');
 		if(this.error != null) return this.error;
@@ -652,7 +653,7 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 		texture.length_t = this.parseFloatAttr(t, 'length_t');
 		if(this.error != null) return this.error;
 
-		this.textures[texture_id] = new CGFtexture(this.scene, texture.file, texture.length_s, texture.length_t);
+		this.textures[texture_id] = texture;
 	}
 
 	//Display values for Debugging
@@ -660,7 +661,7 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 	for(i in this.textures) {
 		var x = this.textures[i];
 		console.log("Texture id = " + i +
-				" { file = " + x.file +
+				" { file = " + x.CGFtexture.image.src +
 				", length_s = " + x.length_s +
 				", length_t = " + x.length_t + " }");
 	}

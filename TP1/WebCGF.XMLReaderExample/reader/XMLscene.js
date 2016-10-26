@@ -14,7 +14,6 @@ XMLscene.prototype.init = function (application) {
     this.cameras = [];
     this.camera_index = 0;
 
-    //this.initCameras();
     this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -62,7 +61,6 @@ XMLscene.prototype.initLights = function ()
 		this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
 		this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
 		this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
-		// this.lights[i].enable();
 		
 	    i++;
 	}
@@ -75,7 +73,6 @@ XMLscene.prototype.initLights = function ()
 	    this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
 	    this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
 	  	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
-	  	// this.lights[i].enable();
 
 	    i++;
 	}
@@ -190,10 +187,7 @@ XMLscene.prototype.display = function () {
 	// This is one possible way to do it
 	if (this.graph.loadedOk)
 	{
-		this.lights[0].update();
-		//this.drawComponent(this.graph.root, null, null);
 		this.drawComponent(this.graph.root, "inherit", "inherit");
-		//this.drawPrimitive('E', null, null);
 		
 		var i = 0;
 		
@@ -245,16 +239,18 @@ XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parent
 	if(parentTexture == "none")
 	{
 		parentMaterial.setTexture(null);
-		//parentMaterial.setTextureWrap('REPEAT', 'REPEAT');
 	}
 	else
 	{
-		parentMaterial.setTexture(parentTexture);
-		//parentMaterial.setTextureWrap('REPEAT', 'REPEAT');
+		parentMaterial.setTexture(parentTexture.CGFtexture);
+		
+		var type = this.graph.primitives[primitiveID].type;
+		if (type == "rectangle" || type == "triangle" )
+			this.primitives[primitiveID].setTextureScales(parentTexture.length_s, parentTexture.length_t);
 	}
 
 	parentMaterial.apply();
-
+		
 	this.primitives[primitiveID].display();
 }
 

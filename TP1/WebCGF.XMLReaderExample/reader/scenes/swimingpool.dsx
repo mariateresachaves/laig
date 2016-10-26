@@ -59,7 +59,7 @@
 		<texture id="pool_stone" file="./resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
 		<texture id="pool_tile" file="./resources/images/pool_tile.png" length_s="1.0" length_t="1.0" />
 		<texture id="water" file="./resources/images/water.png" length_s="1.0" length_t="1.0" />
-		<texture id="towel" file="./resources/images/towel.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="towel" file="./resources/images/towel.jpg" length_s="0.2" length_t="0.5" />
 	</textures>
 
 	<materials>
@@ -146,6 +146,9 @@
 	<primitives>
 		<primitive id="square">
 			<rectangle x1="-0.5" y1="-0.5" x2="0.5" y2="0.5" />
+		</primitive>
+		<primitive id="triangle">
+			<triangle x1="0" y1="1" z1="0" x2="0" y2="0" z2="1" x3="1" y3="0" z3="0" />
 		</primitive>
 		<primitive id="sphere">
             <sphere radius="1" slices="50" stacks="10" />
@@ -526,6 +529,7 @@
 				<componentref id="table_left_front_leg" />
 				<componentref id="table_right_back_leg" />
 				<componentref id="table_left_back_leg" />
+				<componentref id="pyramid" />
 			</children>
 		</component>
 
@@ -606,6 +610,78 @@
 			<texture id="inherit" />
 			<children>
 				<componentref id="table_leg" />
+			</children>
+		</component>
+		
+		<component id="pyramid">
+			<transformation>
+				<translate x="0" y="1" z="0.1" />
+				<scale x="0.2" y="0.2" z="0.2" />
+			</transformation>
+			<materials>
+				<material id="pipe" />
+				<material id="table" />
+				<material id="buoy" />
+				<material id="plastic" />
+				<material id="water" />
+			</materials>
+			<texture id="towel" />
+			<children>
+				<componentref id="pyramid_face1" />
+				<componentref id="pyramid_face2" />
+				<componentref id="pyramid_face3" />
+				<componentref id="pyramid_face4" />
+			</children>
+		</component>
+		
+		<component id="pyramid_face1">
+			<transformation>
+			</transformation>
+			<materials>
+				<material id="inherit" />
+			</materials>
+			<texture id="inherit" />
+			<children>
+				<primitiveref id="triangle" />
+			</children>
+		</component>
+		
+		<component id="pyramid_face2">
+			<transformation>
+				<rotate axis="y" angle="90" />
+			</transformation>
+			<materials>
+				<material id="inherit" />
+			</materials>
+			<texture id="inherit" />
+			<children>
+				<primitiveref id="triangle" />
+			</children>
+		</component>
+		
+		<component id="pyramid_face3">
+			<transformation>
+				<rotate axis="y" angle="180" />
+			</transformation>
+			<materials>
+				<material id="inherit" />
+			</materials>
+			<texture id="inherit" />
+			<children>
+				<primitiveref id="triangle" />
+			</children>
+		</component>
+		
+		<component id="pyramid_face4">
+			<transformation>
+				<rotate axis="y" angle="-90" />
+			</transformation>
+			<materials>
+				<material id="inherit" />
+			</materials>
+			<texture id="inherit" />
+			<children>
+				<primitiveref id="triangle" />
 			</children>
 		</component>
 

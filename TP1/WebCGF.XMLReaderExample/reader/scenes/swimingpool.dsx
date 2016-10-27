@@ -60,6 +60,7 @@
 		<texture id="pool_tile" file="./resources/images/pool_tile.png" length_s="1.0" length_t="1.0" />
 		<texture id="water" file="./resources/images/water.png" length_s="1.0" length_t="1.0" />
 		<texture id="towel" file="./resources/images/towel.jpg" length_s="0.2" length_t="0.5" />
+		<texture id="pyramid" file="./resources/images/pyramid.jpg" length_s="2.0" length_t="2.0" />
 	</textures>
 
 	<materials>
@@ -612,20 +613,20 @@
 				<componentref id="table_leg" />
 			</children>
 		</component>
-		
+
 		<component id="pyramid">
 			<transformation>
 				<translate x="0" y="1" z="0.1" />
 				<scale x="0.2" y="0.2" z="0.2" />
 			</transformation>
 			<materials>
+				<material id="plastic" />
 				<material id="pipe" />
 				<material id="table" />
 				<material id="buoy" />
-				<material id="plastic" />
 				<material id="water" />
 			</materials>
-			<texture id="towel" />
+			<texture id="pyramid" />
 			<children>
 				<componentref id="pyramid_face1" />
 				<componentref id="pyramid_face2" />
@@ -633,7 +634,7 @@
 				<componentref id="pyramid_face4" />
 			</children>
 		</component>
-		
+
 		<component id="pyramid_face1">
 			<transformation>
 			</transformation>
@@ -645,7 +646,7 @@
 				<primitiveref id="triangle" />
 			</children>
 		</component>
-		
+
 		<component id="pyramid_face2">
 			<transformation>
 				<rotate axis="y" angle="90" />
@@ -658,7 +659,7 @@
 				<primitiveref id="triangle" />
 			</children>
 		</component>
-		
+
 		<component id="pyramid_face3">
 			<transformation>
 				<rotate axis="y" angle="180" />
@@ -671,7 +672,7 @@
 				<primitiveref id="triangle" />
 			</children>
 		</component>
-		
+
 		<component id="pyramid_face4">
 			<transformation>
 				<rotate axis="y" angle="-90" />

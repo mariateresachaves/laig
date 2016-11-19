@@ -109,6 +109,9 @@ XMLscene.prototype.initPrimitives = function ()
 		case "plane":
 			var primitive = new Plane(this, p.dimX, p.dimY, p.partsX, p.partsY);
 			break;
+		case "patch":
+			var primitive = new Patch(this, p.orderU, p.orderV, p.partsU, p.partsV, p.controlPoints);
+			break;
 		}
 
 		this.primitives[primitiveID] = primitive;

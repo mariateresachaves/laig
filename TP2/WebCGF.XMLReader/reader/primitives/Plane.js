@@ -3,8 +3,8 @@
  *
  * @constructor
  */
-function Plane(scene, dimX, dimY, partsX, partsY) {
-
+function Plane(scene, dimX, dimY, partsX, partsY)
+{
     var knotsX = [0, 0, 1, 1];
     var knotsY = [0, 0, 1, 1];
 

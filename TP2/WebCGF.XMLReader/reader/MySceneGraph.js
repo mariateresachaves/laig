@@ -1107,6 +1107,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	    	primitive.y2 = this.parseFloatAttr(figure, 'y2');
 			if(this.error != null) return this.error;
 	        break;
+			
 	    case "triangle":
 	    	primitive.type = "triangle";
 	    	primitive.x1 = this.parseFloatAttr(figure, 'x1');
@@ -1128,6 +1129,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	    	primitive.z3 = this.parseFloatAttr(figure, 'z3');
 			if(this.error != null) return this.error;
 	        break;
+			
 	    case "cylinder":
 	    	primitive.type = "cylinder";
 	    	primitive.base = this.parseFloatAttr(figure, 'base');
@@ -1141,6 +1143,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	    	primitive.stacks = this.parseIntegerAttr(figure, 'stacks');
 			if(this.error != null) return this.error;
 	        break;
+			
 	    case "sphere":
 	    	primitive.type = "sphere";
 	    	primitive.radius = this.parseFloatAttr(figure, 'radius');
@@ -1150,6 +1153,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	    	primitive.stacks = this.parseIntegerAttr(figure, 'stacks');
 			if(this.error != null) return this.error;
 	        break;
+			
 	    case "torus":
 	    	primitive.type = "torus";
 	    	primitive.inner = this.parseFloatAttr(figure, 'inner');
@@ -1161,6 +1165,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	    	primitive.loops = this.parseIntegerAttr(figure, 'loops');
 			if(this.error != null) return this.error;
 	        break;
+			
 		case "plane":
 			primitive.type = "plane";
 			primitive.dimX = this.parseFloatAttr(figure, 'dimX');
@@ -1172,8 +1177,50 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
             primitive.partsY = this.parseFloatAttr(figure, 'partsY');
             if(this.err != null) return this.error;
             break;
+
+		case "patch":
+			primitive.type = "patch";
+			primitive.orderU = this.parseIntegerAttr(figure, 'orderU');
+			if(this.err != null) return this.error;
+            primitive.orderV = this.parseIntegerAttr(figure, 'orderV');
+            if(this.err != null) return this.error;
+            primitive.partsU = this.parseIntegerAttr(figure, 'partsU');
+            if(this.err != null) return this.error;
+            primitive.partsV = this.parseIntegerAttr(figure, 'partsV');
+            if(this.err != null) return this.error;
+			if (primitive.orderU < 1 || primitive.orderV < 1 || primitive.partsU < 1 || primitive.partsV < 1)
+				return "patch attributes must be positive.";
+			
+			var nControlPointsExpected = (primitive.orderU + 1) * (primitive.orderV + 1);
+			var controlPoints = figure.getElementsByTagName('controlpoint');
+			if (controlPoints == null  || controlPoints.length != nControlPointsExpected)
+				return "unexpected number of control points found.";
+			
+			primitive.controlPoints = [];			
+			j = 0;
+			
+			for (v = 0; v <= primitive.orderV; v++)
+			{
+				for (u = 0; u <= primitive.orderU; u++)
+				{
+					var c = controlPoints[j];
+					var x = this.parseFloatAttr(c, 'x'); 
+					if(this.err != null) return this.error;
+					var y = this.parseFloatAttr(c, 'y'); 
+					if(this.err != null) return this.error;
+					var z = this.parseFloatAttr(c, 'z'); 
+					if(this.err != null) return this.error;
+					
+					if (primitive.controlPoints[u] == null)
+						primitive.controlPoints[u] = [];
+					primitive.controlPoints[u][v] = [x,y,z,1];
+					j++;
+				}
+			}			
+            break;
+			
 	    default:
-	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere', 'torus' or 'plane'.";
+	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere', 'torus' 'plane' or 'patch'.";
 	    }
 
 		this.primitives[primitive_id] = primitive;
@@ -1586,7 +1633,7 @@ MySceneGraph.prototype.parseIntegerAttr = function(elem, attr) {
 		this.error = "Attribute '" + attr + "' not found.";
 
 	if( isNaN(e) )
-		this.error = "Attribute '" + attr + "' value must be a float number.";
+		this.error = "Attribute '" + attr + "' value must be a integer number.";
 
 	return e;
 }
@@ -1601,8 +1648,8 @@ MySceneGraph.prototype.parseIntegerAttrAsBoolean = function(elem, attr) {
 	var e = this.reader.getInteger(elem, attr, false);
 
 	//errors
-	if (e == null || isNaN(e))
-		this.error = "Attribute '" + attr + "' value must be an integer number.";
+	if (e != 0 && e != 1)
+		this.error = "Attribute '" + attr + "' value must be 0 or 1.";
 
 	return e;
 }

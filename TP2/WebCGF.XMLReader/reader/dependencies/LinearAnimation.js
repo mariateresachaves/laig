@@ -19,50 +19,85 @@ LinearAnimation.prototype.addControlPoint = function(controlPoint)
 
 LinearAnimation.prototype.init = function()
 {
-	this.delta = 0;
+	var totalDelta = 0;
 	this.segments = [];
 	
-	for (i = 0; i < this.controlPoints.length - 1; i++)
+	for (i = 1; i < this.controlPoints.length; i++)
 	{
 		var segment = new Object;
 		
-		segment.deltax = this.controlPoints[i+1].x - this.controlPoints[i].x;
-		segment.deltay = this.controlPoints[i+1].y - this.controlPoints[i].y;
-		segment.deltaz = this.controlPoints[i+1].z - this.controlPoints[i].z;
-		segment.delta += Math.sqrt( Math.pow(segment.deltax, 2) + Math.pow(segment.deltay, 2) + Math.pow(segment.deltaz, 2) );
-		segment.angleZX = Math.atan(segment.deltax / segment.deltaz );
-		segment.angleZY = Math.atan(segment.deltay / segment.deltaz );
+		segment.deltax = this.controlPoints[i].x - this.controlPoints[i-1].x;
+		segment.deltay = this.controlPoints[i].y - this.controlPoints[i-1].y;
+		segment.deltaz = this.controlPoints[i].z - this.controlPoints[i-1].z;
+		segment.delta = Math.sqrt( Math.pow(segment.deltax, 2) + Math.pow(segment.deltay, 2) + Math.pow(segment.deltaz, 2) );
+		
+		if (segment.deltaz == 0)
+		{
+			if (segment.deltax > 0)
+				segment.angleZX = Math.PI/2;
+			else if (segment.deltax < 0)
+				segment.angleZX = -Math.PI/2;
+			else segment.angleZX = 0;
+			
+			if (segment.deltay > 0)
+				segment.angleZY = -Math.PI/2;
+			else if (segment.deltay < 0)
+				segment.angleZY = Math.PI/2;
+			else segment.angleZY = 0;
+		}
+		else{
+			segment.angleZX = Math.atan(segment.deltax / segment.deltaz );
+			segment.angleZY = Math.atan(-segment.deltay / segment.deltaz );
+		}
 		
 		this.segments.push(segment);
 		
-		this.delta += segment.delta;
+		totalDelta += segment.delta;
 	}
 	
 	for(i in this.segments)
 	{
 		var segment = this.segments[i];
-		segment.span = this.span * segment.delta / this.delta;		
+		segment.span = this.span * segment.delta / totalDelta;		
 	}
 	
 	this.startTime = Date.now();
 };
 
 LinearAnimation.prototype.update = function(currTime)
-{
+{	
 	if (this.startTime == null) return;
 	
-	var elapsedTime = Date.now() - this.startTime;
-	var totalSpan = 0;
+	var elapsedTime = (Date.now() - this.startTime)/1000;
+	mat4.identity(this.matrix);
 	
 	for(i in this.segments)
 	{
-		var segment = this.segments[i];
-		totalSpan += segment.span;
-		if (elapsedTime < totalSpan)
+		if (elapsedTime <= 0)
 			break;
 		
-		if (elapsedTime > totalSpan)
-	}
-	
-	
+		var segment = this.segments[i];
+		if (elapsedTime >= segment.span)
+		{
+			mat4.translate(this.matrix, this.matrix, [segment.deltax, segment.deltay, segment.deltaz]);
+			if (i == this.segments.length - 1){
+				//mat4.rotateX(this.matrix, this.matrix, segment.angleZY);
+				//mat4.rotateY(this.matrix, this.matrix, segment.angleZX);
+			}
+		}
+		else{
+			var k = elapsedTime / segment.span;
+			mat4.translate(this.matrix, this.matrix, [segment.deltax * k, segment.deltay * k, segment.deltaz * k]);
+			//mat4.rotateX(this.matrix, this.matrix, segment.angleZY);
+			//mat4.rotateY(this.matrix, this.matrix, segment.angleZX);
+		}		
+		
+		elapsedTime -= segment.span;
+	}	
 };
+
+LinearAnimation.prototype.getMatrix = function()
+{
+	var x = Animation.prototype.getMatrix.call(this);
+	return x;
+}

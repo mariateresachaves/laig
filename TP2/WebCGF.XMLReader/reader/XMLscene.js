@@ -79,7 +79,7 @@ XMLscene.prototype.initLights = function ()
 };
 
 //--- Iniatialize Primitives ---
-XMLscene.prototype.initializePrimitives = function ()
+XMLscene.prototype.initPrimitives = function ()
 {
 	this.primitives = new Object;
 
@@ -109,6 +109,15 @@ XMLscene.prototype.initializePrimitives = function ()
 	}
 }
 
+//--- Iniatialize Animations ---
+XMLscene.prototype.initAnimations = function ()
+{
+	for( var id in this.graph.animations )
+	{
+		this.graph.animations[id].init();
+	}
+}
+
 XMLscene.prototype.setDefaultAppearance = function () {
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
     this.setDiffuse(0.2, 0.4, 0.8, 1.0);
@@ -130,7 +139,7 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.lights[1].setVisible(true);
 	this.lights[1].enable();
 
-	this.initializePrimitives();
+	this.initPrimitives();
 	
 	for(l_o in this.graph.lights.omnis)
 		this[l_o] = true;
@@ -143,6 +152,10 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.initLights();
 	
 	this.initCameras();
+	
+	this.setUpdatePeriod(1000 / 60);
+	
+	this.initAnimations();
 };
 
 XMLscene.prototype.updateLights = function() {
@@ -220,7 +233,7 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 	if (texture == "inherit") texture = parentTexture;
 
 	this.pushMatrix();
-	this.multMatrix(component.transformations);
+	this.multMatrix( component.getTransformations() );
 
 	for (var i = 0; i < component.children.length; i++)
 	{

@@ -973,18 +973,31 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 		
 		if (type == 'linear')
 		{
-			if (controlPoints.length < 2)
+			if (controlPoints == null || controlPoints.length < 2)
 				return "Linear animations must have at least 2 control points";
 			
 			var animation = new LinearAnimation(this.scene, span);
 			
-			//<controlpoint xx="ff" yy="ff" zz="ff" />
-			
-
+			for (j = 0; j < controlPoints.length; j++)
+			{
+				var c = controlPoints[j];
+				var controlPoint = new Object;
+				
+				controlPoint.x = this.parseFloatAttr(c, 'xx');
+				if(this.error != null) return this.error;
+				
+				controlPoint.y = this.parseFloatAttr(c, 'yy');
+				if(this.error != null) return this.error;
+				
+				controlPoint.z = this.parseFloatAttr(c, 'zz');
+				if(this.error != null) return this.error;
+				
+				animation.addControlPoint(controlPoint);
+			}
 		}
 		else if (type == 'circular')
 		{
-			if (controlPoints.length != 0)
+			if (controlPoints != null && controlPoints.length != 0)
 				return "Circular animations cannot have control points";
 						
 			var centerx = this.parseFloatAttr(a, 'centerx');
@@ -1019,11 +1032,16 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 	console.log("--- Parse Animations ---");
 	for(i in this.animations) {
 		var x = this.animations[i];
-		if (x.constructor.name == 'LinearAnimation')
+		if (x.constructor.name == 'LinearAnimation'){
 			console.log("Animation id = " + i +
 				" { type = linear animation" +
 				", span = " + x.span + " }");
-		else
+			console.log("Control Points: ");
+			for (i = 0; i < x.controlPoints.length; i++){
+				console.log("	[ " + x.controlPoints[i].x + ", " + x.controlPoints[i].y + ", " + x.controlPoints[i].z + " ]");
+			}
+		}
+		else{
 			console.log("Animation id = " + i +
 				" { type = circular animation" +
 				", span = " + x.span +
@@ -1033,6 +1051,7 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 				", radius = " + x.radius +
 				", startang = " + x.startang +
 				", rotang = " + x.rotang + " }");
+		}
 	}
 	console.log("");
 }
@@ -1184,6 +1203,9 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		return "zero or more than one 'components' element found.";
 
 	var components = elems[0];
+	
+	if (components != rootElement.children[9]) // erro na ordem dos elementos do ficheiro - reporta e termina
+		return "element 'components' doesn't respect the order in the DSX file.";
 
 	var componentsList = components.getElementsByTagName('component');
 	if (componentsList == null  || componentsList.length == 0) //erro nenhuma component - reporta e termina
@@ -1311,11 +1333,37 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		}
 
 		component.setTransformations(m);
+		
+		//animation
+		elems = c.getElementsByTagName('animation');
+		if (elems != null && elems.length == 1)
+		{
+			var animations = elems[0];
+			var animationList = animations.getElementsByTagName('animationref');
+			if (animationList != null)
+			{
+				if (animationList.length != animations.children.length) //erro elemento nao 'animationref' encontrado - reporta e termina
+					return "non 'animationref' element found.";
+					
+				for(j = 0; j < animationList.length; j++)
+				{
+					var animation = animationList[j];
+					
+					var animationid = this.parseStringAttr(animation, "id");
+					if (this.error != null) return this.error;
+					
+					if(!(animationid in this.animations)) // check if animation with this id exists
+						return "Cannot find a animation with id=" + animationid;
+					
+					component.addAnimation(this.animations[animationid]);
+				}
+			}
+		}
 
 		//materials
 		elems = c.getElementsByTagName('materials');
 
-		if (elems == null  || elems.length != 1) //erro nenhum ou mais do que um materials - reporta e termina
+		if (elems == null || elems.length != 1) //erro nenhum ou mais do que um materials - reporta e termina
 			return "zero or more than one 'materials' element found in component " + id;
 
 		var materials = elems[0];
@@ -1439,6 +1487,28 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		console.log("Component id = " + id);
 
 		console.log("transformations = " + c.transformations);
+		
+		console.log("animations:");
+		c.animations.forEach(function(x) {
+			if (x.constructor.name == 'LinearAnimation'){
+				console.log("	Animation id = " + i +	" { type = linear animation" + ", span = " + x.span + " }");
+				console.log("	Control Points: ");
+				for (i = 0; i < x.controlPoints.length; i++){
+					console.log("	[ " + x.controlPoints[i].x + ", " + x.controlPoints[i].y + ", " + x.controlPoints[i].z + " ]");
+				}
+			}
+			else{
+				console.log("	Animation id = " + i +
+				" { type = circular animation" +
+				", span = " + x.span +
+				", centerx = " + x.centerx +
+				", centery = " + x.centery +
+				", centerz = " + x.centerz +
+				", radius = " + x.radius +
+				", startang = " + x.startang +
+				", rotang = " + x.rotang + " }");
+			}
+		});
 
 		console.log("materials:");
 		c.materials.forEach(function(m_id) {
@@ -1448,7 +1518,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 				console.log("	{ emission = [" + m_id.emission + "], ambient = [" + m_id.ambient + "], diffuse = [" + m_id.diffuse + "], specular = [" + m_id.specular+ "], shininess = " + m_id.shininess + " }" );
 		});
 
-		console.log("children: ");
+		console.log("children:");
 		c.children.forEach(function(ch) {
 			console.log("	" + ch.type + " id = " + ch.id );
 		});

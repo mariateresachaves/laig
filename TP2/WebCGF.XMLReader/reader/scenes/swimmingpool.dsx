@@ -152,10 +152,11 @@
 		<!-- demorar. Nesta versão do formato DSX, type pode ter -->
 		<!-- o valor "linear" ou "circular"; na animacao circular -->
 		<!-- os angulos sao expressos em graus -->
-		<animation id="linear1" span="10" type="linear">
+		<animation id="linear1" span="5" type="linear">
 			<controlpoint xx="0" yy="0" zz="0" />
-			<controlpoint xx="5" yy="1" zz="5" />
-			<controlpoint xx="0" yy="0" zz="0" />
+			<controlpoint xx="1" yy="0" zz="2" />
+			<controlpoint xx="5" yy="0" zz="2" />
+			<controlpoint xx="5" yy="0" zz="-3" />
 		</animation>
 		<animation id="circular1" span="15" type="circular" centerx="0" centery="0" centerz="0" radius="3" startang="30" rotang="30" />
 	</animations>

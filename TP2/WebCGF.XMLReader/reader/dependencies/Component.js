@@ -6,6 +6,7 @@ function Component(id, scene) {
   this.materialpos = 0;
   this.transformations = mat4.create();
   mat4.identity(this.transformations);
+  this.animations = [];
   this.children = [];
 }
 
@@ -33,6 +34,22 @@ Component.prototype.nextMaterial = function()
 	if (this.materialpos === this.materials.length)
 		this.materialpos = 0;
 }
+
+Component.prototype.addAnimation = function(a)
+{
+	this.animations.push(a);
+}
+
+Component.prototype.getTransformations = function(t)
+{
+	var currentTransformations = mat4.clone(this.transformations);
+	for (i = 0; i < this.animations.length; i++)
+	{
+		mat4.multiply(currentTransformations, this.animations[i].getMatrix(), currentTransformations);		
+	}
+	
+	return currentTransformations;
+};
 
 Component.prototype.setTransformations = function(t)
 {

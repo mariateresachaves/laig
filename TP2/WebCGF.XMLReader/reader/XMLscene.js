@@ -107,7 +107,7 @@ XMLscene.prototype.initPrimitives = function ()
 			var primitive = new Torus(this, p.inner, p.outer, p.slices, p.loops);
 			break;
 		case "plane":
-			var primitive = new Plane(this, p.dimX, p.dimY, p.partsX, p.partsY);
+			//var primitive = new Plane(this, p.dimX, p.dimY, p.partsX, p.partsY);
 			break;
 		}
 

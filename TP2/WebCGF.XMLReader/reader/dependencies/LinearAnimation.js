@@ -7,6 +7,8 @@ function LinearAnimation(scene, span)
 	//call Animation constructor
 	Animation.call(this, scene, span);
 	this.controlPoints = [];
+	
+	this.initialized = false;
 };
 
 LinearAnimation.prototype = Object.create(Animation.prototype);
@@ -61,14 +63,17 @@ LinearAnimation.prototype.init = function()
 		segment.span = this.span * segment.delta / totalDelta;		
 	}
 	
-	this.startTime = Date.now();
+	this.initialized = true;
 };
 
 LinearAnimation.prototype.update = function(currTime)
 {	
-	if (this.startTime == null) return;
+	if (!this.initialized) return;
 	
-	var elapsedTime = (Date.now() - this.startTime)/1000;
+	if (this.startTime == null)
+		this.startTime = currTime;
+	
+	var elapsedTime = (currTime - this.startTime)/1000;
 	mat4.identity(this.translationMatrix);
 	mat4.identity(this.rotationMatrix);
 	

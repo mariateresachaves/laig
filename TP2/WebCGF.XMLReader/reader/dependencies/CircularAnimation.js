@@ -2,15 +2,17 @@
  * CircularAnimation
  * @constructor
  */
-function CircularAnimation(scene, span, centerx, centery, centerz, radius, startang, rotang) {
+function CircularAnimation(scene, span, centerX, centerY, centerZ, radius, startang, rotang) {
 	//call Animation constructor
 	Animation.call(this, scene, span);
-	this.centerx = centerx;
-	this.centery = centery;
-	this.centerz = centerz;
+	this.centerX = centerX;
+	this.centerY = centerY;
+	this.centerZ = centerZ;
 	this.radius = radius; 
-	this.startang = startang;
-	this.rotang = rotang;
+	this.startang = startang * Math.PI/180;
+	this.rotang = rotang * Math.PI/180;
+	
+	this.initialized = false;
 };
 
 CircularAnimation.prototype = Object.create(Animation.prototype);
@@ -18,60 +20,29 @@ CircularAnimation.prototype.constructor = CircularAnimation;
 
 CircularAnimation.prototype.init = function()
 {
-	//var totalDelta = 0;
-	//this.segments = [];
-	//
-	//for (i = 1; i < this.controlPoints.length; i++)
-	//{
-	//	var segment = new Object;
-	//	
-	//	segment.deltax = this.controlPoints[i].x - this.controlPoints[i-1].x;
-	//	segment.deltay = this.controlPoints[i].y - this.controlPoints[i-1].y;
-	//	segment.deltaz = this.controlPoints[i].z - this.controlPoints[i-1].z;
-	//	segment.delta += Math.sqrt( Math.pow(segment.deltax, 2) + Math.pow(segment.deltay, 2) + Math.pow(segment.deltaz, 2) );
-	//	segment.angleZX = Math.atan(segment.deltax / segment.deltaz );
-	//	segment.angleZY = Math.atan(segment.deltay / segment.deltaz );
-	//	
-	//	this.segments.push(segment);
-	//	
-	//	totalDelta += segment.delta;
-	//}
-	//
-	//for(i in this.segments)
-	//{
-	//	var segment = this.segments[i];
-	//	segment.span = this.span * segment.delta / totalDelta;		
-	//}
-	//
-	//this.startTime = Date.now();
+	this.initialized = true;
 };
 
 CircularAnimation.prototype.update = function(currTime)
-{	
-	//if (this.startTime == null) return;
-	//
-	//var elapsedTime = Date.now() - this.startTime;
-	//mat4.identity(this.matrix);
-	//
-	//for(i in this.segments)
-	//{
-	//	if (elapsedTime <= 0)
-	//		break;
-	//	
-	//	var segment = this.segments[i];
-	//	if (elapsedTime >= segment.span)
-	//	{
-	//		mat4.translate(this.matrix, this.matrix, [segment.deltax, segment.deltay, segment.deltaz]);
-	//	}
-	//	else{
-	//		var k = elapsedTime / segment.span;
-	//		mat4.translate(this.matrix, this.matrix, [segment.deltax * k, segment.deltay * k, segment.deltaz * k]);
-	//		mat4.rotateX(this.matrix, this.matrix, -segment.angleZY);
-	//		mat4.rotateY(this.matrix, this.matrix, segment.angleZX);
-	//	}		
-	//	
-	//	elapsedTime -= segment.span;
-	//}	
+{
+	if (!this.initialized) return;
+	
+	if (this.startTime == null)
+		this.startTime = currTime;
+	
+	var elapsedTime = (currTime - this.startTime)/1000;
+	mat4.identity(this.translationMatrix);
+	mat4.identity(this.rotationMatrix);
+
+	var k = elapsedTime / this.span;
+	if (k > 1) k = 1;
+
+	mat4.translate(this.translationMatrix, this.translationMatrix, [this.centerX, this.centerY, this.centerZ]);
+	
+	mat4.rotateY(this.rotationMatrix, this.rotationMatrix, this.startang + this.rotang * k);
+	mat4.translate(this.rotationMatrix, this.rotationMatrix, [-this.radius, 0, 0]);
+	if (this.rotang < 0)
+		mat4.rotateY(this.rotationMatrix, this.rotationMatrix, Math.PI/180);	
 };
 
 CircularAnimation.prototype.getTranslationMatrix = function()

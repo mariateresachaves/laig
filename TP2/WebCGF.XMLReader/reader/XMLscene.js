@@ -107,7 +107,7 @@ XMLscene.prototype.initPrimitives = function ()
 			var primitive = new Torus(this, p.inner, p.outer, p.slices, p.loops);
 			break;
 		case "plane":
-			//var primitive = new Plane(this, p.dimX, p.dimY, p.partsX, p.partsY);
+			var primitive = new Plane(this, p.dimX, p.dimY, p.partsX, p.partsY);
 			break;
 		}
 
@@ -124,17 +124,6 @@ XMLscene.prototype.initAnimations = function ()
 	}
 }
 
-//--- Initialize Surfaces ---
-XMLscene.prototype.initSurfaces = function ()
-{
-    this.surfaces = [];
-
-   /* for(var id in this.graph.surfaces)
-	{
-		// TODO:
-	}*/
-}
-
 XMLscene.prototype.setDefaultAppearance = function () {
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
     this.setDiffuse(0.2, 0.4, 0.8, 1.0);
@@ -147,8 +136,6 @@ XMLscene.prototype.setDefaultAppearance = function () {
 XMLscene.prototype.onGraphLoaded = function ()
 {
 	this.axis = new CGFaxis(this, this.graph.axis_length);
-
-	this.initSurfaces();
 
 	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
 	this.lights[0].setVisible(true);

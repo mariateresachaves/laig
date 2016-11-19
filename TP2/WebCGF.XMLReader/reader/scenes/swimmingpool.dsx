@@ -192,8 +192,9 @@
 			<materials>
 				<material id="table" />
 			</materials>
-			<texture id="towel" />
+			<texture id="none" />
 			<children>
+				<primitiveref id="plane" />
 				<componentref id="floor" />
 				<componentref id="table" />
 				<componentref id="pool" />

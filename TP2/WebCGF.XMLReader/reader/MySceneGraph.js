@@ -1161,8 +1161,19 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	    	primitive.loops = this.parseIntegerAttr(figure, 'loops');
 			if(this.error != null) return this.error;
 	        break;
+		case "plane":
+			primitive.type = "plane";
+			primitive.dimX = this.parseFloatAttr(figure, 'dimX');
+			if(this.err != null) return this.error;
+            primitive.dimY = this.parseFloatAttr(figure, 'dimY');
+            if(this.err != null) return this.error;
+            primitive.partsX = this.parseFloatAttr(figure, 'partsX');
+            if(this.err != null) return this.error;
+            primitive.partsY = this.parseFloatAttr(figure, 'partsY');
+            if(this.err != null) return this.error;
+            break;
 	    default:
-	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere' or torus.";
+	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere', 'torus' or 'plane'.";
 	    }
 
 		this.primitives[primitive_id] = primitive;
@@ -1189,6 +1200,9 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	    case "torus":
 	    	console.log("Primitive id = " + id + " { type = " + p.type + ", inner = "+ p.inner + ", outer = " + p.outer + ", slices = " + p.slices + ", loops = " + p.loops + " }");
 	        break;
+		case "plane":
+			console.log("Primitive id = " + id + " { type = " + p.type + ", dimX = "+ p.dimX + ", dimY = " + p.dimY + ", partsX = " + p.partsX + ", partsY = " + p.partsY + " }");
+			break;
 	    }
 	}
 	console.log("");

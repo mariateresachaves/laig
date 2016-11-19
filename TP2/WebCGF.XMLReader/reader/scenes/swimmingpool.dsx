@@ -180,6 +180,9 @@
 		<primitive id="torus">
             <torus inner="0.4" outer="1" slices="50" loops="50" />
         </primitive>
+        <primitive id="plane">
+            <plane dimX="3" dimY="2" partsX="10" partsY="7" />
+        </primitive>
 	</primitives>
 
 	<components>

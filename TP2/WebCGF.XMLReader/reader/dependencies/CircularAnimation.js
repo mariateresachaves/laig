@@ -74,7 +74,12 @@ CircularAnimation.prototype.update = function(currTime)
 	//}	
 };
 
-CircularAnimation.prototype.getMatrix = function()
+CircularAnimation.prototype.getTranslationMatrix = function()
 {
-	return Animation.prototype.getMatrix.call(this);
+	return Animation.prototype.getTranslationMatrix.call(this);
 }
+
+CircularAnimation.prototype.getRotationMatrix = function()
+{
+	return Animation.prototype.getRotationMatrix.call(this);
+};

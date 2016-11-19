@@ -39,15 +39,15 @@ LinearAnimation.prototype.init = function()
 				segment.angleZX = -Math.PI/2;
 			else segment.angleZX = 0;
 			
-			if (segment.deltay > 0)
-				segment.angleZY = -Math.PI/2;
-			else if (segment.deltay < 0)
-				segment.angleZY = Math.PI/2;
-			else segment.angleZY = 0;
+			//if (segment.deltay > 0)
+			//	segment.angleZY = -Math.PI/2;
+			//else if (segment.deltay < 0)
+			//	segment.angleZY = Math.PI/2;
+			//else segment.angleZY = 0;
 		}
 		else{
 			segment.angleZX = Math.atan(segment.deltax / segment.deltaz );
-			segment.angleZY = Math.atan(-segment.deltay / segment.deltaz );
+			//segment.angleZY = Math.atan(-segment.deltay / segment.deltaz );
 		}
 		
 		this.segments.push(segment);
@@ -69,7 +69,8 @@ LinearAnimation.prototype.update = function(currTime)
 	if (this.startTime == null) return;
 	
 	var elapsedTime = (Date.now() - this.startTime)/1000;
-	mat4.identity(this.matrix);
+	mat4.identity(this.translationMatrix);
+	mat4.identity(this.rotationMatrix);
 	
 	for(i in this.segments)
 	{
@@ -79,25 +80,26 @@ LinearAnimation.prototype.update = function(currTime)
 		var segment = this.segments[i];
 		if (elapsedTime >= segment.span)
 		{
-			mat4.translate(this.matrix, this.matrix, [segment.deltax, segment.deltay, segment.deltaz]);
-			if (i == this.segments.length - 1){
-				//mat4.rotateX(this.matrix, this.matrix, segment.angleZY);
-				//mat4.rotateY(this.matrix, this.matrix, segment.angleZX);
-			}
+			mat4.translate(this.translationMatrix, this.translationMatrix, [segment.deltax, segment.deltay, segment.deltaz]);
+			if (i == this.segments.length - 1)
+				mat4.rotateY(this.rotationMatrix, this.rotationMatrix, segment.angleZX);
 		}
 		else{
 			var k = elapsedTime / segment.span;
-			mat4.translate(this.matrix, this.matrix, [segment.deltax * k, segment.deltay * k, segment.deltaz * k]);
-			//mat4.rotateX(this.matrix, this.matrix, segment.angleZY);
-			//mat4.rotateY(this.matrix, this.matrix, segment.angleZX);
+			mat4.translate(this.translationMatrix, this.translationMatrix, [segment.deltax * k, segment.deltay * k, segment.deltaz * k]);
+			mat4.rotateY(this.rotationMatrix, this.rotationMatrix, segment.angleZX);
 		}		
 		
 		elapsedTime -= segment.span;
 	}	
 };
 
-LinearAnimation.prototype.getMatrix = function()
+LinearAnimation.prototype.getTranslationMatrix = function()
 {
-	var x = Animation.prototype.getMatrix.call(this);
-	return x;
+	return Animation.prototype.getTranslationMatrix.call(this);
 }
+
+CircularAnimation.prototype.getRotationMatrix = function()
+{
+	return Animation.prototype.getRotationMatrix.call(this);
+};

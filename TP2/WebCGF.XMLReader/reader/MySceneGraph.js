@@ -1225,8 +1225,74 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 			primitive.type = "vehicle";
             break;
 			
+		case "chessboard":
+			//var primitive = new ChessBoard(this, p.du, p.dv, p.textureref, p.su, p.sv, p.c1, p.c2, p.cs);
+			primitive.type = "chessboard";
+			primitive.du = this.parseIntegerAttr(figure, 'du');
+			if(this.err != null) return this.error;
+            primitive.dv = this.parseIntegerAttr(figure, 'dv');
+            if(this.err != null) return this.error;
+            primitive.textureref = this.parseStringAttr(figure, 'textureref');
+			if(!(primitive.textureref in this.textures))
+				return "Cannot find a texture with id=" + primitive.textureref;
+            if(this.err != null) return this.error;
+            primitive.su = this.parseIntegerAttr(figure, 'su');
+            if(this.err != null) return this.error;
+			primitive.sv = this.parseIntegerAttr(figure, 'sv');
+            if(this.err != null) return this.error;
+			
+			if (figure.children.length != 3)
+				return "chessboard should have 3 colors (c1, c2 and cs).";
+			
+			//color 1
+			var color = figure.getElementsByTagName('c1');
+			if (color == null  || color.length != 1) //erro nenhum ou mais do que um c1 - reporta e termina
+				return "zero or more than one 'c1' element found.";
+			color1 = color[0];
+			var r = this.parseFloatAttr(color1, 'r');
+			if(this.err != null) return this.error;
+			var g = this.parseFloatAttr(color1, 'g');
+			if(this.err != null) return this.error;
+			var b = this.parseFloatAttr(color1, 'b');
+			if(this.err != null) return this.error;
+			var a = this.parseFloatAttr(color1, 'a');
+			if(this.err != null) return this.error;
+			primitive.c1 = vec4.fromValues(r, g, b, a);
+			
+			//color 2
+			var color = figure.getElementsByTagName('c2');
+			if (color == null  || color.length != 1) //erro nenhum ou mais do que um c2 - reporta e termina
+				return "zero or more than one 'c2' element found.";
+			color2 = color[0];
+			var r = this.parseFloatAttr(color2, 'r');
+			if(this.err != null) return this.error;
+			var g = this.parseFloatAttr(color2, 'g');
+			if(this.err != null) return this.error;
+			var b = this.parseFloatAttr(color2, 'b');
+			if(this.err != null) return this.error;
+			var a = this.parseFloatAttr(color2, 'a');
+			if(this.err != null) return this.error;
+			primitive.c2 = vec4.fromValues(r, g, b, a);
+
+			//color selected
+			var color = figure.getElementsByTagName('cs');
+			if (color == null  || color.length != 1) //erro nenhum ou mais do que um cs - reporta e termina
+				return "zero or more than one 'cs' element found.";
+			colorS = color[0];
+			var r = this.parseFloatAttr(colorS, 'r');
+			if(this.err != null) return this.error;
+			var g = this.parseFloatAttr(colorS, 'g');
+			if(this.err != null) return this.error;
+			var b = this.parseFloatAttr(colorS, 'b');
+			if(this.err != null) return this.error;
+			var a = this.parseFloatAttr(colorS, 'a');
+			if(this.err != null) return this.error;
+			primitive.cs = vec4.fromValues(r, g, b, a);
+			
+            break;
+			
 	    default:
-	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere', 'torus', 'plane', 'patch' or 'vehicle'.";
+	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere', 'torus', 'plane', 'patch', 'vehicle' or 'chessboard'.";
 	    }
 
 		this.primitives[primitive_id] = primitive;
@@ -1255,6 +1321,15 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	        break;
 		case "plane":
 			console.log("Primitive id = " + id + " { type = " + p.type + ", dimX = "+ p.dimX + ", dimY = " + p.dimY + ", partsX = " + p.partsX + ", partsY = " + p.partsY + " }");
+			break;
+		case "patch":
+			console.log("Primitive id = " + id + " { type = " + p.type + ", orderU = "+ p.orderU + ", orderV = " + p.orderV + ", partsU = " + p.partsU + ", partsV = " + p.partsV + " }");
+			break;
+		case "vehicle":
+			console.log("Primitive id = " + id + " { type = " + p.type + " }");
+			break;
+		case "chessboard":
+			console.log("Primitive id = " + id + " { type = " + p.type + ", du = "+ p.du + ", dv = " + p.dv + ", textureref = " + p.textureref + ", su = " + p.su + ", sv = " + p.sv + " }");
 			break;
 	    }
 	}

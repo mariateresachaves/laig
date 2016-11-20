@@ -115,6 +115,9 @@ XMLscene.prototype.initPrimitives = function ()
 		case "vehicle":
 			var primitive = new Vehicle(this);
 			break;
+		case "chessboard":
+			var primitive = new ChessBoard(this, p.du, p.dv, p.textureref, p.su, p.sv, p.c1, p.c2, p.cs);
+			break;			
 		}
 
 		this.primitives[primitiveID] = primitive;

@@ -7,12 +7,12 @@ function Animation(scene, span)
 	this.scene = scene;
 	this.span = span;
 	this.translationMatrix = mat4.create();
-	this.rotationMatrix = mat4.create();
+	this.rotationMatrix = mat4.create();	
+	this.ended = false;
 };
 
 Animation.prototype = Object.create(Object.prototype);
 Animation.prototype.constructor = Animation;
-
 
 Animation.prototype.update = function() { };
 

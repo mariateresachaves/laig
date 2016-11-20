@@ -67,3 +67,24 @@ Component.prototype.addChildren = function(c)
 {
 	this.children.push(c);
 }
+
+Component.prototype.update = function(currTime)
+{
+	if (this.startTime == null)
+		this.startTime = currTime;
+	
+	var elapsedTime = (currTime - this.startTime)/1000;
+	
+	for (i = 0; i < this.animations.length; i++)
+	{
+		if (elapsedTime <= 0) break;
+		
+		var currAnim = this.animations[i];
+		if (currAnim.ended){
+			elapsedTime -= currAnim.span;
+			continue;
+		}
+		
+		elapsedTime = currAnim.update(elapsedTime);
+	}
+}

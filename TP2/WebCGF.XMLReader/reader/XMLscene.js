@@ -112,21 +112,16 @@ XMLscene.prototype.initPrimitives = function ()
 		case "patch":
 			var primitive = new Patch(this, p.orderU, p.orderV, p.partsU, p.partsV, p.controlPoints);
 			break;
+		case "vehicle":
+			var primitive = new Vehicle(this);
+			break;
 		}
 
 		this.primitives[primitiveID] = primitive;
 	}
 }
 
-//--- Iniatialize Animations ---
-XMLscene.prototype.initAnimations = function ()
-{
-	for( var id in this.graph.animations )
-	{
-		this.graph.animations[id].init();
-	}
-}
-
+//--- Set Default Appearance ---
 XMLscene.prototype.setDefaultAppearance = function () {
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
     this.setDiffuse(0.2, 0.4, 0.8, 1.0);
@@ -162,16 +157,16 @@ XMLscene.prototype.onGraphLoaded = function ()
 	
 	this.initCameras();
 
-    this.initAnimations();
-
 	this.setUpdatePeriod(1000 / 60);
 };
 
+//--- Update Lights ---
 XMLscene.prototype.updateLights = function() {
 	for (i = 0; i < this.lights.length; i++)
 		this.lights[i].update();
 };
 
+//--- Change Camera ---
 XMLscene.prototype.changeCamera = function()
 {
 	this.camera_index++;
@@ -181,6 +176,7 @@ XMLscene.prototype.changeCamera = function()
 	this.interface.setActiveCamera(this.camera);
 };
 
+//--- Display Scene ---
 XMLscene.prototype.display = function () {
 	// ---- BEGIN Background, camera and axis setup
 
@@ -288,8 +284,8 @@ XMLscene.prototype.changeMaterials = function ()
 //--- Update Animations ---
 XMLscene.prototype.update = function (currTime)
 {	
-	for( var id in this.graph.animations )
+	for( var id in this.graph.components )
 	{
-		this.graph.animations[id].update(currTime);
+		this.graph.components[id].update(currTime);
 	}
 }

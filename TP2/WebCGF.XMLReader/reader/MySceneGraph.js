@@ -25,8 +25,8 @@ function MySceneGraph(filename, scene) { // filename: path
 /*
  * Callback to be executed after successful reading
  */
-MySceneGraph.prototype.onXMLReady=function()
-{
+MySceneGraph.prototype.onXMLReady=function() {
+	
 	console.log("XML Loading finished.");
 	var rootElement = this.reader.xmlDoc.documentElement;
 
@@ -676,7 +676,7 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 	console.log("");
 }
 
-//--- Parse Materials ---
+// --- Parse Materials ---
 MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('materials');
@@ -829,7 +829,7 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 	console.log("");
 }
 
-//--- Parse Transformations ---
+// --- Parse Transformations ---
 MySceneGraph.prototype.parseTransformations = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('transformations');
@@ -955,6 +955,8 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 	for (var i = 0; i < animation_list.length; i++)
 	{
 		var a = animation_list[i];
+		
+		var animation = new Object;
 
 		var animation_id = this.parseStringAttr(a, 'id');
 		if(this.error != null) return this.error;
@@ -963,20 +965,20 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 		if(animation_id in this.animations)
 			return "Duplicate entry of texture id (id=" + animation_id +").";
 
-		var span = this.parseFloatAttr(a, 'span');
+		animation.span = this.parseFloatAttr(a, 'span');
 		if(this.error != null) return this.error;
 		
-		var type = this.parseStringAttr(a, 'type');
+		animation.type = this.parseStringAttr(a, 'type');
 		if(this.error != null) return this.error;
 		
 		var controlPoints = a.getElementsByTagName('controlpoint');
 		
-		if (type == 'linear')
+		if (animation.type == 'linear')
 		{
 			if (controlPoints == null || controlPoints.length < 2)
 				return "Linear animations must have at least 2 control points";
 			
-			var animation = new LinearAnimation(this.scene, span);
+			animation.controlPoints = [];
 			
 			for (j = 0; j < controlPoints.length; j++)
 			{
@@ -992,33 +994,33 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 				controlPoint.z = this.parseFloatAttr(c, 'zz');
 				if(this.error != null) return this.error;
 				
-				animation.addControlPoint(controlPoint);
+				animation.controlPoints.push(controlPoint);
 			}
 		}
-		else if (type == 'circular')
+		else if (animation.type == 'circular')
 		{
 			if (controlPoints != null && controlPoints.length != 0)
 				return "Circular animations cannot have control points";
 						
-			var centerx = this.parseFloatAttr(a, 'centerx');
+			animation.centerx = this.parseFloatAttr(a, 'centerx');
 			if(this.error != null) return this.error;
 			
-			var centery = this.parseFloatAttr(a, 'centery');
+			animation.centery = this.parseFloatAttr(a, 'centery');
 			if(this.error != null) return this.error;
 			
-			var centerz = this.parseFloatAttr(a, 'centerz');
+			animation.centerz = this.parseFloatAttr(a, 'centerz');
 			if(this.error != null) return this.error;
 			
-			var radius = this.parseFloatAttr(a, 'radius');
+			animation.radius = this.parseFloatAttr(a, 'radius');
 			if(this.error != null) return this.error;
 			
-			var startang = this.parseFloatAttr(a, 'startang');
+			animation.startang = this.parseFloatAttr(a, 'startang');
 			if(this.error != null) return this.error;
 			
-			var rotang = this.parseFloatAttr(a, 'rotang');
+			animation.rotang = this.parseFloatAttr(a, 'rotang');
 			if(this.error != null) return this.error;
 
-			var animation = new CircularAnimation(this.scene, span, centerx, centery, centerz, radius, startang, rotang);			
+			
 		}
 		else
 		{
@@ -1032,7 +1034,7 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 	console.log("--- Parse Animations ---");
 	for(i in this.animations) {
 		var x = this.animations[i];
-		if (x.constructor.name == 'LinearAnimation'){
+		if (x.type == 'linear'){
 			console.log("Animation id = " + i +
 				" { type = linear animation" +
 				", span = " + x.span + " }");
@@ -1056,7 +1058,7 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 	console.log("");
 }
 
-//--- Parse Primitives ---
+// --- Parse Primitives ---
 MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('primitives');
@@ -1219,8 +1221,12 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 			}			
             break;
 			
+		case "vehicle":
+			primitive.type = "vehicle";
+            break;
+			
 	    default:
-	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere', 'torus' 'plane' or 'patch'.";
+	    	return "element found is not 'rectangle', 'triangle', 'cylinder', 'sphere', 'torus', 'plane', 'patch' or 'vehicle'.";
 	    }
 
 		this.primitives[primitive_id] = primitive;
@@ -1255,7 +1261,7 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 	console.log("");
 }
 
-//--- Parse Components ---
+// --- Parse Components ---
 MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('components');
@@ -1315,9 +1321,9 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 			mat4.identity(m);
 
-			for(k = 0; k < this.transformations[transformationref].list.length; k++)
+			for(j = 0; j < this.transformations[transformationref].list.length; j++)
 			{
-				var t = this.transformations[transformationref].list[k];
+				var t = this.transformations[transformationref].list[j];
 				switch (t.type) {
 					case "translate":
 						this.translateMatrix(m, t.x, t.y, t.z);
@@ -1415,8 +1421,14 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 					
 					if(!(animationid in this.animations)) // check if animation with this id exists
 						return "Cannot find a animation with id=" + animationid;
+
+					var a = this.animations[animationid];
+					if (a.type == 'linear')
+						var animation = new LinearAnimation(this.scene, a.span, a.controlPoints);
+					else
+						var animation = new CircularAnimation(this.scene, a.span, a.centerx, a.centery, a.centerz, a.radius, a.startang, a.rotang);
 					
-					component.addAnimation(this.animations[animationid]);
+					component.addAnimation(animation);
 				}
 			}
 		}
@@ -1590,7 +1602,6 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 /*
  * Callback to be executed on any read error
  */
-
 MySceneGraph.prototype.onXMLError = function (message) {
 	console.error("XML Loading Error: "+message);
 	this.loadedOk=false;

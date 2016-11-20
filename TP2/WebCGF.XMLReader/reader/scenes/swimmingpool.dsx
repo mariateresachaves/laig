@@ -63,6 +63,7 @@
 		<texture id="pyramid" file="./resources/images/pyramid.jpg" length_s="2.0" length_t="2.0" />
 		<texture id="waffle" file="./resources/images/waffle.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="icecream" file="./resources/images/icecream.png" length_s="1.0" length_t="1.0" />
+		<texture id="iron" file="./resources/images/iron.jpg" length_s="1.0" length_t="1.0" />
 	</textures>
 
 	<materials>
@@ -158,7 +159,8 @@
 			<controlpoint xx="5" yy="0" zz="2" />
 			<controlpoint xx="5" yy="0" zz="-3" />
 		</animation>
-		<animation id="circular1" span="5" type="circular" centerx="0" centery="0" centerz="0" radius="7" startang="10" rotang="90" />
+		<animation id="circular1" span="5" type="circular" centerx="0" centery="0" centerz="0" radius="3" startang="0" rotang="180" />
+		<animation id="circular2" span="2" type="circular" centerx="-5" centery="0" centerz="0" radius="5" startang="180" rotang="270" />
 	</animations>
 
 	<primitives>
@@ -199,6 +201,9 @@
 				<controlpoint x="0.5" y="2.0" z="0" />
 			</patch>
         </primitive>
+		<primitive id="cart">
+            <vehicle />
+        </primitive>
 	</primitives>
 
 	<components>
@@ -210,12 +215,25 @@
 			</materials>
 			<texture id="none" />
 			<children>
-				<primitiveref id="patch" />
+				<componentref id="cart" />
 				<componentref id="floor" />
 				<componentref id="table" />
 				<componentref id="pool" />
 				<componentref id="towel" />
 				<componentref id="ball2" />
+			</children>
+		</component>
+		
+		<component id="cart">
+			<transformation>
+				<translate x="0" y="2" z="0" />
+			</transformation>
+			<materials>
+				<material id="inherit" />
+			</materials>
+			<texture id="iron" />
+			<children>
+				<primitiveref id="cart" />
 			</children>
 		</component>
 
@@ -441,18 +459,8 @@
 			</transformation>
 			<!-- bloco opcional -->
 			<animation>
-				<!-- podem ser declaradas zero ou mais animacoes -->
-				<!-- de entre as declaradas no bloco de animacoes; -->
-				<!-- as animacoes devem ser executadas sequencialmente -->
-				<!-- pela ordem com que sao declaradas. -->
-				<!-- NOTA: as transformacoes geometricas da -->
-				<!-- animacao seguem as mesmas regras de ordenacao -->
-				<!-- definidas no trabalho anterior para as -->
-				<!-- transformacoes geometricas; dado que as -->
-				<!-- animacoes sao declaradas apos as transformacoes -->
-				<!-- geometricas do mesmo objeto, isso significa -->
-				<!-- que as animacoes sao afetadas pelas transformacoes -->
-				<!-- geometricas do objeto. -->
+				<animationref id="linear1" />
+				<animationref id="circular2" />
 				<animationref id="linear1" />
 			</animation>
 			<materials>

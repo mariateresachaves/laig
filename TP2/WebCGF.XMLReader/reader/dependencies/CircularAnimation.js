@@ -11,6 +11,10 @@ function CircularAnimation(scene, span, centerX, centerY, centerZ, radius, start
 	this.radius = radius; 
 	this.startang = startang * Math.PI/180;
 	this.rotang = rotang * Math.PI/180;
+	
+	this.pos.x = this.centerX + this.radius * Math.cos(this.startang);
+	this.pos.y = this.centerY;
+	this.pos.z = this.centerZ + this.radius * Math.sin(this.startang);
 };
 
 CircularAnimation.prototype = Object.create(Animation.prototype);
@@ -18,9 +22,6 @@ CircularAnimation.prototype.constructor = CircularAnimation;
 
 CircularAnimation.prototype.update = function(elapsedTime)
 {
-	mat4.identity(this.translationMatrix);
-	mat4.identity(this.rotationMatrix);
-
 	var k = 0;
 	var remainingTime = 0;
 	if (elapsedTime > this.span){
@@ -33,22 +34,11 @@ CircularAnimation.prototype.update = function(elapsedTime)
 		remainingTime = 0;
 	}
 
-	mat4.translate(this.rotationMatrix, this.rotationMatrix, [this.centerX, this.centerY, this.centerZ]);
-	
-	mat4.rotateY(this.rotationMatrix, this.rotationMatrix, this.startang + this.rotang * k);
-	mat4.translate(this.rotationMatrix, this.rotationMatrix, [-this.radius, 0, 0]);
-	if (this.rotang < 0)
-		mat4.rotateY(this.rotationMatrix, this.rotationMatrix, Math.PI/180);
+	this.pos.x = this.centerX + this.radius * Math.cos(this.startang + k * this.rotang);
+	this.pos.y = this.centerY;
+	this.pos.z = this.centerZ + this.radius * Math.sin(this.startang + k * this.rotang);
+
+	this.orientation = this.startang + k * this.rotang;
 	
 	return remainingTime;
-};
-
-CircularAnimation.prototype.getTranslationMatrix = function()
-{
-	return Animation.prototype.getTranslationMatrix.call(this);
-}
-
-CircularAnimation.prototype.getRotationMatrix = function()
-{
-	return Animation.prototype.getRotationMatrix.call(this);
 };

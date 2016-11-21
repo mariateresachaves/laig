@@ -42,18 +42,32 @@ Component.prototype.addAnimation = function(a)
 
 Component.prototype.getTransformations = function(t)
 {
-	var currentTransformations = mat4.clone(this.transformations);
+	//var currentTransformations = mat4.clone(this.transformations);
+	var currentTransformations = mat4.create();
+	mat4.identity(currentTransformations);
+
+	var x = 0;
+	var y = 0;
+	var z = 0;
+	var orientation = 0;
 	
-	//apply animation orientation
 	for (i = 0; i < this.animations.length; i++)
 	{
-		mat4.multiply(currentTransformations, currentTransformations, this.animations[i].getRotationMatrix());		
+		if (this.animations[i].ended && i != this.animations.length - 1)
+			continue;
+		else
+		{
+			x = this.animations[i].pos.x;
+			y = this.animations[i].pos.y;
+			z = this.animations[i].pos.z;
+			orientation = this.animations[i].orientation;
+			break;			
+		}	
 	}
-	//apply animation translations
-	for (i = 0; i < this.animations.length; i++)
-	{
-		mat4.multiply(currentTransformations, this.animations[i].getTranslationMatrix(), currentTransformations);		
-	}
+	
+	mat4.translate(currentTransformations, currentTransformations, [x, y, z]);
+	mat4.multiply(currentTransformations, this.transformations, currentTransformations);
+	mat4.rotateY(currentTransformations, currentTransformations, -orientation);
 	
 	return currentTransformations;
 };

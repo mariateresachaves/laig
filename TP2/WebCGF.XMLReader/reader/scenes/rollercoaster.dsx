@@ -63,6 +63,9 @@
 		<texture id="iron_diagonal" file="./resources/images/iron.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="iron_horizontal" file="./resources/images/iron.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="face" file="./resources/images/ball.png" length_s="1.0" length_t="1.0" />
+		<texture id="pool_stone" file="./resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
+		<texture id="roof" file="./resources/images/roof.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="metal_roof" file="./resources/images/metal_roof.jpg" length_s="1.0" length_t="1.0" />
 	</textures>
 
 	<materials>
@@ -145,6 +148,16 @@
         <primitive id="plane">
             <plane dimX="1" dimY="1" partsX="10" partsY="10" />
         </primitive>
+        <primitive id="cart">
+            <vehicle />
+        </primitive>
+        <primitive id="chessboard">
+            <chessboard du="8" dv="8" textureref="pool_stone" su="2" sv="2">
+                <c1 r="0.8" g="0.8" b="0.8" a="1" />
+                <c2 r="0.2" g="0.2" b="0.2" a="1" />
+                <cs r="1" g="0" b="0" a="1" />
+            </chessboard>
+        </primitive>
 	</primitives>
 
 	<components>
@@ -160,7 +173,7 @@
                 <componentref id="railroad" />
                 <componentref id="person" />
                 <componentref id="base_bars" />
-                <componentref id="house_column" />
+                <componentref id="base_house" />
 			</children>
 		</component>
 
@@ -2225,6 +2238,10 @@
             <children>
                 <componentref id="house_column" />
                 <componentref id="roof" />
+                <componentref id="roof_2" />
+                <componentref id="roof_3" />
+                <componentref id="roof_4" />
+                <componentref id="roof_5" />
             </children>
         </component>
 
@@ -2245,7 +2262,7 @@
 
         <component id="column_unit_1">
             <transformation>
-                <translate x="4.8" y="2" z="0" />
+                <translate x="4" y="2" z="0" />
                 <scale x="0.05" y="2" z="0.05" />
                 <rotate axis="x" angle="90" />
             </transformation>
@@ -2260,7 +2277,7 @@
 
         <component id="column_unit_2">
             <transformation>
-                <translate x="4.8" y="2" z="3" />
+                <translate x="4" y="2" z="3" />
                 <scale x="0.05" y="2" z="0.05" />
                 <rotate axis="x" angle="90" />
             </transformation>
@@ -2305,17 +2322,78 @@
 
         <component id="roof">
             <transformation>
-                <scale x="2" y="2" z="2" />
+                <translate x="5.5" y="1.98" z="1.5" />
+                <scale x="3.1" y="1" z="3.1" />
+                <rotate axis="x" angle="90"/>
             </transformation>
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="metal" />
+            <texture id="metal_roof" />
             <children>
-                <primitiveref id="square" />
+                <primitiveref id="plane" />
             </children>
         </component>
 
+        <component id="roof_2">
+            <transformation>
+                <translate x="5.5" y="1.98" z="1.5" />
+                <scale x="2.2" y="1.5" z="2.2" />
+                <rotate axis="y" angle="45" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="roof" />
+            <children>
+                <primitiveref id="triangle" />
+            </children>
+        </component>
+
+        <component id="roof_3">
+            <transformation>
+                <translate x="5.5" y="1.98" z="1.5" />
+                <scale x="2.2" y="1.5" z="2.2" />
+                <rotate axis="y" angle="135" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="roof" />
+            <children>
+                <primitiveref id="triangle" />
+            </children>
+        </component>
+
+        <component id="roof_4">
+            <transformation>
+                <translate x="5.5" y="1.98" z="1.5" />
+                <scale x="2.2" y="1.5" z="2.2" />
+                <rotate axis="y" angle="-45" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="roof" />
+            <children>
+                <primitiveref id="triangle" />
+            </children>
+        </component>
+
+        <component id="roof_5">
+            <transformation>
+                <translate x="5.5" y="1.98" z="1.5" />
+                <scale x="2.2" y="1.5" z="2.2" />
+                <rotate axis="y" angle="-135" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="roof" />
+            <children>
+                <primitiveref id="triangle" />
+            </children>
+        </component>
 
 	</components>
 

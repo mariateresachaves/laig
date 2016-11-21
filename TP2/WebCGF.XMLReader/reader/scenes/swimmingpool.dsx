@@ -148,19 +148,20 @@
 	</transformations>
 	
 	<animations>
-		<!-- podem existir zero ou mais nós "animation" -->
-		<!-- span é o tempo, em segundos, que a animação deve -->
-		<!-- demorar. Nesta versão do formato DSX, type pode ter -->
-		<!-- o valor "linear" ou "circular"; na animacao circular -->
-		<!-- os angulos sao expressos em graus -->
-		<animation id="linear1" span="5" type="linear">
+		<animation id="A1" span="5" type="linear">
 			<controlpoint xx="0" yy="0" zz="0" />
-			<controlpoint xx="1" yy="0" zz="2" />
-			<controlpoint xx="5" yy="0" zz="2" />
-			<controlpoint xx="5" yy="0" zz="-3" />
+			<controlpoint xx="0" yy="0" zz="5" />
+			<controlpoint xx="10" yy="0" zz="5" />
+			<controlpoint xx="12" yy="1" zz="-3" />
 		</animation>
-		<animation id="circular1" span="5" type="circular" centerx="0" centery="0" centerz="0" radius="3" startang="0" rotang="180" />
-		<animation id="circular2" span="2" type="circular" centerx="-5" centery="0" centerz="0" radius="5" startang="180" rotang="270" />
+		<animation id="A3" span="5" type="linear">
+			<controlpoint xx="22" yy="1" zz="-3" />
+			<controlpoint xx="22" yy="3" zz="0" />
+			<controlpoint xx="25" yy="5" zz="5" />
+			<controlpoint xx="25" yy="0" zz="5" />
+		</animation>
+		<animation id="A2" span="2" type="circular" centerx="17" centery="1" centerz="-3" radius="5" startang="180" rotang="180" />
+		<animation id="B" span="5" type="circular" centerx="0" centery="0" centerz="0" radius="3" startang="180" rotang="270" />
 	</animations>
 
 	<primitives>
@@ -235,6 +236,11 @@
 			<transformation>
 				<translate x="0" y="2" z="0" />
 			</transformation>
+			<animation>
+				<animationref id="A1" />
+				<animationref id="A2" />
+				<animationref id="A3" />
+			</animation>
 			<materials>
 				<material id="inherit" />
 			</materials>
@@ -448,7 +454,7 @@
 				<scale x="0.2" y="0.2" z="0.2" />
 			</transformation>
 			<animation>
-				<animationref id="circular1" />
+				<animationref id="B" />
 			</animation>
 			<materials>
 				<material id="inherit" />
@@ -464,12 +470,6 @@
 				<translate x="-3" y="0.15" z="1.5" />
 				<scale x="0.2" y="0.2" z="0.2" />
 			</transformation>
-			<!-- bloco opcional -->
-			<animation>
-				<animationref id="linear1" />
-				<animationref id="circular2" />
-				<animationref id="linear1" />
-			</animation>
 			<materials>
 				<material id="inherit" />
 			</materials>

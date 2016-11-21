@@ -1,3 +1,8 @@
+/**
+ * Node
+ * @id node's identification.
+ * @constructor
+ */
 function Component(id, scene) {
   this.id = id;
   this.scene = scene;
@@ -13,35 +18,49 @@ function Component(id, scene) {
 Component.prototype = Object.create(Object.prototype);
 Component.prototype.constructor = Node;
 
-Component.prototype.setTexture = function(t)
-{
+/**
+ * Sets the node's texture.
+ * @param texture
+ */
+Component.prototype.setTexture = function(t) {
 	this.texture = t;
 }
 
-Component.prototype.addMaterial = function(m)
-{
+/**
+ * Adds a material.
+ * @param material
+ */
+Component.prototype.addMaterial = function(m) {
 	this.materials.push(m);
 }
 
-Component.prototype.getMaterial = function()
-{
+/**
+ * Returns the node's material.
+ */
+Component.prototype.getMaterial = function() {
 	return this.materials[this.materialpos];
 }
 
-Component.prototype.nextMaterial = function()
-{
+/**
+ * Returns the node's next material.
+ */
+Component.prototype.nextMaterial = function() {
 	this.materialpos++;
 	if (this.materialpos === this.materials.length)
 		this.materialpos = 0;
 }
 
-Component.prototype.addAnimation = function(a)
-{
+/**
+ * Adds an animation to the node.
+ */
+Component.prototype.addAnimation = function(a) {
 	this.animations.push(a);
 }
 
-Component.prototype.getTransformations = function(t)
-{
+/**
+ * Returns the node's transformation matrix.
+ */
+Component.prototype.getTransformations = function() {
 	//var currentTransformations = mat4.clone(this.transformations);
 	var currentTransformations = mat4.create();
 	mat4.identity(currentTransformations);
@@ -72,18 +91,27 @@ Component.prototype.getTransformations = function(t)
 	return currentTransformations;
 };
 
-Component.prototype.setTransformations = function(t)
-{
+/**
+ * Updates the node's transformation matrix to a given matrix.
+ * @param t new node's transformation matrix.
+ */
+Component.prototype.setTransformations = function(t) {
 	this.transformations = t;
 };
 
-Component.prototype.addChildren = function(c)
-{
+/**
+ * Adds a child to the node's children.
+ * @param c child to add.
+ */
+Component.prototype.addChildren = function(c) {
 	this.children.push(c);
 }
 
-Component.prototype.update = function(currTime)
-{
+/**
+ * Function to update the animation.
+ * @param currTime current time.
+ */
+Component.prototype.update = function(currTime) {
 	if (this.startTime == null)
 		this.startTime = currTime;
 	

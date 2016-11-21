@@ -1,9 +1,10 @@
 /**
  * LinearAnimation
+ * @param span animation's duration.
+ * @param controlPoints control points.
  * @constructor
  */
-function LinearAnimation(scene, span, controlPoints)
-{
+function LinearAnimation(scene, span, controlPoints) {
 	//call Animation constructor
 	Animation.call(this, scene, span);
 	this.controlPoints = controlPoints;
@@ -52,8 +53,11 @@ function LinearAnimation(scene, span, controlPoints)
 LinearAnimation.prototype = Object.create(Animation.prototype);
 LinearAnimation.prototype.constructor = LinearAnimation;
 
-LinearAnimation.prototype.update = function(elapsedTime)
-{	
+/**
+ * Updates postion (x, y, z) for a given elapsed time.
+ * @param elapsedTime elapsed time.
+ */
+LinearAnimation.prototype.update = function(elapsedTime) {
 	var remainingTime = elapsedTime;
 	
 	this.pos.x = this.startPos.x;

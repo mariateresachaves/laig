@@ -1,4 +1,7 @@
-
+/**
+ * XMLscene
+ * @constructor
+ */
 function XMLscene() {
     CGFscene.call(this);
 }
@@ -6,6 +9,10 @@ function XMLscene() {
 XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
 
+/**
+ * init function for XMLscene.
+ * @param application application
+ */
 XMLscene.prototype.init = function (application) {
     CGFscene.prototype.init.call(this, application);
 
@@ -29,9 +36,12 @@ XMLscene.prototype.init = function (application) {
     this.axis=new CGFaxis(this);
 };
 
-//--- Iniatialize Cameras ---
-XMLscene.prototype.initCameras = function ()
-{	
+//--- Initialize Cameras ---
+
+/**
+ * Function to initialize the cameras.
+ */
+XMLscene.prototype.initCameras = function () {
 	var i = 0
 	for(perspective in this.graph.views.list) {
 		var p = this.graph.views.list[perspective];
@@ -51,7 +61,11 @@ XMLscene.prototype.initCameras = function ()
 	}
 };
 
-//--- Iniatialize Lights ---
+//--- Initialize Lights ---
+
+/**
+ * Function to initialize the lights.
+ */
 XMLscene.prototype.initLights = function ()
 {
 	var i = 0;
@@ -93,9 +107,12 @@ XMLscene.prototype.initLights = function ()
 	}
 };
 
-//--- Iniatialize Primitives ---
-XMLscene.prototype.initPrimitives = function ()
-{
+//--- Initialize Primitives ---
+
+/**
+ * Function to initialize the primitives.
+ */
+XMLscene.prototype.initPrimitives = function () {
 	this.primitives = new Object;
 
 	for( var primitiveID in this.graph.primitives )
@@ -137,18 +154,22 @@ XMLscene.prototype.initPrimitives = function ()
 }
 
 //--- Set Default Appearance ---
-XMLscene.prototype.setDefaultAppearance = function ()
-{
+
+/**
+ * Function to set the default appearance.
+ */
+XMLscene.prototype.setDefaultAppearance = function () {
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
     this.setDiffuse(0.2, 0.4, 0.8, 1.0);
     this.setSpecular(0.2, 0.4, 0.8, 1.0);
     this.setShininess(10.0);
 };
 
-// Handler called when the graph is finally loaded.
-// As loading is asynchronous, this may be called already after the application has started the run loop
-XMLscene.prototype.onGraphLoaded = function ()
-{
+/**
+ * Handler called when the graph is finally loaded.
+ * As loading is asynchronous, this may be called already after the application has started the run loop.
+ */
+XMLscene.prototype.onGraphLoaded = function () {
 	this.axis = new CGFaxis(this, this.graph.axis_length);
 
 	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
@@ -167,14 +188,21 @@ XMLscene.prototype.onGraphLoaded = function ()
 };
 
 //--- Update Lights ---
+
+/**
+ * Function to update the lights.
+ */
 XMLscene.prototype.updateLights = function() {
 	for (i = 0; i < this.lights.length; i++)
 		this.lights[i].update();
 };
 
 //--- Change Camera ---
-XMLscene.prototype.changeCamera = function()
-{
+
+/**
+ * Function to change the camera.
+ */
+XMLscene.prototype.changeCamera = function() {
 	this.camera_index++;
 	if (this.camera_index >= this.cameras.length)
 		this.camera_index = 0;
@@ -183,6 +211,9 @@ XMLscene.prototype.changeCamera = function()
 };
 
 //--- Display Scene ---
+/**
+ * display function of the scene.
+ */
 XMLscene.prototype.display = function () {
 	// ---- BEGIN Background, camera and axis setup
 
@@ -233,8 +264,14 @@ XMLscene.prototype.display = function () {
 };
 
 //--- Draw Components ---
-XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parentTexture)
-{
+
+/**
+ * Function to draw components.
+ * @param componentID component identification.
+ * @param parentMaterial component parent material.
+ * @param parentTexture component parent texture.
+ */
+XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parentTexture) {
 	var component = this.graph.components[componentID];
 
 	var material = component.getMaterial();
@@ -258,8 +295,14 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 }
 
 //--- Draw Primitives ---
-XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture)
-{
+
+/**
+ * Function to draw a primitive.
+ * @param primitiveID primitive identification.
+ * @param parentMaterial primitive parent material.
+ * @param parentTexture primitive parent texture.
+ */
+XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parentTexture) {
 	if(parentTexture == "none")
 	{
 		parentMaterial.setTexture(null);
@@ -279,8 +322,11 @@ XMLscene.prototype.drawPrimitive = function (primitiveID, parentMaterial, parent
 }
 
 //--- Change Materials ---
-XMLscene.prototype.changeMaterials = function ()
-{	
+
+/**
+ * Function to change the materials.
+ */
+XMLscene.prototype.changeMaterials = function () {
 	for( var id in this.graph.components )
 	{
 		this.graph.components[id].nextMaterial();
@@ -288,8 +334,12 @@ XMLscene.prototype.changeMaterials = function ()
 }
 
 //--- Update Animations ---
-XMLscene.prototype.update = function (currTime)
-{	
+
+/**
+ * Function to update the animation.
+ * @param currTime current time.
+ */
+XMLscene.prototype.update = function (currTime) {
 	for( var id in this.graph.components )
 	{
 		this.graph.components[id].update(currTime);

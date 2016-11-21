@@ -1,5 +1,14 @@
+var degToRad = Math.PI / 180;
+
 /**
  * CircularAnimation
+ * @param span animation's duration.
+ * @param centerX center x position.
+ * @param centerY center y position.
+ * @param centerZ center z position.
+ * @param radius radius.
+ * @param startang start angle.
+ * @param rotang angle of rotation.
  * @constructor
  */
 function CircularAnimation(scene, span, centerX, centerY, centerZ, radius, startang, rotang) {
@@ -9,8 +18,8 @@ function CircularAnimation(scene, span, centerX, centerY, centerZ, radius, start
 	this.centerY = centerY;
 	this.centerZ = centerZ;
 	this.radius = radius; 
-	this.startang = startang * Math.PI/180;
-	this.rotang = rotang * Math.PI/180;
+	this.startang = startang * degToRad;
+	this.rotang = rotang * degToRad;
 	
 	this.pos.x = this.centerX + this.radius * Math.cos(this.startang);
 	this.pos.y = this.centerY;
@@ -20,8 +29,12 @@ function CircularAnimation(scene, span, centerX, centerY, centerZ, radius, start
 CircularAnimation.prototype = Object.create(Animation.prototype);
 CircularAnimation.prototype.constructor = CircularAnimation;
 
-CircularAnimation.prototype.update = function(elapsedTime)
-{
+
+/**
+ * Updates postion (x, y, z) for a given elapsed time.
+ * @param elapsedTime elapsed time.
+ */
+CircularAnimation.prototype.update = function(elapsedTime) {
 	var k = 0;
 	var remainingTime = 0;
 	if (elapsedTime > this.span){

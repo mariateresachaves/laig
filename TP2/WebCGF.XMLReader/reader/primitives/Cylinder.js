@@ -1,6 +1,10 @@
 /**
  * Cylinder
- * 
+ * @param base base dimension.
+ * @param top top dimension.
+ * @param height cylinder height.
+ * @param slices number of slices.
+ * @param stacks number of stack.
  * @constructor
  */
 function Cylinder(scene, base, top, height, slices, stacks) {
@@ -18,6 +22,9 @@ function Cylinder(scene, base, top, height, slices, stacks) {
 Cylinder.prototype = Object.create(CGFobject.prototype);
 Cylinder.prototype.constructor = Cylinder;
 
+/**
+ * initBuffers
+ */
 Cylinder.prototype.initBuffers = function() {
 
     this.vertices = [];

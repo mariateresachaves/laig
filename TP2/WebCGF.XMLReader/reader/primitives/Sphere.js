@@ -1,5 +1,8 @@
 /**
  * Sphere
+ * @param radius sphere radius.
+ * @param slices number of slices.
+ * @param stacks number of stacks.
  * @constructor
  */
  function Sphere(scene, radius, slices, stacks) {
@@ -15,7 +18,10 @@
  Sphere.prototype = Object.create(CGFobject.prototype);
  Sphere.prototype.constructor = Sphere;
 
- Sphere.prototype.initBuffers = function() {
+/**
+ * initBuffers
+ */
+Sphere.prototype.initBuffers = function() {
 
  	this.vertices = [];
  	this.normals = [];

@@ -1,10 +1,13 @@
 /**
  * Patch
- *
+ * @param orderU control points of the direction in u (ordered list).
+ * @param orderV control points of the direction in v (ordered list).
+ * @param partsU parts number in u.
+ * @param partsV parts number in v.
+ * @param controlPoints control points.
  * @constructor
  */
-function Patch(scene, orderU, orderV, partsU, partsV, controlPoints)
-{
+function Patch(scene, orderU, orderV, partsU, partsV, controlPoints) {
     var knotsX = this.getKnotsVector(orderU);
     var knotsY = this.getKnotsVector(orderV);
 
@@ -20,14 +23,20 @@ function Patch(scene, orderU, orderV, partsU, partsV, controlPoints)
 Patch.prototype = Object.create(CGFnurbsObject.prototype);
 Patch.prototype.constructor = Patch;
 
-Patch.prototype.getKnotsVector = function(degree)
-{	
+/**
+ * Returns the knots vector.
+ * @param degree ordered list of control points.
+ */
+Patch.prototype.getKnotsVector = function(degree) {
 	var v = new Array();
+
 	for (var i=0; i<=degree; i++) {
 		v.push(0);
 	}
+
 	for (var i=0; i<=degree; i++) {
 		v.push(1);
 	}
+
 	return v;
 };

@@ -1,5 +1,11 @@
 var degToRad = Math.PI / 180;
-function MySceneGraph(filename, scene) { // filename: path
+
+/**
+ * MySceneGraph
+ * @param filename path to the dsx file.
+ * @constructor
+ */
+function MySceneGraph(filename, scene) {
 	this.loadedOk = null;
 
 	// Establish bidirectional references between scene and graph
@@ -22,7 +28,7 @@ function MySceneGraph(filename, scene) { // filename: path
 	// aqui temos de fazer o parse do ficheiro
 }
 
-/*
+/**
  * Callback to be executed after successful reading
  */
 MySceneGraph.prototype.onXMLReady=function() {
@@ -116,11 +122,15 @@ MySceneGraph.prototype.onXMLReady=function() {
 	this.loadedOk=true;
 
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
-	// TODO: inserir no grafo os nós lidos no dsx
 	this.scene.onGraphLoaded();
 };
 
 // --- Parse Scene ---
+
+/**
+ * Function to parse the scene elements.
+ * @param rootElement element in the root.
+ */
 MySceneGraph.prototype.parseScene = function(rootElement) {
 
 	if (rootElement.nodeName != "dsx")
@@ -155,6 +165,11 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
 }
 
 // --- Parse Views ---
+
+/**
+ * Function to parse the views elements.
+ * @param rootElement element in the root.
+ */
 MySceneGraph.prototype.parseViews = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('views');
@@ -260,6 +275,11 @@ MySceneGraph.prototype.parseViews = function(rootElement) {
 }
 
 // --- Parse Illumination ---
+
+/**
+ * Function to parse the illumination elements.
+ * @param rootElement element in the root.
+ */
 MySceneGraph.prototype.parseIllumination = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('illumination');
@@ -334,6 +354,11 @@ MySceneGraph.prototype.parseIllumination = function(rootElement) {
 }
 
 // --- Parse Lights ---
+
+/**
+ * Function to parse the lights elements.
+ * @param rootElement element in the root.
+ */
 MySceneGraph.prototype.parseLights = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('lights');
@@ -618,6 +643,11 @@ MySceneGraph.prototype.parseLights = function(rootElement) {
 }
 
 // --- Parse Textures ---
+
+/**
+ * Function to parse the textures elements.
+ * @param rootElement element in the root.
+ */
 MySceneGraph.prototype.parseTextures = function(rootElement) {
 
 	var elems = rootElement.getElementsByTagName('textures');
@@ -677,6 +707,11 @@ MySceneGraph.prototype.parseTextures = function(rootElement) {
 }
 
 // --- Parse Materials ---
+
+/**
+ * Function to parse the materials elements.
+ * @param rootElement element in the root.
+ */
 MySceneGraph.prototype.parseMaterials = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('materials');
@@ -830,6 +865,10 @@ MySceneGraph.prototype.parseMaterials = function(rootElement) {
 }
 
 // --- Parse Transformations ---
+/**
+ * Function to parse the transformation elements.
+ * @param rootElement element in the root.
+ */
 MySceneGraph.prototype.parseTransformations = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('transformations');
@@ -931,12 +970,17 @@ MySceneGraph.prototype.parseTransformations = function(rootElement) {
 }
 
 // --- Parse Animations ---
+
+/**
+ * Function to parse the animation elements.
+ * @param rootElement element in the root.
+ */
 MySceneGraph.prototype.parseAnimations = function(rootElement) {
 
 	var elems = rootElement.getElementsByTagName('animations');
 
-	if (elems == null || elems.length != 1) { // erro nenhum ou mais do que um textures - reporta e termina
-		return "either zero or more than one 'textures' element found.";
+	if (elems == null || elems.length != 1) { // erro nenhum ou mais do que uma animation - reporta e termina
+		return "either zero or more than one 'animations' element found.";
 	}
 
 	var animations = elems[0];
@@ -1059,6 +1103,11 @@ MySceneGraph.prototype.parseAnimations = function(rootElement) {
 }
 
 // --- Parse Primitives ---
+
+/**
+ * Function to parse the primitives elements.
+ * @param rootElement element in the root.
+ */
 MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('primitives');
@@ -1337,6 +1386,11 @@ MySceneGraph.prototype.parsePrimitives = function(rootElement) {
 }
 
 // --- Parse Components ---
+
+/**
+ * Function to parse the components elements.
+ * @param rootElementelement in the root.
+ */
 MySceneGraph.prototype.parseComponents = function(rootElement) {
 
 	var elems =  rootElement.getElementsByTagName('components');
@@ -1682,6 +1736,11 @@ MySceneGraph.prototype.onXMLError = function (message) {
 	this.loadedOk=false;
 };
 
+/**
+ * Function to parse a string attribute.
+ * @param elem element to parse.
+ * @param attr attribute name.
+ */
 MySceneGraph.prototype.parseStringAttr = function(elem, attr) {
 
 	var e = this.reader.getString(elem, attr, false);
@@ -1696,6 +1755,11 @@ MySceneGraph.prototype.parseStringAttr = function(elem, attr) {
 	return e;
 }
 
+/**
+ * Function to parse a float attribute.
+ * @param elem element to parse.
+ * @param attr attribute name.
+ */
 MySceneGraph.prototype.parseFloatAttr = function(elem, attr) {
 
 	var e = this.reader.getFloat(elem, attr, false);
@@ -1710,6 +1774,11 @@ MySceneGraph.prototype.parseFloatAttr = function(elem, attr) {
 	return e;
 }
 
+/**
+ * Function to parse an integer attribute.
+ * @param elem element to parse.
+ * @param attr attribute name.
+ */
 MySceneGraph.prototype.parseIntegerAttr = function(elem, attr) {
 
 	var e = this.reader.getInteger(elem, attr, false);
@@ -1724,6 +1793,11 @@ MySceneGraph.prototype.parseIntegerAttr = function(elem, attr) {
 	return e;
 }
 
+/**
+ * Function to parse an integer attribute as a boolean value.
+ * @param elem element to parse.
+ * @param attr attribute name.
+ */
 MySceneGraph.prototype.parseIntegerAttrAsBoolean = function(elem, attr) {
 
 	if ( !this.reader.hasAttribute(elem, attr, false) ) {
@@ -1740,6 +1814,12 @@ MySceneGraph.prototype.parseIntegerAttrAsBoolean = function(elem, attr) {
 	return e;
 }
 
+/**
+ * Function to parse an array of values attribute.
+ * @param elem element to parse.
+ * @param attr attribute name.
+ * @param array array contains the names of each array value to be parsed.
+ */
 MySceneGraph.prototype.parseItemAttr = function(elem, attr, array) {
 
 	if(!this.reader.hasAttribute(elem, attr, false)) {
@@ -1757,10 +1837,23 @@ MySceneGraph.prototype.parseItemAttr = function(elem, attr, array) {
 	return e;
 }
 
+/**
+ * Function to calculate the new transformation matrix for the given translate values.
+ * @param actual_matrix actual transformation matrix.
+ * @param x x value for the translate.
+ * @param y y value for the translate.
+ * @param z z value for the translate.
+ */
 MySceneGraph.prototype.translateMatrix = function(actual_matrix, x, y, z) {
 	mat4.translate(actual_matrix, actual_matrix, [x, y, z]);
 }
 
+/**
+ * Function to calculate the new transformation matrix for the given rotate values.
+ * @param actual_matrix actual transformation matrix.
+ * @param axis axis through which the rotation will be performed.
+ * @param angle angle of the rotation.
+ */
 MySceneGraph.prototype.rotateMatrix = function(actual_matrix, axis, angle) {
 	if(axis == "x" || axis == "X") {
 		mat4.rotateX(actual_matrix, actual_matrix, angle);
@@ -1773,6 +1866,13 @@ MySceneGraph.prototype.rotateMatrix = function(actual_matrix, axis, angle) {
 	}
 }
 
+/**
+ * Function to calculate the new transformation matrix for the given scale values.
+ * @param actual_matrix actual transformation matrix.
+ * @param x x value for the scale.
+ * @param y y value for the scale.
+ * @param z z value for the scale.
+ */
 MySceneGraph.prototype.scaleMatrix = function(actual_matrix, x, y, z) {
 	mat4.scale(actual_matrix, actual_matrix, [x, y, z]);
 }

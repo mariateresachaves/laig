@@ -1,6 +1,5 @@
 /**
- * Cylinder
- * 
+ * Vehicle
  * @constructor
  */
 function Vehicle(scene) {
@@ -44,7 +43,7 @@ function Vehicle(scene) {
 		]
 	];
 	
-	this.body = new Patch(this.scene, 4, 4, 20, 20, controlPoints)
+	this.body = new Patch(this.scene, 4, 4, 20, 20, controlPoints);
 	this.axis = new Cylinder(this.scene, 0.03, 0.03, 1, 20, 10);
 	this.whell = new Cylinder(this.scene, 0.2, 0.2, .06, 20, 1);
 
@@ -53,6 +52,9 @@ function Vehicle(scene) {
 Vehicle.prototype = Object.create(CGFobject.prototype);
 Vehicle.prototype.constructor=Vehicle;
 
+/**
+ * vehicle display function.
+ */
 Vehicle.prototype.display = function () {
 
 	this.scene.pushMatrix();

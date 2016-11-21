@@ -1,6 +1,9 @@
 /**
  * Torus
- * 
+ * @param innerRadius torus inner radius.
+ * @param outerRadius torus outer radius.
+ * @param slices number of slices.
+ * @param loops number of loops.
  * @constructor
  */
 function Torus(scene, innerRadius, outerRadius, slices, loops) {
@@ -17,8 +20,10 @@ function Torus(scene, innerRadius, outerRadius, slices, loops) {
 Torus.prototype = Object.create(CGFobject.prototype);
 Torus.prototype.constructor = Torus;
 
-Torus.prototype.initBuffers = function()
-{
+/**
+ * initBuffers
+ */
+Torus.prototype.initBuffers = function() {
 	this.vertices = [];
 	this.normals = [];
 	this.indices = [];

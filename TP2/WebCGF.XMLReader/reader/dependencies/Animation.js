@@ -1,9 +1,9 @@
 /**
  * Animation
+ * @param span animation's duration.
  * @constructor
  */
-function Animation(scene, span)
-{
+function Animation(scene, span) {
 	this.scene = scene;
 	this.span = span;
 	//this.translationMatrix = mat4.create();

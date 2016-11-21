@@ -29,8 +29,7 @@ serialInclude(['../lib/CGF.js',
 			   'primitives/Vehicle.js',
 			   'primitives/ChessBoard.js',
 
-main=function()
-{
+main=function() {
 	// Standard application, scene and interface setup
     var app = new CGFapplication(document.body);
     var myScene = new XMLscene();
@@ -46,7 +45,7 @@ main=function()
 	// get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml
 	// or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor)
 
-	var filename=getUrlVars()['file'] || "rollercoaster.dsx";
+	var filename = getUrlVars()['file'] || "rollercoaster.dsx";
 	//var filename=getUrlVars()['file'] || "swimmingpool.dsx";
 
 	// create and load graph, and associate it to scene.

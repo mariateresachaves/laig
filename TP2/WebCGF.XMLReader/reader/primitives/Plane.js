@@ -1,10 +1,12 @@
 /**
  * Plane
- *
+ * @param dimX x dimension.
+ * @param dimY y dimension.
+ * @param partsX parts number in x.
+ * @param partsY parts number in y.
  * @constructor
  */
-function Plane(scene, dimX, dimY, partsX, partsY)
-{
+function Plane(scene, dimX, dimY, partsX, partsY) {
     var knotsX = [0, 0, 1, 1];
     var knotsY = [0, 0, 1, 1];
 

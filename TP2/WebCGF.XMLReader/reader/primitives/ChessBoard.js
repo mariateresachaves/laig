@@ -1,6 +1,13 @@
 /**
  * ChessBoard
- * 
+ * @param du u dimension.
+ * @param dv v dimension.
+ * @param textureref reference his background texture.
+ * @param su u selected position.
+ * @param sv v selected position.
+ * @param c1 rgba primary color.
+ * @param c2 rgba secondary color.
+ * @param cs rgba selected color.
  * @constructor
  */
 function ChessBoard(scene, du, dv, textureref, su, sv, c1, c2, cs) {
@@ -30,7 +37,10 @@ function ChessBoard(scene, du, dv, textureref, su, sv, c1, c2, cs) {
 ChessBoard.prototype = Object.create(CGFobject.prototype);
 ChessBoard.prototype.constructor = ChessBoard;
 
-ChessBoard.prototype.display = function(){
+/**
+ * ChessBoard display function.
+ */
+ChessBoard.prototype.display = function() {
 
     this.scene.setActiveShader(this.shader);
 

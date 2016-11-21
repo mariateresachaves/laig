@@ -13,8 +13,10 @@ function MyInterface(scene) {
 MyInterface.prototype = Object.create(CGFinterface.prototype);
 MyInterface.prototype.constructor = MyInterface;
 
-MyInterface.prototype.onGraphLoaded = function ()
-{
+/**
+ * Function to create the lights groups.
+ */
+MyInterface.prototype.onGraphLoaded = function () {
 	this.gui = new dat.GUI();
 	
 	this.group_1 = this.gui.addFolder("Omni Lights");
@@ -30,7 +32,8 @@ MyInterface.prototype.onGraphLoaded = function ()
 
 /**
  * init
- * @param {CGFapplication} application
+ * @param application application
+ * @returns {boolean}
  */
 MyInterface.prototype.init = function(application) {
 	// call CGFinterface init
@@ -40,11 +43,10 @@ MyInterface.prototype.init = function(application) {
 };
 
 /**
- * processKeyUp
- * @param event {Event}
+ * Function to process a key event.
+ * @param event key event.
  */
-MyInterface.prototype.processKeyUp = function(event)
-{
+MyInterface.prototype.processKeyUp = function(event) {
 	switch (event.which || event.keyCode)
 	{
 		case (MyInterface.Keys.KEY_M):
@@ -56,12 +58,23 @@ MyInterface.prototype.processKeyUp = function(event)
 	};
 };
 
+/**
+ * Function to process the event of a key down.
+ * @param event key event.
+ */
 MyInterface.prototype.processKeyDown = function(event) { };
 
-MyInterface.prototype.processKeyboard = function(event) { }
+/**
+ * Function to process the keyboard.
+ * @param event key event.
+ */
+MyInterface.prototype.processKeyboard = function(event) { };
 
-MyInterface.Keys =
-{
+/**
+ * Codes of the keys
+ * @type {{KEY_M: number, KEY_V: number}}
+ */
+MyInterface.Keys = {
 	KEY_M : 77,	//M
 	KEY_V : 86	//L
 };

@@ -1,3 +1,16 @@
+/**
+ * Triangle
+ * @param x1 point 1 x coordinate.
+ * @param y1 point 1 y coordinate.
+ * @param z1 point 1 z coordinate.
+ * @param x2 point 2 x coordinate.
+ * @param y2 point 2 y coordinate.
+ * @param z2 point 2 z coordinate.
+ * @param x3 point 3 x coordinate.
+ * @param y3 point 3 y coordinate.
+ * @param z3 point 3 z coordinate.
+ * @constructor
+ */
 function Triangle(scene, x1, y1, z1, x2, y2, z2, x3, y3, z3) {
 	CGFobject.call(this,scene);
 
@@ -19,6 +32,9 @@ function Triangle(scene, x1, y1, z1, x2, y2, z2, x3, y3, z3) {
 Triangle.prototype = Object.create(CGFobject.prototype);
 Triangle.prototype.constructor=Triangle;
 
+/**
+ * initBuffers
+ */
 Triangle.prototype.initBuffers = function () {
 	this.vertices = [
    	this.x1, this.y1, this.z1,
@@ -55,6 +71,11 @@ Triangle.prototype.initBuffers = function () {
 	this.initGLBuffers();
 };
 
+/**
+ * Sets the texture scales for a given length.
+ * @param length_s s length.
+ * @param length_t t length.
+ */
 Triangle.prototype.setTextureScales = function(length_s, length_t)
 {
 	 this.texCoords = [

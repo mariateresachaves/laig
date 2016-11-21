@@ -56,26 +56,38 @@ XMLscene.prototype.initLights = function ()
 {
 	var i = 0;
 	
-	for(omni in this.graph.lights.omnis)
+	for(omniId in this.graph.lights.omnis)
 	{
-		var l = this.graph.lights.omnis[omni];
+		var l = this.graph.lights.omnis[omniId];
 
 		this.lights[i].setPosition(l.location[0], l.location[1], l.location[2], l.location[3]);
 		this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
 		this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
 		this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
-		
-	    i++;
+		this.lights[i].setVisible(true);
+		if (l.enabled)
+			this[omniId] = true;
+		else this[omniId] = false;
+
+	    i++;		
 	}
 	
-	for(spot in this.graph.lights.spots)
+	
+	for(spotId in this.graph.lights.spots)
 	{
-		var l = this.graph.lights.spots[spot];
+		var l = this.graph.lights.spots[spotId];
 
 	    this.lights[i].setPosition(l.location[0], l.location[1], l.location[2], l.location[3]);
 	    this.lights[i].setAmbient(l.ambient[0], l.ambient[1], l.ambient[2], l.ambient[3]);
 	    this.lights[i].setDiffuse(l.diffuse[0], l.diffuse[1], l.diffuse[2], l.diffuse[3]);
 	  	this.lights[i].setSpecular(l.specular[0], l.specular[1], l.specular[2], l.specular[3]);
+		this.lights[i].setSpotCutOff(l.angle);
+		this.lights[i].setSpotExponent(l.exponent);
+		this.lights[i].setSpotDirection(0, -1, 0);
+		this.lights[i].setVisible(true);
+		if (l.enabled)
+			this[spotId] = true;
+		else this[spotId] = false;
 
 	    i++;
 	}
@@ -125,7 +137,8 @@ XMLscene.prototype.initPrimitives = function ()
 }
 
 //--- Set Default Appearance ---
-XMLscene.prototype.setDefaultAppearance = function () {
+XMLscene.prototype.setDefaultAppearance = function ()
+{
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
     this.setDiffuse(0.2, 0.4, 0.8, 1.0);
     this.setSpecular(0.2, 0.4, 0.8, 1.0);
@@ -139,24 +152,14 @@ XMLscene.prototype.onGraphLoaded = function ()
 	this.axis = new CGFaxis(this, this.graph.axis_length);
 
 	this.gl.clearColor(this.graph.background[0],this.graph.background[1],this.graph.background[2],this.graph.background[3]);
-	this.lights[0].setVisible(true);
-	this.lights[0].enable();
 
 	this.setGlobalAmbientLight(this.graph.ambient[0],this.graph.ambient[1],this.graph.ambient[2],this.graph.ambient[3]);
-	this.lights[1].setVisible(true);
-	this.lights[1].enable();
 
 	this.initPrimitives();
 	
-	for(l_o in this.graph.lights.omnis)
-		this[l_o] = true;
-	
-	for(l_s in this.graph.lights.spots)
-		this[l_s] = true;
+	this.initLights();
 	
 	this.interface.onGraphLoaded();
-	
-	this.initLights();
 	
 	this.initCameras();
 

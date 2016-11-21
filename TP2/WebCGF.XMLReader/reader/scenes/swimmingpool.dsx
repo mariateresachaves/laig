@@ -56,7 +56,7 @@
 	<textures>
 		<texture id="grass" file="./resources/images/grass.png" length_s="1.0" length_t="1.0" />
 		<texture id="ball" file="./resources/images/ball.png" length_s="1.0" length_t="1.0" />
-		<texture id="pool_stone" file="./resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
+		<texture id="pool_stone" file="./resources/images/stone.png" length_s="1.0" length_t="1.0" />
 		<texture id="pool_tile" file="./resources/images/pool_tile.png" length_s="1.0" length_t="1.0" />
 		<texture id="water" file="./resources/images/water.png" length_s="1.0" length_t="1.0" />
 		<texture id="towel" file="./resources/images/towel.jpg" length_s="0.2" length_t="0.5" />

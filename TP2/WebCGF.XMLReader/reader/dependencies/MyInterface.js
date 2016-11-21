@@ -2,16 +2,12 @@
  * MyInterface
  * @constructor
  */
-
-
 function MyInterface(scene) {
 	//call CGFinterface constructor
 	CGFinterface.call(this);
 	
 	this.scene = scene;
 	scene.interface = this;
-
-
 };
 
 MyInterface.prototype = Object.create(CGFinterface.prototype);
@@ -32,7 +28,6 @@ MyInterface.prototype.onGraphLoaded = function ()
 		this.group_2.add(this.scene, spotID);
 };
 
-
 /**
  * init
  * @param {CGFapplication} application
@@ -43,8 +38,6 @@ MyInterface.prototype.init = function(application) {
 	
 	return true;
 };
-
-
 
 /**
  * processKeyUp

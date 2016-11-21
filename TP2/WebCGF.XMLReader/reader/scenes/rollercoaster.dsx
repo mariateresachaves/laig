@@ -4,7 +4,7 @@
 
 	<views default="vd" >
 		<perspective id="vd" near="0.1" far="150.0" angle="45.0">
-			<from x="10.0" y="10.0" z="10.0" />
+			<from x="20.0" y="20.0" z="20.0" />
 			<to x="0.0" y="0.0" z="0.0" />
 		</perspective>
 		<perspective id="top" near="0.1" far="150.0" angle="45.0">
@@ -30,7 +30,7 @@
 			<specular r="1" g="0.3" b="0.2" a="1" />
 		</omni>
 
-		<omni id="o2" enabled="1">
+		<omni id="o2" enabled="0">
 			<location x="0" y="50" z="0" w="1" />
 			<ambient r="0.3" g="0.7" b="0.9" a="1" />
 			<diffuse r="0.3" g="0.7" b="0.9" a="1" />
@@ -44,9 +44,9 @@
 			<specular r="1" g="1" b="0.4" a="1" />
 		</omni>
 
-		<spot id="spot1" enabled="1" angle="10" exponent="0.5">
+		<spot id="spot1" enabled="0" angle="10" exponent="0.5">
 			<target x="0" y="0" z="0" />
-			<location x="50" y="50" z="0" />
+			<location x="0" y="5" z="0" />
 			<ambient r="1" g="1" b="1" a="1" />
 			<diffuse r="1" g="1" b="1" a="1" />
 			<specular r="1" g="1" b="1" a="1" />
@@ -60,10 +60,9 @@
 		<texture id="metal" file="./resources/images/metal.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="wood" file="./resources/images/wood.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="wood_lat" file="./resources/images/wood.jpg" length_s="0.01" length_t="1.0" />
-		<texture id="iron_diagonal" file="./resources/images/iron.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="iron_horizontal" file="./resources/images/iron.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="iron" file="./resources/images/iron.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="stone" file="./resources/images/stone.png" length_s="1.0" length_t="1.0" />
 		<texture id="face" file="./resources/images/ball.png" length_s="1.0" length_t="1.0" />
-		<texture id="pool_stone" file="./resources/images/pool_stone.png" length_s="1.0" length_t="1.0" />
 		<texture id="roof" file="./resources/images/roof.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="metal_roof" file="./resources/images/metal_roof.jpg" length_s="1.0" length_t="1.0" />
 	</textures>
@@ -84,6 +83,7 @@
             <specular r="0" g="0" b="0" a="1" />
             <shininess value="10.0" />
         </material>
+		
         <material id="skin">
             <emission r="0" g="0" b="0" a="0" />
             <ambient r="1" g="0.9" b="0.65" a="1" />
@@ -114,13 +114,16 @@
 		<!-- demorar. Nesta versão do formato DSX, type pode ter -->
 		<!-- o valor "linear" ou "circular"; na animacao circular -->
 		<!-- os angulos sao expressos em graus -->
-		<animation id="linear1" span="5" type="linear">
-			<controlpoint xx="0" yy="0" zz="0" />
-			<controlpoint xx="1" yy="0" zz="2" />
-			<controlpoint xx="5" yy="0" zz="2" />
-			<controlpoint xx="5" yy="0" zz="-3" />
+		<animation id="A1" span="3" type="linear">
+			<controlpoint xx="11.7" yy="0" zz="0" />
+			<controlpoint xx="11.7" yy="0" zz="8" />
 		</animation>
-		<animation id="circular1" span="5" type="circular" centerx="0" centery="0" centerz="0" radius="7" startang="10" rotang="90" />
+		<animation id="A3" span="6" type="linear">
+			<controlpoint xx="7.7" yy="0" zz="12.6" />
+			<controlpoint xx="0" yy="0" zz="12.6" />
+			<controlpoint xx="-5.7" yy="1" zz="12.6" />
+		</animation>
+		<animation id="A2" span="3" type="circular" centerx="7.7" centery="0" centerz="8.6" radius="4" startang="0" rotang="90" />
 	</animations>
 
 	<primitives>
@@ -152,7 +155,7 @@
             <vehicle />
         </primitive>
         <primitive id="chessboard">
-            <chessboard du="8" dv="8" textureref="pool_stone" su="2" sv="2">
+            <chessboard du="8" dv="8" textureref="stone" su="2" sv="2">
                 <c1 r="0.8" g="0.8" b="0.8" a="1" />
                 <c2 r="0.2" g="0.2" b="0.2" a="1" />
                 <cs r="1" g="0" b="0" a="1" />
@@ -161,6 +164,9 @@
 	</primitives>
 
 	<components>
+	
+		<!-- ************************* ROOT *************************** -->
+	
 		<component id="root_scene">
 			<transformation>
 			</transformation>
@@ -170,18 +176,41 @@
 			<texture id="none" />
 			<children>
                 <componentref id="floor" />
-                <componentref id="railroad" />
-                <componentref id="person" />
+                <componentref id="railroad" />                
                 <componentref id="base_bars" />
                 <componentref id="base_house" />
+				<componentref id="cart" />
 			</children>
 		</component>
+		
+		<!-- ************************* CART *************************** -->
+		
+		<component id="cart">
+            <transformation>
+                <translate x="0" y=".2" z="0" />
+				<scale x=".5" y=".5" z=".5" />
+            </transformation>
+			<animation>
+				<animationref id="A1" />
+				<animationref id="A2" />
+				<animationref id="A3" />
+			</animation>
+            <materials>
+                <material id="plastic" />
+            </materials>
+            <texture id="iron" />
+            <children>
+				<componentref id="person" />
+                <primitiveref id="cart" />
+            </children>
+        </component>
 
         <!-- ************************* PERSON ************************* -->
 
         <component id="person">
             <transformation>
-                <translate x="0" y="0" z="3" />
+                <translate x="0" y="0" z="0" />
+				<rotate axis="y" angle="90" />
             </transformation>
             <materials>
                 <material id="inherit" />
@@ -1762,8 +1791,6 @@
                 <componentref id="bar_horizontal_2" />
                 <componentref id="bar_horizontal_3" />
                 <componentref id="bar_horizontal_4" />
-                <componentref id="bar_horizontal_5" />
-                <componentref id="bar_horizontal_6" />
                 <componentref id="bar_curve_1" />
                 <componentref id="bar_curve_2" />
                 <componentref id="bar_curve_3" />
@@ -1801,7 +1828,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1815,7 +1842,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1829,7 +1856,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1844,7 +1871,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1859,7 +1886,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1874,7 +1901,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1889,7 +1916,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1904,7 +1931,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1919,7 +1946,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1934,7 +1961,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1949,7 +1976,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1964,7 +1991,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1979,7 +2006,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -1994,7 +2021,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2009,7 +2036,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2024,7 +2051,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2039,7 +2066,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2054,7 +2081,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2069,7 +2096,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2084,7 +2111,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2099,7 +2126,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2114,7 +2141,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2129,7 +2156,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2144,7 +2171,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2152,14 +2179,14 @@
 
         <component id="bar_curve_25">
             <transformation>
-                <translate x="4.45" y="0.25" z="-5.08" />
-                <rotate axis="y" angle="-95" />
-                <scale x="1" y="1" z="1.4" />
+                <translate x="5.15" y="0.25" z="-4.9" />
+                <rotate axis="y" angle="-90" />
+                <scale x="1" y="1" z="1.2" />
             </transformation>
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2167,14 +2194,14 @@
 
         <component id="bar_curve_26">
             <transformation>
-                <translate x="4.33" y="0.25" z="-4.49" />
+                <translate x="4.84" y="0.25" z="-4.4" />
                 <rotate axis="y" angle="-90" />
-                <scale x="1" y="1" z="1" />
+                <scale x="1" y="1" z="1.2" />
             </transformation>
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_diagonal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2189,7 +2216,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_horizontal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2204,7 +2231,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_horizontal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2218,7 +2245,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_horizontal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>
@@ -2232,37 +2259,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="iron_horizontal" />
-            <children>
-                <componentref id="bar_unit" />
-            </children>
-        </component>
-
-        <component id="bar_horizontal_5">
-            <transformation>
-                <translate x="1.9" y="0.25" z="-5.1" />
-                <scale x="9.4" y="1" z="1" />
-                <rotate axis="y" angle="-90" />
-            </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
-            <texture id="iron_horizontal" />
-            <children>
-                <componentref id="bar_unit" />
-            </children>
-        </component>
-
-        <component id="bar_horizontal_6">
-            <transformation>
-                <translate x="1.9" y="0.25" z="-4.48" />
-                <scale x="9.4" y="1" z="1" />
-                <rotate axis="y" angle="-90" />
-            </transformation>
-            <materials>
-                <material id="inherit" />
-            </materials>
-            <texture id="iron_horizontal" />
+            <texture id="iron" />
             <children>
                 <componentref id="bar_unit" />
             </children>

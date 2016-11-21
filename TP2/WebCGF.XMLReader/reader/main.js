@@ -47,7 +47,7 @@ main=function()
 	// or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor)
 
 	var filename=getUrlVars()['file'] || "rollercoaster.dsx";
-	//var filename=getUrlVars()['file'] || "rollercoaster.dsx";
+	//var filename=getUrlVars()['file'] || "swimmingpool.dsx";
 
 	// create and load graph, and associate it to scene.
 	// Check console for loading errors

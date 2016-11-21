@@ -1762,6 +1762,8 @@
                 <componentref id="bar_horizontal_2" />
                 <componentref id="bar_horizontal_3" />
                 <componentref id="bar_horizontal_4" />
+                <componentref id="bar_horizontal_5" />
+                <componentref id="bar_horizontal_6" />
                 <componentref id="bar_curve_1" />
                 <componentref id="bar_curve_2" />
                 <componentref id="bar_curve_3" />
@@ -2150,9 +2152,9 @@
 
         <component id="bar_curve_25">
             <transformation>
-                <translate x="5.15" y="0.25" z="-4.9" />
-                <rotate axis="y" angle="-90" />
-                <scale x="1" y="1" z="1.2" />
+                <translate x="4.45" y="0.25" z="-5.08" />
+                <rotate axis="y" angle="-95" />
+                <scale x="1" y="1" z="1.4" />
             </transformation>
             <materials>
                 <material id="inherit" />
@@ -2165,9 +2167,9 @@
 
         <component id="bar_curve_26">
             <transformation>
-                <translate x="4.84" y="0.25" z="-4.4" />
+                <translate x="4.33" y="0.25" z="-4.49" />
                 <rotate axis="y" angle="-90" />
-                <scale x="1" y="1" z="1.2" />
+                <scale x="1" y="1" z="1" />
             </transformation>
             <materials>
                 <material id="inherit" />
@@ -2226,6 +2228,36 @@
             <transformation>
                 <translate x="6.25" y="0.25" z="1.35" />
                 <scale x="1" y="1" z="13.1" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="iron_horizontal" />
+            <children>
+                <componentref id="bar_unit" />
+            </children>
+        </component>
+
+        <component id="bar_horizontal_5">
+            <transformation>
+                <translate x="1.9" y="0.25" z="-5.1" />
+                <scale x="9.4" y="1" z="1" />
+                <rotate axis="y" angle="-90" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="iron_horizontal" />
+            <children>
+                <componentref id="bar_unit" />
+            </children>
+        </component>
+
+        <component id="bar_horizontal_6">
+            <transformation>
+                <translate x="1.9" y="0.25" z="-4.48" />
+                <scale x="9.4" y="1" z="1" />
+                <rotate axis="y" angle="-90" />
             </transformation>
             <materials>
                 <material id="inherit" />

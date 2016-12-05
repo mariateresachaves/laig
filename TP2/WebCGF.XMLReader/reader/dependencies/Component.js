@@ -84,9 +84,9 @@ Component.prototype.getTransformations = function() {
 		}	
 	}
 	
-	mat4.translate(currentTransformations, currentTransformations, [x, y, z]);
-	mat4.multiply(currentTransformations, this.transformations, currentTransformations);
+	mat4.translate(currentTransformations, currentTransformations, [x, y, z]);	
 	mat4.rotateY(currentTransformations, currentTransformations, -orientation);
+	mat4.multiply(currentTransformations, this.transformations, currentTransformations);
 	
 	return currentTransformations;
 };

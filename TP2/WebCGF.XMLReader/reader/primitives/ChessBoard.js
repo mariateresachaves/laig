@@ -1,10 +1,10 @@
 /**
  * ChessBoard
- * @param du u dimension.
- * @param dv v dimension.
+ * @param du dimension in u.
+ * @param dv dimension in v.
  * @param textureref reference his background texture.
- * @param su u selected position.
- * @param sv v selected position.
+ * @param su selected position in u.
+ * @param sv selected position in v.
  * @param c1 rgba primary color.
  * @param c2 rgba secondary color.
  * @param cs rgba selected color.
@@ -15,7 +15,7 @@ function ChessBoard(scene, du, dv, textureref, su, sv, c1, c2, cs) {
 
     this.scene = scene;
 	
-	this.plane = new Plane(this.scene, 1, 1, du*20, dv*20);
+	this.plane = new Plane(this.scene, 1, 1, du*5, dv*5);
 		
 	this.texture = this.scene.graph.textures[textureref].CGFtexture;
 

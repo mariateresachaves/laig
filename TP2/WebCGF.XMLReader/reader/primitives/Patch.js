@@ -1,9 +1,9 @@
 /**
  * Patch
- * @param orderU control points of the direction in u (ordered list).
- * @param orderV control points of the direction in v (ordered list).
- * @param partsU parts number in u.
- * @param partsV parts number in v.
+ * @param orderU order of the surface curves in the direction u.
+ * @param orderV order of the surface curves in the direction v.
+ * @param partsU number of divisions in the direction u.
+ * @param partsV number of divisions in the direction v.
  * @param controlPoints control points.
  * @constructor
  */
@@ -25,7 +25,7 @@ Patch.prototype.constructor = Patch;
 
 /**
  * Returns the knots vector.
- * @param degree ordered list of control points.
+ * @param degree order of the curve.
  */
 Patch.prototype.getKnotsVector = function(degree) {
 	var v = new Array();

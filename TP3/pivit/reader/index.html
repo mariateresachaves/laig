@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>CGFexample</title>
+
+<style>
+body, html {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
+div.well{
+  height: 250px;
+}
+
+.Absolute-Center {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.Absolute-Center.is-Responsive {
+  width: 50%;
+  height: 60%;
+  min-width: 200px;
+  max-width: 400px;
+  padding: 40px;
+}
+
+#main-menu > div:nth-child(3) > select,
+#main-menu > div:nth-child(4) > select,
+#main-menu > div:nth-child(5) > select,
+#main-menu > div:nth-child(6) > select {
+  margin-left: 10px;
+  width: 95%;
+}
+
+#main-menu > div:nth-child(3) > span,
+#main-menu > div:nth-child(4) > span,
+#main-menu > div:nth-child(5) > span,
+#main-menu > div:nth-child(6) > span {
+  border-right: 1px solid #ccc;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+#main-menu > div:nth-child(7) > button {
+  text-align: center;
+  width: 95px;
+}
+
+.background {
+  background-color: cornflowerblue;
+}
+
+.title-center {
+  text-align: center;
+}
+
+#sub_button {
+  width: 50%;
+  margin: 0 auto;
+}
+
+#rules {
+  margin: 0 auto;
+  padding-bottom: 10px;
+}
+
+#main-menu > h3 {
+  padding-top: 15px;
+}
+
+#rules > a {
+  color: black;
+}
+
+.play-form-group {
+  margin-top: 20px;
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="Absolute-Center is-Responsive">
+      <div class="col-sm-12 col-md-10 col-md-offset-1 background">
+        <form action="game.html" id="main-menu" method="get">
+          <h3 class="title-center"> Pivit Board Game </h3>
+          <hr>
+          <div class="form-group input-group">
+            <span class="input-group-addon">Player 1</span>
+            <select class="form-control" name="player1_type">
+              <option value="human">Human</option>
+              <option value="computer">Computer</option>
+            </select>
+          </div>
+
+          <div class="form-group input-group">
+            <span class="input-group-addon">Player 2</span>
+            <select class="form-control" name="player2_type">
+              <option value="human">Human</option>
+              <option value="computer">Computer</option>
+            </select>
+          </div>
+
+          <div class="form-group input-group">
+            <span class="input-group-addon">Player 3</span>
+            <select class="form-control" name="player3_type">
+              <option value="-">-</option>
+              <option value="human">Human</option>
+              <option value="computer">Computer</option>
+            </select>
+          </div>
+
+          <div class="form-group input-group">
+            <span class="input-group-addon">Player 4</span>
+            <select class="form-control" name="player4_type">
+              <option value="-">-</option>
+              <option value="human">Human</option>
+              <option value="computer">Computer</option>
+            </select>
+          </div>
+
+          <div class="form-group play-form-group">
+            <input type="submit" class="btn btn-def btn-block" id="sub_button"value="Play">
+          </div>
+          <div class="col-md-offset-1 form-group text-center" id="rules">
+            <a href="../docs/game_rules.pdf">Game Rules</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+</script>
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+</body>
+</html>

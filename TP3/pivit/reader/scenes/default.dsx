@@ -1,0 +1,240 @@
+<dsx>
+
+	<scene root="root_scene" axis_length="0" />
+
+	<views default="vd" >
+		<perspective id="vd" near="0.1" far="150.0" angle="30.0">
+			<from x="3.0" y="2.0" z="0.0" />
+			<to x="0.0" y="0.0" z="0.0" />
+		</perspective>
+		<perspective id="top" near="0.1" far="150.0" angle="45.0">
+			<from x="0.5" y="3.0" z="0.0" />
+			<to x="0.0" y="0.0" z="0.0" />
+		</perspective>
+		<perspective id="other_players" near="0.1" far="150.0" angle="30.0">
+			<from x="-3.0" y="2.0" z="0.0" />
+			<to x="0.0" y="0.0" z="0.0" />
+		</perspective>
+	</views>
+
+	<illumination doublesided="1" local="1" >
+		<ambient r="0.1" g="0.1" b="0.1" a="1.0" />
+		<background r="0.26" g="0.53" b="0.96" a="1.0" />
+	</illumination>
+
+	<lights>
+		<omni id="o1" enabled="1">
+			<location x="-20" y="30" z="40" w="1" />
+			<ambient r="0" g="0" b="0" a="1" />
+			<diffuse r="1" g="0.3" b="0.2" a="1" />
+			<specular r="1" g="0.3" b="0.2" a="1" />
+		</omni>
+
+		<omni id="o2" enabled="0">
+			<location x="0" y="50" z="0" w="1" />
+			<ambient r="0.3" g="0.7" b="0.9" a="1" />
+			<diffuse r="0.3" g="0.7" b="0.9" a="1" />
+			<specular r="0.3" g="0.7" b="0.9" a="1" />
+		</omni>
+
+		<omni id="o3" enabled="1">
+			<location x="20" y="5" z="20" w="1" />
+			<ambient r="0" g="0" b="0" a="0" />
+			<diffuse r="1" g="1" b="0.4" a="1" />
+			<specular r="1" g="1" b="0.4" a="1" />
+		</omni>
+
+		<spot id="spot1" enabled="0" angle="10" exponent="0.5">
+			<target x="0" y="0" z="0" />
+			<location x="0" y="5" z="0" />
+			<ambient r="1" g="1" b="1" a="1" />
+			<diffuse r="1" g="1" b="1" a="1" />
+			<specular r="1" g="1" b="1" a="1" />
+		</spot>
+	</lights>
+
+	<textures>
+		<!-- tails textures -->
+		<texture id="master" file="./resources/images/master.png" length_s="0.5" length_t="0.5" />
+	  <texture id="minion" file="./resources/images/minion.png" length_s="1.0" length_t="1.0" />
+
+		<!-- other textures -->
+		<texture id="grass" file="./resources/images/floor.jpg" length_s="0.5" length_t="0.5" />
+		<texture id="soil" file="./resources/images/soil.jpg" length_s="0.3" length_t="0.3" />
+		<texture id="soil_lat" file="./resources/images/soil.jpg" length_s="1.0" length_t="0.1" />
+		<texture id="metal" file="./resources/images/metal.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="wood" file="./resources/images/wood.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="wood_lat" file="./resources/images/wood.jpg" length_s="0.01" length_t="1.0" />
+		<texture id="iron" file="./resources/images/iron.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="face" file="./resources/images/ball.png" length_s="1.0" length_t="1.0" />
+		<texture id="roof" file="./resources/images/roof.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="metal_roof" file="./resources/images/metal_roof.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="pyramid" file="./resources/images/pyramid.jpg" length_s="2.0" length_t="2.0" />
+		<texture id="waffle" file="./resources/images/waffle.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="icecream" file="./resources/images/icecream.png" length_s="1.0" length_t="1.0" />
+		<texture id="stone" file="./resources/images/stone.png" length_s="1.0" length_t="1.0" />
+		<texture id="stripe" file="./resources/images/stripe.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="tree" file="./resources/images/tree.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="trunk" file="./resources/images/trunk.jpg" length_s="1.0" length_t="1.0" />
+  </textures>
+
+	<materials>
+		<material id="plastic">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="1" g="1" b="1" a="1" />
+			<diffuse r="1" g="1" b="1" a="1" />
+			<specular r="1" g="1" b="1" a="1" />
+			<shininess value="10.0" />
+		</material>
+
+		<material id="buoy">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="1" g="0.2" b="0.2" a="1" />
+			<diffuse r="1" g="0.2" b="0.2" a="1" />
+			<specular r="1" g="0.2" b="0.2" a="1" />
+			<shininess value="1.0" />
+		</material>
+
+		<material id="table">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="1.0" g="1.0" b="1.0" a="1.0" />
+			<diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
+			<specular r="0.0" g="0.0" b="0.0" a="0.0" />
+			<shininess value="1.0" />
+		</material>
+
+		<material id="water">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="0.3" g="0.3" b="1" a="0.1" />
+			<diffuse r="0.3" g="0.3" b="1" a="0.1" />
+			<specular r="0.3" g="0.3" b="1" a="0.1" />
+			<shininess value="1.0" />
+		</material>
+
+		<material id="pipe">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="0.8" g="0.0" b="1.0" a="1.0" />
+			<diffuse r="0.8" g="0.0" b="1.0" a="1.0" />
+			<specular r="0.0" g="0.0" b="0.0" a="0.0" />
+			<shininess value="1.0" />
+		</material>
+
+		<material id="body_1">
+			<emission r="0" g="0" b="0" a="0" />
+			<ambient r="0.1" g="0.1" b="1" a="1" />
+			<diffuse r="0" g="0" b="0" a="1" />
+			<specular r="0" g="0" b="0" a="1" />
+			<shininess value="10.0" />
+		</material>
+
+		<material id="skin">
+			<emission r="0" g="0" b="0" a="0" />
+			<ambient r="1" g="0.9" b="0.65" a="1" />
+			<diffuse r="0" g="0" b="0" a="1" />
+			<specular r="0" g="0" b="0" a="1" />
+			<shininess value="10.0" />
+		</material>
+	</materials>
+
+	<transformations>
+		<transformation id="scene">
+			<rotate axis="z" angle="0" />
+		</transformation>
+
+		<transformation id="table_leg">
+			<scale x="0.1" y="1" z="0.1" />
+			<translate x="0" y="0.5" z="0" />
+		</transformation>
+
+		<transformation id="towel_trans">
+			<translate x="3.2" y="0" z="-3" />
+			<rotate axis="y" angle="75" />
+			<scale x="2.5" y="0.05" z="1.25" />
+		</transformation>
+	</transformations>
+
+
+	<!-- podem existir zero ou mais nós "animation" -->
+	<!-- span é o tempo, em segundos, que a animação deve -->
+	<!-- demorar. Nesta versão do formato DSX, type pode ter -->
+	<!-- o valor "linear" ou "circular"; na animacao circular -->
+	<!-- os angulos sao expressos em graus -->
+	<animations>
+		<animation id="A1" span="3" type="linear">
+			<controlpoint xx="11.7" yy="0" zz="0" />
+			<controlpoint xx="11.7" yy="0" zz="8" />
+		</animation>
+
+		<animation id="A3" span="6" type="linear">
+			<controlpoint xx="7.7" yy="0" zz="12.6" />
+			<controlpoint xx="0" yy="0" zz="12.6" />
+			<controlpoint xx="-5.7" yy="1" zz="12.6" />
+		</animation>
+
+		<animation id="A2" span="3" type="circular" centerx="7.7" centery="0" centerz="8.6" radius="4" startang="0" rotang="90" />
+	</animations>
+
+	<primitives>
+		<primitive id="square">
+			<rectangle x1="-0.5" y1="-0.5" x2="0.5" y2="0.5" />
+		</primitive>
+
+		<primitive id="triangle">
+			<triangle x1="0" y1="1" z1="0" x2="0" y2="0" z2="1" x3="1" y3="0" z3="0" />
+		</primitive>
+
+		<primitive id="sphere">
+        <sphere radius="1" slices="50" stacks="10" />
+    </primitive>
+
+		<primitive id="cylinder">
+        <cylinder base="1.0" top="1.0" height="1" slices="20" stacks="20" />
+    </primitive>
+
+    <primitive id="person_body">
+        <cylinder base="1.0" top="0.5" height="1" slices="20" stacks="20" />
+    </primitive>
+
+		<primitive id="cone">
+        <cylinder base="1.0" top="0" height="1" slices="25" stacks="10" />
+    </primitive>
+
+		<primitive id="torus">
+        <torus inner="0.4" outer="1" slices="50" loops="50" />
+    </primitive>
+
+    <primitive id="plane">
+        <plane dimX="1" dimY="1" partsX="10" partsY="10" />
+    </primitive>
+
+    <primitive id="cart">
+        <vehicle />
+    </primitive>
+
+    <primitive id="chessboard">
+        <chessboard du="8" dv="8" textureref="stone" su="2" sv="2">
+          <c1 r="0.8" g="0.8" b="0.8" a="1" />
+          <c2 r="0.2" g="0.2" b="0.2" a="1" />
+          <cs r="1" g="0" b="0" a="1" />
+        </chessboard>
+    </primitive>
+	</primitives>
+
+	<components>
+
+		<!-- ************************* ROOT *************************** -->
+		<component id="root_scene">
+			<transformation>
+			</transformation>
+			<materials>
+				<material id="plastic" />
+			</materials>
+			<texture id="none" />
+			<children>
+      	<primitiveref id="chessboard" />
+			</children>
+		</component>
+
+	</components>
+
+</dsx>

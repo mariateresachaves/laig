@@ -2,33 +2,28 @@
 precision highp float;
 #endif
 
-uniform sampler2D uSampler;
-
-uniform float dimU;
-uniform float dimV;
-uniform float selectedU;
-uniform float selectedV;
-uniform vec4 color1;
-uniform vec4 color2;
+uniform float isSelected;
+uniform float isValidMove;
+uniform vec4 color;
 uniform vec4 colorSelected;
-
-varying vec2 vTextureCoord;
+uniform vec4 colorValidMove;
 
 void main()
 {
-	vec4 color = texture2D(uSampler, vTextureCoord);
+	vec4 color;
 
-    if ( vTextureCoord.x > selectedU/dimU && vTextureCoord.x < (selectedU + 1.0)/dimU && (1.0 - vTextureCoord.y) > selectedV/dimV && (1.0 - vTextureCoord.y) < (selectedV+1.0)/dimV )
+    if ( isSelected > 0.5 )
 	{
-		color.rgba *= colorSelected;		
+		color.rgba = colorSelected;		
 	}
-    else if ( mod(dimU*vTextureCoord.x,2.0) < 1.0 ^^ mod(dimV*vTextureCoord.y,2.0) < 1.0)
+    else if ( isValidMove > 0.5)
 	{
-		color.rgba *= color1;	
+		color.rgba = colorValidMove;	
 	}
     else
 	{
-		color.rgba *= color2;
+		color.rgba = color;
+		color.rgba = vec4(0.0, 0.0, 0.0, 0.0);
 	}
 
     gl_FragColor = color;

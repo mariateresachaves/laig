@@ -1,6 +1,9 @@
+:-consult(pivit).
 :-use_module(library(sockets)).
 :-use_module(library(lists)).
 :-use_module(library(codesio)).
+:-use_module(library(random)).
+:-use_module(library(system)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                                        Server                                                   %%%%
@@ -34,7 +37,7 @@ server_loop(Socket) :-
 			read_request(Stream, Request),
 			read_header(Stream)
 		),_Exception,(
-			% write('Error parsing request.'),nl,
+			write('Error parsing request.'),nl,
 			close_stream(Stream),
 			fail
 		)),
@@ -101,12 +104,7 @@ print_header_line(_).
 %%%%                                       Commands                                                  %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Require your Prolog Files here
-
-parse_input(handshake, handshake).
-parse_input(test(C,N), Res) :- test(C,Res,N).
+parse_input(newgame(N_Players, PlayerTypes), [Players, Board]):-
+	newgame(N_Players, PlayerTypes, Players, Board).
 parse_input(quit, goodbye).
 
-test(_,[],N) :- N =< 0.
-test(A,[A|Bs],N) :- N1 is N-1, test(A,Bs,N1).
-	

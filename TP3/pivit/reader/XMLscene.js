@@ -34,6 +34,10 @@ XMLscene.prototype.init = function (application) {
     this.gl.depthFunc(this.gl.LEQUAL);
 
     this.axis=new CGFaxis(this);
+	
+	this.gameboard = new GameBoard(this);
+	
+	this.setPickEnabled(true);
 };
 
 //--- Initialize Cameras ---
@@ -141,12 +145,6 @@ XMLscene.prototype.initPrimitives = function () {
 		case "patch":
 			var primitive = new Patch(this, p.orderU, p.orderV, p.partsU, p.partsV, p.controlPoints);
 			break;
-		case "vehicle":
-			var primitive = new Vehicle(this);
-			break;
-		case "chessboard":
-			var primitive = new ChessBoard(this, p.du, p.dv, p.textureref, p.su, p.sv, p.c1, p.c2, p.cs);
-			break;
 		}
 
 		this.primitives[primitiveID] = primitive;
@@ -159,9 +157,9 @@ XMLscene.prototype.initPrimitives = function () {
  * Function to set the default appearance.
  */
 XMLscene.prototype.setDefaultAppearance = function () {
-    this.setAmbient(0.2, 0.4, 0.8, 1.0);
-    this.setDiffuse(0.2, 0.4, 0.8, 1.0);
-    this.setSpecular(0.2, 0.4, 0.8, 1.0);
+    this.setAmbient(1, 1, 1, 1.0);
+    this.setDiffuse(1, 1, 1, 1.0);
+    this.setSpecular(0.1, 0.1, 0.1, 1.0);
     this.setShininess(10.0);
 };
 
@@ -219,8 +217,10 @@ XMLscene.prototype.changeCamera = function() {
 /**
  * display function of the scene.
  */
-XMLscene.prototype.display = function () {
-	// ---- BEGIN Background, camera and axis setup
+XMLscene.prototype.display = function ()
+{
+	this.logPicking();
+	this.clearPickRegistration();
 
 	// Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
@@ -247,7 +247,7 @@ XMLscene.prototype.display = function () {
 	// This is one possible way to do it
 	if (this.graph.loadedOk)
 	{
-		this.drawComponent(this.graph.root, "inherit", "inherit");
+		//this.drawComponent(this.graph.root, "inherit", "inherit");
 
 		var i = 0;
 
@@ -265,7 +265,9 @@ XMLscene.prototype.display = function () {
 				this.lights[i].disable();
 			i++;
 		}
-	};
+	}
+	
+	this.gameboard.display();
 };
 
 //--- Draw Components ---
@@ -348,5 +350,23 @@ XMLscene.prototype.update = function (currTime) {
 	for( var id in this.graph.components )
 	{
 		this.graph.components[id].update(currTime);
+	}
+}
+
+XMLscene.prototype.logPicking = function ()
+{
+	if (this.pickMode == false) {
+		if (this.pickResults != null && this.pickResults.length > 0) {
+			for (var i = 0; i < this.pickResults.length; i++) {
+				var obj = this.pickResults[i][0];
+				if (obj)
+				{
+					var customId = this.pickResults[i][1];				
+					console.log("Picked object: " + obj + ", with pick id " + customId);
+					obj.toggleSelect();
+				}
+			}
+			this.pickResults.splice(0,this.pickResults.length);
+		}		
 	}
 }

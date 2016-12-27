@@ -47,7 +47,6 @@ function getUrlVars() {
 serialInclude(['../lib/CGF.js',
                'XMLscene.js',
                'MySceneGraph.js',
-               'server.js',
                'dependencies/Component.js',
                'dependencies/MyInterface.js',
                'dependencies/Animation.js',
@@ -60,8 +59,10 @@ serialInclude(['../lib/CGF.js',
                'primitives/Torus.js',
                'primitives/Plane.js',
                'primitives/Patch.js',
-               'primitives/Vehicle.js',
-               'primitives/ChessBoard.js',
+			   'primitives/Board.js',
+			   'primitives/GameBoard.js',
+			   'primitives/AuxiliaryBoard.js',
+			   'primitives/Tile.js',
 
     main = function() {
       var app = new CGFapplication(document.body);

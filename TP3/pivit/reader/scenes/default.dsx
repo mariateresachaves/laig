@@ -4,15 +4,15 @@
 
 	<views default="vd" >
 		<perspective id="vd" near="0.1" far="150.0" angle="30.0">
-			<from x="3.0" y="2.0" z="0.0" />
+			<from x="15.0" y="10.0" z="0.0" />
 			<to x="0.0" y="0.0" z="0.0" />
 		</perspective>
 		<perspective id="top" near="0.1" far="150.0" angle="45.0">
-			<from x="0.5" y="3.0" z="0.0" />
+			<from x="0.1" y="10.0" z="0.0" />
 			<to x="0.0" y="0.0" z="0.0" />
 		</perspective>
 		<perspective id="other_players" near="0.1" far="150.0" angle="30.0">
-			<from x="-3.0" y="2.0" z="0.0" />
+			<from x="-15.0" y="10.0" z="0.0" />
 			<to x="0.0" y="0.0" z="0.0" />
 		</perspective>
 	</views>
@@ -211,7 +211,7 @@
 	<components>
 		<!-- ************************* ROOT *************************** -->
 		<component id="root_scene">
-			<transformation>				
+			<transformation>
 			</transformation>
 			<materials>
 				<material id="plastic" />

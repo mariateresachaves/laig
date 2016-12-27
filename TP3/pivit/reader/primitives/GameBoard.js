@@ -1,11 +1,11 @@
 
-function GameBoard(scene) {
+function GameBoard(scene, players) {
     Board.call(this, scene);
 
     this.scene = scene;
 	
-	this.tiles = new Object;
-	
+	this.players = players;
+
 	// this.texture = this.scene.graph.textures[textureref].CGFtexture;
 	
 	// this.shader = new CGFshader(this.scene.gl, "shaders/chess.vert", "shaders/chess.frag");
@@ -19,6 +19,8 @@ function GameBoard(scene) {
 			// isValidMove: 0.0
 		// }
 	// );
+
+	this.tiles = new Object;
 	
 	var isWhite = 0;
 	for(i = 0; i < 8; i++)

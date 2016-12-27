@@ -35,7 +35,15 @@ XMLscene.prototype.init = function (application) {
 
     this.axis=new CGFaxis(this);
 	
-	this.gameboard = new GameBoard(this);
+	var $_GET = parseUrl();
+	var players = []
+	for (var i = 1; i <= 4; i++){
+		var player = $_GET['player' + i + '_type'];
+		if (player != '-')
+			players.push(player);
+	}	
+	
+	this.gameboard = new GameBoard(this, players);
 	
 	this.setPickEnabled(true);
 };
@@ -369,4 +377,18 @@ XMLscene.prototype.logPicking = function ()
 			this.pickResults.splice(0,this.pickResults.length);
 		}		
 	}
+}
+
+function parseUrl()
+{
+	var $_GET = new Object;
+	if(document.location.toString().indexOf('?') !== -1) {
+		var query = document.location.toString().replace(/^.*?\?/, '').replace(/#.*$/, '').split('&');
+		
+		for(var i = 0; i < query.length; i++) {
+			var aux = decodeURIComponent(query[i]).split('=');
+			$_GET[aux[0]] = aux[1];
+		}
+	}
+	return $_GET;
 }

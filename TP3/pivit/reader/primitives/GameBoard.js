@@ -22,7 +22,7 @@ function GameBoard(scene, players) {
 
 	this.tiles = new Object;
 	
-	var isWhite = 0;
+	var isWhite = false;
 	for(i = 0; i < 8; i++)
 	{
 		this.tiles[i] = new Object;
@@ -30,20 +30,25 @@ function GameBoard(scene, players) {
 		{
 			if (isWhite){
 				var color = vec4.fromValues(1, 1, 1, 1);
-				isWhite = 0;
+				isWhite = false;
 			}
 			else{
 				var color = vec4.fromValues(0, 0, 0, 1);
-				isWhite = 1;
+				isWhite = true;
 			}
 			this.tiles[i][j] = new Tile(this.scene, this, 1, 1, i, j, color, vec4.fromValues(1, 0, 0, 1), vec4.fromValues(0, 1, 0, 1));			
 		}
-		isWhite -= 1;
+		isWhite = !isWhite;
 	}
 }
 
 GameBoard.prototype = Object.create(Board.prototype);
 GameBoard.prototype.constructor = GameBoard;
+
+GameBoard.prototype.getTile = function(row, col)
+{
+	return this.tiles[row][col];
+}
 
 /**
  * GameBoard display function.

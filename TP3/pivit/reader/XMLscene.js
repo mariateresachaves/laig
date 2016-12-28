@@ -44,6 +44,7 @@ XMLscene.prototype.init = function (application) {
 	}	
 	
 	this.gameboard = new GameBoard(this, players);
+	this.piece = new Piece(this, 0.5, 0.1, "minion1", "master1");
 	
 	this.setPickEnabled(true);
 };
@@ -276,6 +277,7 @@ XMLscene.prototype.display = function ()
 	}
 	
 	this.gameboard.display();
+	this.piece.display();
 };
 
 //--- Draw Components ---
@@ -371,7 +373,7 @@ XMLscene.prototype.logPicking = function ()
 				{
 					var customId = this.pickResults[i][1];				
 					console.log("Picked object: " + obj + ", with pick id " + customId);
-					obj.toggleSelect();
+					obj.Select();
 				}
 			}
 			this.pickResults.splice(0,this.pickResults.length);

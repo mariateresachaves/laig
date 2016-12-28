@@ -53,6 +53,8 @@ serialInclude(['../lib/CGF.js',
                'dependencies/CircularAnimation.js',
                'dependencies/LinearAnimation.js',
                'primitives/Cylinder.js',
+			   'primitives/CylinderSide.js',
+			   'primitives/Circle.js',
                'primitives/Rectangle.js',
                'primitives/Sphere.js',
                'primitives/Triangle.js',
@@ -63,6 +65,8 @@ serialInclude(['../lib/CGF.js',
 			   'primitives/GameBoard.js',
 			   'primitives/AuxiliaryBoard.js',
 			   'primitives/Tile.js',
+			   'primitives/Piece.js',
+
 
     main = function() {
       var app = new CGFapplication(document.body);

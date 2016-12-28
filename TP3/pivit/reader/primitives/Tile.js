@@ -8,8 +8,10 @@ function Tile(scene, board, du, dv, row, col, color, colorSelected, colorValidMo
 	this.col = col;
 	this.x = (this.col-3.5)*du;
 	this.z = (3.5-this.row)*dv;
-	this.isSelected = 0;
-	this.isValidMove = 0;
+	this.isSelected = false;
+	this.isValidMove = false;
+	
+	this.piece;
 	
 	this.plane = new Plane(this.scene, 1, 1, du*5, dv*5);
 		
@@ -34,9 +36,14 @@ function Tile(scene, board, du, dv, row, col, color, colorSelected, colorValidMo
 Tile.prototype = Object.create(CGFobject.prototype);
 Tile.prototype.constructor = Tile;
 
-Tile.prototype.toggleSelect = function()
+Tile.prototype.Select = function()
 {
-	this.isSelected = (this.isSelected + 1) % 2;
+	this.isSelected = true;
+}
+
+Tile.prototype.Deselect = function()
+{
+	this.isSelected = false;
 }
 
 /**

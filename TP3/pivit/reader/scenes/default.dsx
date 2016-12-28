@@ -76,6 +76,8 @@
 		<texture id="stripe" file="./resources/images/stripe.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="tree" file="./resources/images/tree.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="trunk" file="./resources/images/trunk.jpg" length_s="1.0" length_t="1.0" />
+		<texture id="minion1" file="./resources/images/minion.png" length_s="1.0" length_t="1.0" />
+		<texture id="master1" file="./resources/images/master.png" length_s="1.0" length_t="1.0" />
   </textures>
 
 	<materials>

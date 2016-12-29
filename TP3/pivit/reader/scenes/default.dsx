@@ -76,8 +76,14 @@
 		<texture id="stripe" file="./resources/images/stripe.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="tree" file="./resources/images/tree.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="trunk" file="./resources/images/trunk.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="minion1" file="./resources/images/minion.png" length_s="1.0" length_t="1.0" />
-		<texture id="master1" file="./resources/images/master.png" length_s="1.0" length_t="1.0" />
+		<texture id="minion1" file="./resources/images/minion_blue.png" length_s="1.0" length_t="1.0" />
+		<texture id="master1" file="./resources/images/master_blue.png" length_s="1.0" length_t="1.0" />
+		<texture id="minion2" file="./resources/images/minion_red.png" length_s="1.0" length_t="1.0" />
+		<texture id="master2" file="./resources/images/master_red.png" length_s="1.0" length_t="1.0" />
+		<texture id="minion3" file="./resources/images/minion_green.png" length_s="1.0" length_t="1.0" />
+		<texture id="master3" file="./resources/images/master_green.png" length_s="1.0" length_t="1.0" />
+		<texture id="minion4" file="./resources/images/minion_yellow.png" length_s="1.0" length_t="1.0" />
+		<texture id="master4" file="./resources/images/master_yellow.png" length_s="1.0" length_t="1.0" />
   </textures>
 
 	<materials>

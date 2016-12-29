@@ -18,8 +18,8 @@ function Piece(scene, radius, height, textureMinion, textureMaster, owner, tile,
 	this.material.setSpecular(1, 1, 1, 1);
 	this.material.setShininess(10);
 	
-	this.textureTop = textureTop;
-	this.textureBottom = textureBottom;
+	this.textureMinion = textureMinion;
+	this.textureMaster = textureMaster;
 };
 
 Piece.prototype = Object.create(CGFobject.prototype);
@@ -32,32 +32,43 @@ Piece.prototype.Select = function()
 
 Piece.prototype.display = function () {
 
-	this.material.apply();
 	this.scene.pushMatrix();
-	this.scene.rotate(-Math.PI/2, 1, 0, 0);
-	this.side.display();
-	this.scene.popMatrix();
 	
-	this.scene.pushMatrix();
-	this.scene.rotate(Math.PI/2, 1, 0, 0);
+		this.scene.translate(this.tile.x, 0, this.tile.z);
+		if (this.orientation == 'v')
+			this.scene.rotate(Math.PI/2, 0, 1, 0);
+		this.material.apply();
 	
-	if (this.scene.graph.loadedOk && (this.textureMaster in this.scene.graph.textures)){
-		var x = this.scene.graph.textures[this.textureMaster];
-		x.CGFtexture.bind();
-	}
+		//cilindrical side
+		this.scene.pushMatrix();
+			this.scene.rotate(-Math.PI/2, 1, 0, 0);
+			this.side.display();
+		this.scene.popMatrix();
 	
-	this.bottom.display();
-	this.scene.popMatrix();	
+		//bottom
+		this.scene.pushMatrix();
+			this.scene.rotate(Math.PI/2, 1, 0, 0);
+	
+			if (this.scene.graph.loadedOk && (this.textureMaster in this.scene.graph.textures)){
+				var x = this.scene.graph.textures[this.textureMaster];
+				x.CGFtexture.bind();
+			}
+	
+			this.bottom.display();
+		this.scene.popMatrix();	
 
-	this.scene.pushMatrix();
-	this.scene.translate(0, this.height, 0);
-	this.scene.rotate(-Math.PI/2, 1, 0, 0);
+		//top
+		this.scene.pushMatrix();
+			this.scene.translate(0, this.height, 0);
+			this.scene.rotate(-Math.PI/2, 1, 0, 0);
 
-	if (this.scene.graph.loadedOk && (this.textureMinion in this.scene.graph.textures)){
-		var x = this.scene.graph.textures[this.textureMinion];
-		x.CGFtexture.bind();
-	}
+			if (this.scene.graph.loadedOk && (this.textureMinion in this.scene.graph.textures)){
+				var x = this.scene.graph.textures[this.textureMinion];
+				x.CGFtexture.bind();
+			}
 	
-	this.top.display();
+			this.top.display();
+		this.scene.popMatrix();
+	
 	this.scene.popMatrix();
 };

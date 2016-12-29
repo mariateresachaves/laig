@@ -39,8 +39,10 @@ XMLscene.prototype.init = function (application) {
 	var players = []
 	for (var i = 1; i <= 4; i++){
 		var player = $_GET['player' + i + '_type'];
-		if (player != '-')
+		if (player != '-'){
+			if (player == 'computer') player = 'pc';
 			players.push(player);
+		}
 	}	
 	
 	this.gameboard = new GameBoard(this, players);

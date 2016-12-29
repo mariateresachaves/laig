@@ -10,9 +10,3 @@ function getPrologRequest(requestString, onSuccess, onError, port)
 	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 	request.send();
 }
-
-function requestNewGame(playerTypes, handler)
-{
-	requestString = 'newgame(' + playerTypes.length + ',[' + playerTypes + '])';
-	getPrologRequest(requestString, handler);
-}

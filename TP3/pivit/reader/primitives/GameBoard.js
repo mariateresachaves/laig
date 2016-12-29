@@ -26,10 +26,10 @@ function GameBoard(scene, playerTypes) {
 	this.tiles = new Object;
 	
 	var isWhite = false;
-	for(i = 0; i < 8; i++)
+	for(var i = 0; i < 8; i++)
 	{
 		this.tiles[i] = new Object;
-		for(j = 0; j < 8; j++)
+		for(var j = 0; j < 8; j++)
 		{
 			if (isWhite){
 				var color = vec4.fromValues(1, 1, 1, 1);
@@ -53,60 +53,50 @@ GameBoard.prototype.constructor = GameBoard;
 GameBoard.prototype.requestNewGame = function (playerTypes)
 {
 	requestString = 'newgame(' + playerTypes.length + ',[' + playerTypes + '])';
-	this.getPrologRequest(requestString, this.newGameHandler.bind(this));
+	getPrologRequest(requestString, this.newGameHandler.bind(this));
 }
 
 GameBoard.prototype.newGameHandler = function(data)
 {
-	var x = data.target.response;
+	var res = data.target.response;
 				
-	x = x.replace(new RegExp('computer', 'g'), '"computer"');
-	x = x.replace(new RegExp('human', 'g'), '"human"');
-	x = x.replace(new RegExp(',m,', 'g'), ',"m",');
-	x = x.replace(new RegExp(',v', 'g'), ',"v"');
-	x = x.replace(new RegExp(',h', 'g'), ',"h"');				
+	res = res.replace(new RegExp('computer', 'g'), '"computer"');
+	res = res.replace(new RegExp('human', 'g'), '"human"');
+	res = res.replace(new RegExp(',m,', 'g'), ',"m",');
+	res = res.replace(new RegExp(',v', 'g'), ',"v"');
+	res = res.replace(new RegExp(',h', 'g'), ',"h"');				
 		
-	var newArr = JSON.parse(x);
+	var newArr = JSON.parse(res);
 	
 	this.players = newArr[0];				
 	console.log("Players");
-	for(i = 0; i < this.players.length; i++){
-		console.log("player " + i + ": " + this.players[i][0] + ", " + this.players[i][1]);
+	for(var i = 0; i < this.players.length; i++){
+		console.log("player " + (i + 1) + ": " + this.players[i][0] + ", " + this.players[i][1]);
 	}
-	
-	var z = this.tiles;
 				
-	this.startingBoard = newArr[1];				
+	this.startingBoard = newArr[1];
+	console.log('startingBoard (' + this.startingBoard.length + ', ' + this.startingBoard[i].length + '): ' + this.startingBoard);	
 	console.log("\nBoard");
-	for(i = 0; i < this.startingBoard.length; i++){
-		for(j = 0; j < this.startingBoard[i].length; j++){
+	for(var i = 0; i < this.startingBoard.length; i++)
+	{
+		for(var j = 0; j < this.startingBoard[i].length; j++)
+		{
 			var tile = this.tiles[i][j];
-			if (this.startingBoard[i][j])
+			if (this.startingBoard[i][j].length != 0)
+			{
 				tile.piece = new Piece(
 					this.scene,
 					this.pieceRadius,
 					this.pieceHeight,
-					'minion1',
-					'master1',
+					'minion' + this.startingBoard[i][j][0],
+					'master' + this.startingBoard[i][j][0],
 					this.startingBoard[i][j][0],
 					tile,
 					this.startingBoard[i][j][2]);
-			console.log('x[' + i + ', ' + j + ']: ' + this.startingBoard[i][j]);
+				console.log('Board[' + i + ', ' + j + ']: ' + this.startingBoard[i][j]);
+			}
 		}
 	}	
-}
-
-GameBoard.prototype.getPrologRequest = function(requestString, onSuccess, onError, port)
-{
-	var requestPort = port || 8081
-	var request = new XMLHttpRequest();
-	request.open('GET', 'http://localhost:'+requestPort+'/'+requestString, true);
-	
-	request.onload = onSuccess || function(data){console.log("Request successful. Reply: " + data.target.response);};
-	request.onerror = onError || function(){console.log("Error waiting for response");};
-	
-	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-	request.send();
 }
 
 GameBoard.prototype.getTile = function(row, col)

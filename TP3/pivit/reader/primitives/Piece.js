@@ -1,5 +1,9 @@
-function Piece(scene, radius, height, textureTop, textureBottom) {
+function Piece(scene, radius, height, textureMinion, textureMaster, owner, tile, orientation) {
 	CGFobject.call(this,scene);
+	
+	this.owner = owner;
+	this.tile = tile;
+	this.orientation = orientation;
 	
 	this.height = height;
 	this.radius = radius;
@@ -37,8 +41,8 @@ Piece.prototype.display = function () {
 	this.scene.pushMatrix();
 	this.scene.rotate(Math.PI/2, 1, 0, 0);
 	
-	if (this.scene.graph.loadedOk && (this.textureBottom in this.scene.graph.textures)){
-		var x = this.scene.graph.textures[this.textureBottom];
+	if (this.scene.graph.loadedOk && (this.textureMaster in this.scene.graph.textures)){
+		var x = this.scene.graph.textures[this.textureMaster];
 		x.CGFtexture.bind();
 	}
 	
@@ -49,8 +53,8 @@ Piece.prototype.display = function () {
 	this.scene.translate(0, this.height, 0);
 	this.scene.rotate(-Math.PI/2, 1, 0, 0);
 
-	if (this.scene.graph.loadedOk && (this.textureTop in this.scene.graph.textures)){
-		var x = this.scene.graph.textures[this.textureTop];
+	if (this.scene.graph.loadedOk && (this.textureMinion in this.scene.graph.textures)){
+		var x = this.scene.graph.textures[this.textureMinion];
 		x.CGFtexture.bind();
 	}
 	

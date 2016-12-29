@@ -44,7 +44,6 @@ XMLscene.prototype.init = function (application) {
 	}	
 	
 	this.gameboard = new GameBoard(this, players);
-	this.piece = new Piece(this, 0.5, 0.1, "minion1", "master1");
 	
 	this.setPickEnabled(true);
 };
@@ -277,7 +276,6 @@ XMLscene.prototype.display = function ()
 	}
 	
 	this.gameboard.display();
-	this.piece.display();
 };
 
 //--- Draw Components ---

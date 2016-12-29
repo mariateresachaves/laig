@@ -6,8 +6,10 @@ function Tile(scene, board, du, dv, row, col, color, colorSelected, colorValidMo
 	this.board = board;
 	this.row = row;
 	this.col = col;
+	
 	this.x = (this.col-3.5)*du;
 	this.z = (3.5-this.row)*dv;
+	
 	this.isSelected = false;
 	this.isValidMove = false;
 

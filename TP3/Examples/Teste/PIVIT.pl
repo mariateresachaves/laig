@@ -248,21 +248,13 @@ player(4,'M','D').
 % Relação entre os valores numericos e letras das colunas do tabuleiro 
 % -------------------------------------------------------------------------------------------------------
 column(a,1).
-%column('A',1).
 column(b,2).
-%column('B',2).
 column(c,3).
-%column('C',3).
 column(d,4).
-%column('D',4).
 column(e,5).
-%column('E',5).
 column(f,6).
-%column('F',6).
 column(g,7).
-%column('G',7).
 column(h,8).
-%column('H',8).
 
 % -------------------------------------------------------------------------------------------------------
 % Valores válidos para o número da linha.
@@ -845,7 +837,18 @@ parseAI([human|T], Players_0, Players):-
 parseAI([pc|T], Players_0, Players):-
 	append(Players_0, [[computer,9]], Players_1),
 	parseAI(T, Players_1, Players).
-
-
+parseAI([computer|T], Players_0, Players):-
+	append(Players_0, [[computer,9]], Players_1),
+	parseAI(T, Players_1, Players).
 	
-
+pieceValidMoves(Player, Board, Row, Column, List_moves):-
+	findall([Row, Column, N_moves], valid_move(Player, Board, Row, Column, N_moves), List_moves).
+	
+valid_move(Player, Board, Row, Column, N_moves):-
+	inbounds(Row, Column),
+	N_moves \= 0,
+	piece(Player, Board, Row, Column, Orientation, Type),
+	odd(N_moves, Type),
+	position(Row, Column, N_moves, Orientation, Row1, Column1),
+	nojump(Board, Row, Column, N_moves, Orientation),
+	no_land_over_own_piece(Board, Player, Row1, Column1).

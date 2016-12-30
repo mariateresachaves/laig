@@ -106,5 +106,28 @@ print_header_line(_).
 
 parse_input(newgame(N_Players, PlayerTypes), [Players, Board]):-
 	newgame(N_Players, PlayerTypes, Players, Board).
+	
+parse_input(game_over(Board, Players), [Winner, WinClause]):-
+	game_over(Board, Players, Winner, WinClause).
+parse_input(game_over(_, _), []).
+
+parse_input(player_eliminated(Player, Board), yes):-	
+	player_eliminated(Player, Board).
+parse_input(player_eliminated(_, _), no).
+
+parse_input(no_valid_moves(Player, Board), yes):-	
+	no_valid_moves(Player, Board).
+parse_input(no_valid_moves(_, _), no).
+
+parse_input(pieceValidMoves(Player, Board, Row, Column), List_moves):-
+	pieceValidMoves(Player, Board, Row, Column, List_moves).
+	
+parse_input(valid_move(Player, Board, Row, Column, N_moves), N_moves):-	
+	valid_move(Player, Board, Row, Column, N_moves).
+parse_input(valid_move(_, _, _, _, _), no).
+
+parse_input(move(Player, Players, Board_start, Row, Column, N_moves), [Players1, Board_final]):-
+	move(Player, Players, Players1, Board_start, Board_final, Row, Column, N_moves).
+	
 parse_input(quit, goodbye).
 

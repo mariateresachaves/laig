@@ -25,9 +25,9 @@ function Piece(scene, radius, height, textureMinion, textureMaster, owner, tile,
 Piece.prototype = Object.create(CGFobject.prototype);
 Piece.prototype.constructor=Piece;
 
-Piece.prototype.Select = function()
+Piece.prototype.Selected = function()
 {
-	this.tile.Select();
+	this.tile.Selected();
 }
 
 Piece.prototype.display = function () {

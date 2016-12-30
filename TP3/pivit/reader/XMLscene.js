@@ -40,7 +40,6 @@ XMLscene.prototype.init = function (application) {
 	for (var i = 1; i <= 4; i++){
 		var player = $_GET['player' + i + '_type'];
 		if (player != '-'){
-			if (player == 'computer') player = 'pc';
 			players.push(player);
 		}
 	}	
@@ -371,9 +370,9 @@ XMLscene.prototype.logPicking = function ()
 				var obj = this.pickResults[i][0];
 				if (obj)
 				{
-					var customId = this.pickResults[i][1];				
-					console.log("Picked object: " + obj + ", with pick id " + customId);
-					obj.Select();
+					//var customId = this.pickResults[i][1];				
+					//console.log("Picked object: " + obj + ", with pick id " + customId);
+					obj.Selected();
 				}
 			}
 			this.pickResults.splice(0,this.pickResults.length);

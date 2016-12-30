@@ -34,7 +34,7 @@ XMLscene.prototype.init = function (application) {
     this.gl.depthFunc(this.gl.LEQUAL);
 
     this.axis=new CGFaxis(this);
-	
+
 	var $_GET = parseUrl();
 	var players = []
 	for (var i = 1; i <= 4; i++){
@@ -42,10 +42,10 @@ XMLscene.prototype.init = function (application) {
 		if (player != '-'){
 			players.push(player);
 		}
-	}	
-	
+	}
+
 	this.gameboard = new GameBoard(this, players);
-	
+
 	this.setPickEnabled(true);
 };
 
@@ -215,10 +215,69 @@ XMLscene.prototype.updateLights = function() {
  * Function to change the camera.
  */
 XMLscene.prototype.changeCamera = function() {
-	this.camera_index++;
+  this.camera_index++;
 	if (this.camera_index >= this.cameras.length)
 		this.camera_index = 0;
+
+  this.init_camera = this.camera;
 	this.camera = this.cameras[this.camera_index];
+
+  var init_pos = this.init_camera.position;
+  var final_pos = this.camera.position;
+
+  var delta_x = (final_pos[0] - init_pos[0])/60;
+  var delta_y = (final_pos[1] - init_pos[1])/60;
+  var delta_z = (final_pos[2] - init_pos[2])/60;
+
+  var x=init_pos[0];
+  var y=init_pos[1];
+  var z=init_pos[2];
+
+  console.log("INITIAL POSITION");
+
+  console.log("x = " + x);
+  console.log("y = " + y);
+  console.log("z = " + z);
+
+  console.log("delta x = " + delta_x);
+  console.log("delta y = " + delta_y);
+  console.log("delta z = " + delta_z);
+
+  console.log("FINAL POSITION");
+
+  console.log("x = " + final_pos[0]);
+  console.log("y = " + final_pos[1]);
+  console.log("z = " + final_pos[2]);
+
+
+  var camera_tmp;
+  var flag = true;
+  console.log("Conditions: ");
+  console.log("x: " + x!=final_pos[0]);
+  console.log("y: " + y!=final_pos[1]);
+  console.log("z: " + z!=final_pos[2]);
+
+  while(flag) {
+    if (x==final_pos[0] && y==final_pos[1] && z==final_pos[2])
+      flag = false;
+
+    if (x!=final_pos[0]) {
+      x+=delta_x;
+    }
+    if (y!=final_pos[1]) {
+      y+=delta_y;
+    }
+    if (z!=final_pos[2]) {
+      z+=delta_z;
+    }
+
+    camera_tmp = new CGFcamera(this.camera.fov, this.camera.near, this.camera.far, vec3.fromValues(x, y, z), this.camera.target);
+
+    //sleep(1);
+
+    this.interface.setActiveCamera(camera_tmp);
+  }
+
 	this.interface.setActiveCamera(this.camera);
 };
 
@@ -275,7 +334,7 @@ XMLscene.prototype.display = function ()
 			i++;
 		}
 	}
-	
+
 	this.gameboard.display();
 };
 
@@ -374,7 +433,7 @@ XMLscene.prototype.logPicking = function ()
 				}
 			}
 			this.pickResults.splice(0,this.pickResults.length);
-		}		
+		}
 	}
 }
 
@@ -383,7 +442,7 @@ function parseUrl()
 	var $_GET = new Object;
 	if(document.location.toString().indexOf('?') !== -1) {
 		var query = document.location.toString().replace(/^.*?\?/, '').replace(/#.*$/, '').split('&');
-		
+
 		for(var i = 0; i < query.length; i++) {
 			var aux = decodeURIComponent(query[i]).split('=');
 			$_GET[aux[0]] = aux[1];

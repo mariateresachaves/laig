@@ -2,8 +2,9 @@ function Piece(scene, radius, height, textureMinion, textureMaster, owner, tile,
 	CGFobject.call(this,scene);
 	
 	this.owner = owner;
-	this.tile = tile;
+	this.type = 'minion';
 	this.orientation = orientation;
+	this.tile = tile;
 	
 	this.height = height;
 	this.radius = radius;
@@ -25,9 +26,17 @@ function Piece(scene, radius, height, textureMinion, textureMaster, owner, tile,
 Piece.prototype = Object.create(CGFobject.prototype);
 Piece.prototype.constructor=Piece;
 
-Piece.prototype.Selected = function()
+Piece.prototype.selected = function()
 {
-	this.tile.Selected();
+	this.tile.selected();
+}
+
+Piece.prototype.changeOrientation = function()
+{
+	if(this.orientation == 'v')
+		this.orientation = 'h';
+	else
+		this.orientation = 'v';
 }
 
 Piece.prototype.display = function () {
@@ -35,6 +44,10 @@ Piece.prototype.display = function () {
 	this.scene.pushMatrix();
 	
 		this.scene.translate(this.tile.x, 0, this.tile.z);
+		if (this.type != 'minion'){
+			this.scene.translate(0, this.height, 0);
+			this.scene.rotate(Math.PI, 1, 0, 0);			
+		}
 		if (this.orientation == 'v')
 			this.scene.rotate(Math.PI/2, 0, 1, 0);
 		this.material.apply();

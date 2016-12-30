@@ -248,21 +248,13 @@ player(4,'M','D').
 % Relação entre os valores numericos e letras das colunas do tabuleiro 
 % -------------------------------------------------------------------------------------------------------
 column(a,1).
-%column('A',1).
 column(b,2).
-%column('B',2).
 column(c,3).
-%column('C',3).
 column(d,4).
-%column('D',4).
 column(e,5).
-%column('E',5).
 column(f,6).
-%column('F',6).
 column(g,7).
-%column('G',7).
 column(h,8).
-%column('H',8).
 
 % -------------------------------------------------------------------------------------------------------
 % Valores válidos para o número da linha.
@@ -378,7 +370,6 @@ piece(Player, Board, Row, Column, Orientation, Type):-
 % -------------------------------------------------------------------------------------------------------
 % Verifica o número de movimentos de uma peça é ímpar ou se a peça é master (não sujeita a restrição)
 % -------------------------------------------------------------------------------------------------------
-
 odd(_, 'M').
 odd(N_moves, _):-
 	X is N_moves mod 2,
@@ -396,7 +387,6 @@ position(Row, Column, N_moves, h, Row1, Column1):-
 	column(Column, C),
 	C1 is C + N_moves,
 	column(Column1, C1).
-
 	
 % -------------------------------------------------------------------------------------------------------
 % Verifica se não existem peças entre as coordenadas iniciais e finais de uma peça
@@ -465,7 +455,6 @@ no_land_over_own_piece(Board, Player, Row, Column):-
 	!,
 	fail.
 no_land_over_own_piece(_, _, _, _).
-
 
 % -------------------------------------------------------------------------------------------------------
 % Verifica todas as restrições de movimentos. No caso de input de utilizador (valid_move/8) não falha
@@ -553,7 +542,7 @@ no_valid_moves(Player, Board):-
 no_valid_moves(_, _).
 
 % -------------------------------------------------------------------------------------------------------
-% Verifica se entre as jogadas possiveis numa lista existem jogadas para promover minions e guardas numa
+% Verifica se entre as jogadas possiveis numa lista existem jogadas para promover minions e guarda as numa
 % outra lista.
 % -------------------------------------------------------------------------------------------------------
 corner_moves(_, [], []).
@@ -567,7 +556,7 @@ corner_moves(Board, [_|T], T1):- corner_moves(Board, T, T1).
 
 % -------------------------------------------------------------------------------------------------------
 % Verifica se entre as jogadas possiveis numa lista existem jogadas para eliminiar peças do adversario
-% e guardas numa outra lista.
+% e guarda as numa outra lista.
 % -------------------------------------------------------------------------------------------------------
 eliminate_moves(_, [], []).
 eliminate_moves(Board, [[Row, Column, N_moves]|T], [[Row, Column, N_moves]|T1]):-
@@ -589,9 +578,9 @@ choose_move(Player, computer, Board, Row, Column, N_moves):-
 	corner_moves(Board, List_moves, List_corners),
 	eliminate_moves(Board, List_moves, List_eliminate),
 	choose_priority(List_moves, List_eliminate, List_corners, Row, Column, N_moves),
-	sleep(1),
-	write('[Computer] Row: '), write(Row), write(', Column: '), write(Column), write(', Number of moves: '), write(N_moves), nl,
-	sleep(1).
+	%sleep(1),
+	write('[Computer] Row: '), write(Row), write(', Column: '), write(Column), write(', Number of moves: '), write(N_moves), nl.
+	%sleep(1).
 choose_move(Player, human, Board, Row, Column, N_moves):-
 	write('Choose piece´s row [1-8] '), read(Row_input), 
 	write('Choose piece´s column [a-h] '), read(Column_input),
@@ -673,8 +662,7 @@ move(Player, Players, Players1, Board_start, Board_final, Row, Column, N_moves):
 nextPlayer(Player, N_Players, Player1):-
 	Player < N_Players,
 	Player1 is Player + 1.
-nextPlayer(Player, N_Players, Player1):-
-	Player == N_Players,
+nextPlayer(N_Players, N_Players, Player1):-
 	Player1 = 1.
 
 % -------------------------------------------------------------------------------------------------------
@@ -742,7 +730,7 @@ check_tie(List, Players, Winner, 'First Master'):-
 	P1 \= P2,
 	!,
 	firstMaster(List, Max, 1, Players, Winner).
-check_tie(List, _, Winner, 'Most Minions'):-
+check_tie(List, _, Winner, 'Most Masters'):-
 	max_member(Max, List),
 	nth1(Winner, List, Max).	
 
@@ -793,7 +781,7 @@ play( _, _, Players, Board):-
 	game_over(Board, Players, Winner, WinClause),
 	!,
 	player(Winner, 'M', Letter),
-	write('Game Ended'), nl, nl, write('Player '), write(Letter), write(' is the winner ('), write(WinClause), write(')!').
+	write('Game Ended'), nl, nl, write('Player '), write(Letter), write(' is the winner ('), write(WinClause), write(')!'), nl.
 play(Player, N_Players, Players, Board):-
 	player_eliminated(Player, Board),
 	!,
@@ -830,131 +818,37 @@ pivit:-
 	initializeAI(N_Players, Players), nl,
 	display_game(Board),
 	play(1, N_Players, Players, Board).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                             TESTS                                                     %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-test1:-
-	initializeAI(4, Players),
-	write(Players).
-test2:-
-	land([ [[1,'M',v],[],[],[]], [[],[],[],[]], [[2,m,h],[],[],[]], [[],[],[],[]] ], Board2, 4, 4, 3, 'M', v),
-	write(Board2).
-test3:-
-	erase_initial_pos([ [ [], [1,m,v], [2,m,v], [1,m,v], [1,m,v], [2,m,v], [1,m,v], [] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [1,m,h], [], [], [], [], [], [], [1,m,h] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [1,m,h], [], [], [], [], [], [], [1,m,h] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [], [1,m,v], [2,m,v], [1,m,v], [1,m,v], [2,m,v], [1,m,v], [] ] ], Board2, 1, b),
-	display_game(Board2).
-test4:-
-	land([ [ [], [1,m,v], [2,m,v], [1,m,v], [1,m,v], [2,m,v], [1,m,v], [] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [1,m,h], [], [], [], [], [], [], [1,m,h] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [1,m,h], [], [], [], [], [], [], [1,m,h] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [], [1,m,v], [2,m,v], [1,m,v], [1,m,v], [2,m,v], [1,m,v], [] ] ], Board2, 3, d, 4, m, h),
-	display_game(Board2).
-test5:-
-	write('1, a, 1, v'), nl,
-	position(1, a, 1, v, Row1, Column1),
-	write('Row: '), write(Row1), write(', Column: '), write(Column1), nl,
-	write('3, b, 2, h'), nl,
-	position(3, b, 2, h, Row2, Column2),
-	write('Row: '), write(Row2), write(', Column: '), write(Column2), nl.
-test6:-
-	move(1, [ [ [], [], [], [1,m,v], [1,m,v], [2,m,v], [1,m,v], [] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [1,m,h], [], [], [], [], [], [], [1,m,h] ],
-	[ [], [], [], [], [], [], [], [] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [1,m,h], [], [], [], [], [], [], [] ],
-	[ [2,m,h], [], [], [], [], [], [], [] ],
-	[ [], [1,m,v], [], [1,m,v], [], [2,m,v], [1,m,h], [] ] ], Board2, 1, g, 1),
-	display_game(Board2).
-test7:-
-	move(1, [ [ [], [], [], [1,m,v], [1,m,v], [2,m,v], [1,m,v], [] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [1,m,h], [], [], [], [], [], [], [1,m,h] ],
-	[ [], [], [], [], [], [], [], [] ],
-	[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-	[ [1,m,h], [], [], [], [], [], [], [] ],
-	[ [2,m,h], [], [], [], [], [], [], [] ],
-	[ [], [1,m,v], [], [1,m,v], [], [2,m,v], [1,m,h], [] ] ], Board2, 1, d, 7),
-	display_game(Board2).
-test8:-
-	use_module(library(lists)),
-	initializeAI(4, Players),
-	updatePlayers(2, Players, Players1),
-	updatePlayers(3, Players1, Players2),
-	updatePlayers(1, Players2, Players3),
-	updatePlayers(2, Players3, Players4),
-	updatePlayers(4, Players4, Players5),
-	write(Players), nl,
-	write(Players1), nl,
-	write(Players2), nl,
-	write(Players3), nl,
-	write(Players4), nl,
-	write(Players5), nl.
-
-test9:-
-	use_module(library(random)), nl, nl,
-	%Number is bound to a random float between Lower and Upper. Upper will never be generated.
-	random(1, 10, R1),
-	write('Random number between 1-9: '), write(R1), nl,
-	random(1, 10, R2),
-	write('Random number between 1-9: '), write(R2), nl,
-	random(1, 10, R3),
-	write('Random number between 1-9: '), write(R3), nl.
-pred(X, Y, List):-
-	nth1(X, List, List2),
-	nth1(Y, List2, player).
-test10:-
-	use_module(library(lists)),
-	findall([X,Y], pred(X,Y,[[c,d],[],[1,a,c,player],[],[],[],[],[player,0,1],[],[]]), L),
-	write(L).
-pred2(X):-
-	column(X,C),
-	C < 5.
-test11:-
-	use_module(library(lists)),
-	findall(X, pred2(X), L),
-	write(L).
-test12:-
-	use_module(library(lists)),
-	use_module(library(random)), nl, nl,
-	getBoard(_, 3, Board),
-	display_game(Board),
-	choose_move(1, computer, Board, Row, Column, N_moves),
-	write('Row: '), write(Row), write(', Column: '), write(Column), write(', Number of moves: '), write(N_moves), nl.
-test13:-
-	corner_moves([ [ [], [], [], [], [], [], [1,m,h], [] ],
-			[ [2,m,h], [], [], [], [], [], [], [2,m,v] ],
-			[ [1,m,h], [], [], [], [], [], [], [1,m,h] ],
-			[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-			[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-			[ [1,m,h], [], [], [], [], [], [], [1,m,h] ],
-			[ [2,m,h], [], [], [], [], [], [], [2,m,h] ],
-			[ [], [1,m,h], [2,m,v], [1,m,v], [1,m,v], [2,m,v], [1,m,v], [] ] ],
-				[[8,g,1],[7,a,1],[1,g,1],[7,h,1]], List),
-	write(List).
-test14:-
-	use_module(library(lists)),
-	getBoard(_, 2, Board),
-	initializeAI(2, Players),
-	display_game(Board),
-	%trace,
-	count_masters(1, Board, Players, [], List),
-	write(List), nl,
-	mostMasters(Board, Players, Winner),
-	write(Winner), nl.
 	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                             TODO                                                      %
+%                                             LAIG                                                      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+newgame(N_Players, PlayerTypes, Players, Board):-
+	length(PlayerTypes, N_Players),
+	getBoard(N_Players, _, Board),
+	parseAI(PlayerTypes, Players).
+	
+parseAI(PlayerTypes, Players):-
+	parseAI(PlayerTypes, [], Players).
+parseAI([], Players, Players).
+parseAI([human|T], Players_0, Players):-
+	append(Players_0, [[human,9]], Players_1),
+	parseAI(T, Players_1, Players).
+parseAI([pc|T], Players_0, Players):-
+	append(Players_0, [[computer,9]], Players_1),
+	parseAI(T, Players_1, Players).
+parseAI([computer|T], Players_0, Players):-
+	append(Players_0, [[computer,9]], Players_1),
+	parseAI(T, Players_1, Players).
+	
+pieceValidMoves(Player, Board, Row, Column, List_moves):-
+	findall([Row, Column, N_moves], valid_move(Player, Board, Row, Column, N_moves), List_moves).
+	
+valid_move(Player, Board, Row, Column, N_moves):-
+	inbounds(Row, Column),
+	N_moves \= 0,
+	piece(Player, Board, Row, Column, Orientation, Type),
+	odd(N_moves, Type),
+	position(Row, Column, N_moves, Orientation, Row1, Column1),
+	nojump(Board, Row, Column, N_moves, Orientation),
+	no_land_over_own_piece(Board, Player, Row1, Column1).

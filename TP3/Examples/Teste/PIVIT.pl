@@ -730,7 +730,7 @@ check_tie(List, Players, Winner, 'First Master'):-
 	P1 \= P2,
 	!,
 	firstMaster(List, Max, 1, Players, Winner).
-check_tie(List, _, Winner, 'Most Minions'):-
+check_tie(List, _, Winner, 'Most Masters'):-
 	max_member(Max, List),
 	nth1(Winner, List, Max).	
 

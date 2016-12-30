@@ -4,7 +4,9 @@ function GameBoard(scene, playerTypes) {
 
     this.scene = scene;
 	
+	this.nPlayers = playerTypes.length;
 	this.players;
+	this.playersHistory = [];
 	this.currentPlayer = 1;
 	
 	this.pieceRadius = 0.5;
@@ -14,7 +16,8 @@ function GameBoard(scene, playerTypes) {
 	this.tiles = new Object;
 	this.boardHistory = [];
 	this.canSelect = false;
-	this.firstTileSelection;
+	this.firstTile;
+	this.secondTile;
 	
 	//create tiles
 	var isWhite = false;
@@ -61,35 +64,21 @@ GameBoard.prototype.newGameHandler = function(data)
 		
 	var newArr = JSON.parse(res);
 	
-	this.players = newArr[0];				
-	console.log("Players");
-	for(var i = 0; i < this.players.length; i++){
-		console.log("player " + (i + 1) + ": " + this.players[i][0] + ", " + this.players[i][1]);
-	}
+	this.players = newArr[0];
+	this.playersHistory.push(this.players);				
 				
 	var startingBoard = newArr[1];
 	this.boardHistory.push(startingBoard);
-	console.log('startingBoard (' + startingBoard.length + ', ' + startingBoard[i].length + '):\n' + JSON.stringify(startingBoard));	
+	console.log('startingBoard (' + startingBoard.length + ', ' + startingBoard[0].length + '):\n' + JSON.stringify(startingBoard));	
 	
-	console.log("\nBoard");
 	for(var i = 0; i < startingBoard.length; i++)
 	{
 		for(var j = 0; j < startingBoard[i].length; j++)
 		{
 			var tile = this.tiles[i][j];
-			if (startingBoard[i][j].length != 0)
-			{
-				tile.piece = new Piece(
-					this.scene,
-					this.pieceRadius,
-					this.pieceHeight,
-					'minion' + startingBoard[i][j][0],
-					'master' + startingBoard[i][j][0],
-					startingBoard[i][j][0],
-					tile,
-					startingBoard[i][j][2]);
-				console.log('Board[' + i + ', ' + j + ']: ' + startingBoard[i][j]);
-			}
+			var tileInfo = startingBoard[i][j];
+			if (tileInfo.length != 0)
+				tile.piece = new Piece( this.scene, this.pieceRadius, this.pieceHeight,	'minion' + tileInfo[0], 'master' + tileInfo[0], tileInfo[0], tile, tileInfo[2] );			
 		}
 	}
 	
@@ -98,7 +87,8 @@ GameBoard.prototype.newGameHandler = function(data)
 
 GameBoard.prototype.checkGameOver = function ()
 {
-	requestString = 'game_over(' + JSON.stringify(this.boardHistory[this.boardHistory.length - 1]) + ',' + JSON.stringify(this.players) + ')';
+	var board = this.getCurrentBoardJSON();	
+	requestString = 'game_over(' + board + ',' + JSON.stringify(this.players) + ')';
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkGameOverHandler.bind(this));
 }
@@ -107,9 +97,14 @@ GameBoard.prototype.checkGameOverHandler = function(data)
 {
 	var res = data.target.response;
 	
-	if (res != '[]'){
-		
-		alert('GAME OVER');
+	if (res != '[]')
+	{
+		res = res.replace(new RegExp('First Master', 'g'), '"First Master"');
+		res = res.replace(new RegExp('Last player standing', 'g'), '"Last player standing"');
+		res = res.replace(new RegExp('Most Masters', 'g'), '"Most Masters"');
+				
+		var newArr = JSON.parse(res);
+		alert('GAME OVER\nPlayer ' + newArr[0] + ' won (' + newArr[1] + ')');
 		//var newArr = JSON.parse(res);
 	}
 	else
@@ -118,7 +113,8 @@ GameBoard.prototype.checkGameOverHandler = function(data)
 
 GameBoard.prototype.checkPlayerEliminated = function ()
 {
-	requestString = 'player_eliminated(' + (this.currentPlayer) + ',' + JSON.stringify(this.boardHistory[this.boardHistory.length - 1]) + ')';
+	var board = this.getCurrentBoardJSON();	
+	requestString = 'player_eliminated(' + (this.currentPlayer) + ',' + board + ')';
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkPlayerEliminatedHandler.bind(this));
 }
@@ -134,7 +130,8 @@ GameBoard.prototype.checkPlayerEliminatedHandler = function(data)
 
 GameBoard.prototype.checkPlayerHasValidMoves = function ()
 {
-	requestString = 'no_valid_moves(' + (this.currentPlayer) + ',' + JSON.stringify(this.boardHistory[this.boardHistory.length - 1]) + ')';
+	var board = this.getCurrentBoardJSON();	
+	requestString = 'no_valid_moves(' + (this.currentPlayer) + ',' + board + ')';
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkPlayerHasValidMovesHandler.bind(this));
 }
@@ -150,8 +147,8 @@ GameBoard.prototype.checkPlayerHasValidMovesHandler = function(data)
 
 GameBoard.prototype.nextPlayer = function ()
 {
-	this.currentPlayer = this.currentPlayer % this.players.length + 1;
-	this.CheckGameOver();
+	this.currentPlayer = this.currentPlayer % this.nPlayers + 1;
+	this.checkGameOver();
 }
 
 GameBoard.prototype.selectMove = function ()
@@ -185,15 +182,18 @@ GameBoard.prototype.tileSelection = function (tile)
 	}
 	else
 	{
+		this.secondTile = tile;
 		this.checkValidMove(this.firstTile, tile);
 	}
 }
 
 GameBoard.prototype.getPossibleMoves = function (tile)
 {
+	var board = this.getCurrentBoardJSON();
 	var rowNumber = 8 - tile.row; 
 	var columnLetter = String.fromCharCode(tile.col + 97);
-	requestString = 'pieceValidMoves(' + (this.currentPlayer) + ',' + JSON.stringify(this.boardHistory[this.boardHistory.length - 1]) + ',' + rowNumber +',' + columnLetter + ')'; 
+	
+	requestString = 'pieceValidMoves(' + (this.currentPlayer) + ',' + board + ',' + rowNumber +',' + columnLetter + ')'; 
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.getPossibleMovesHandler.bind(this));
 }
@@ -201,7 +201,6 @@ GameBoard.prototype.getPossibleMoves = function (tile)
 GameBoard.prototype.getPossibleMovesHandler = function(data)
 {
 	var res = data.target.response;
-	console.log(res);
 	
 	res = res.replace(new RegExp(',a,', 'g'), ',"a",');
 	res = res.replace(new RegExp(',b,', 'g'), ',"b",');
@@ -227,15 +226,17 @@ GameBoard.prototype.checkValidMove = function (sourceTile, destTile)
 	if (sourceTile.row != destTile.row && sourceTile.col != destTile.col) return;
 	
 	var nMoves = 0;
-	if (sourceTile.row != destTile.row)
+	if (sourceTile.piece.orientation == 'v' && sourceTile.row != destTile.row)
 		nMoves = sourceTile.row - destTile.row;
-	else
+	else if (sourceTile.piece.orientation == 'h')
 		nMoves = destTile.col - sourceTile.col;
+	else return;
 	
+	var board = this.getCurrentBoardJSON();
 	var rowNumber = 8 - sourceTile.row; 
 	var columnLetter = String.fromCharCode(sourceTile.col + 97);
 	
-	requestString = 'valid_move(' + (this.currentPlayer) + ',' + JSON.stringify(this.boardHistory[this.boardHistory.length - 1]) + ',' + rowNumber +',' + columnLetter + ',' + nMoves + ')';
+	requestString = 'valid_move(' + (this.currentPlayer) + ',' + board + ',' + rowNumber +',' + columnLetter + ',' + nMoves + ')';
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkValidMoveHandler.bind(this));
 }
@@ -251,10 +252,11 @@ GameBoard.prototype.checkValidMoveHandler = function(data)
 
 GameBoard.prototype.makeMove = function (sourceTile, nMoves)
 {
+	var board = this.getCurrentBoardJSON();
 	var rowNumber = 8 - sourceTile.row; 
 	var columnLetter = String.fromCharCode(sourceTile.col + 97);
 	
-	requestString = 'move(' + (this.currentPlayer) + ',' + JSON.stringify(this.players) + ',' + JSON.stringify(this.boardHistory[this.boardHistory.length - 1]) + ',' + rowNumber +',' + columnLetter + ',' + nMoves + ')';
+	requestString = 'move(' + (this.currentPlayer) + ',' + JSON.stringify(this.players) + ',' + board + ',' + rowNumber +',' + columnLetter + ',' + nMoves + ')';
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.makeMoveHandler.bind(this));
 }
@@ -273,15 +275,32 @@ GameBoard.prototype.makeMoveHandler = function(data)
 
 		var newArr = JSON.parse(res);
 
-		this.players = newArr[0];				
+		this.players = newArr[0];
+		this.playersHistory.push(this.players);		
 		console.log("Players");
 		for(var i = 0; i < this.players.length; i++){
 			console.log("player " + (i + 1) + ": " + this.players[i][0] + ", " + this.players[i][1]);
 		}
 
-		var startingBoard = newArr[1];
-		this.boardHistory.push(startingBoard);
-		console.log('startingBoard (' + startingBoard.length + ', ' + startingBoard[i].length + '):\n' + JSON.stringify(startingBoard));
+		var newBoard = newArr[1];
+		this.boardHistory.push(newBoard);
+		console.log('newBoard (' + newBoard.length + ', ' + newBoard[0].length + '):\n' + JSON.stringify(newBoard));
+
+
+		var piece = this.firstTile.piece;
+		if (piece.type == 'minion' && newBoard[this.secondTile.row][this.secondTile.col][1] == 'M')
+			piece.type = 'master';
+		piece.tile = this.secondTile;
+		piece.changeOrientation();
+		
+		this.firstTile.piece = null;
+		this.secondTile.piece = piece;
+		
+		this.firstTile = null;
+		this.secondTile = null;
+		this.unselectAllTiles();
+		
+		this.nextPlayer();
 	}		
 }
 
@@ -315,6 +334,13 @@ GameBoard.prototype.getDestinationTile = function(rowNumber, columnLetter, orien
 	else
 		col += numMoves;
 	return this.tiles[row][col];
+}
+
+GameBoard.prototype.getCurrentBoardJSON = function()
+{
+	var board = JSON.stringify(this.boardHistory[this.boardHistory.length - 1]);
+	board = board.replace(new RegExp('M', 'g'), "'M'");
+	return board;
 }
 
 /**

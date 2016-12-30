@@ -44,7 +44,7 @@ function Tile(scene, board, du, dv, row, col, color, colorSelected, colorValidMo
 Tile.prototype = Object.create(CGFobject.prototype);
 Tile.prototype.constructor = Tile;
 
-Tile.prototype.Selected = function()
+Tile.prototype.selected = function()
 {
 	this.board.tileSelection(this);
 }

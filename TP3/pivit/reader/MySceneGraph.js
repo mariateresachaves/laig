@@ -1645,6 +1645,9 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 		    	if(!(child.id in this.primitives))
 		    		return "Cannot find a primitive with id=" + child.id;
 		    	break;
+			case "gameboard":
+		    	child.type = "gameboard";
+		    	break;
 		    default:
 		    	return "element found in " + id + " is not 'componentref' or 'primitiveref' (" + c.nodeName +").";
 		    }
@@ -1664,7 +1667,7 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 				if(!(this.components[id].children[k].id in this.primitives))
 					return "Cannot find a primitive with id=" + this.components[id].children[k].id;
 
-			} else {
+			} else if(this.components[id].children[k].type == "component"){
 				if(!(this.components[id].children[k].id in this.components))
 					return "Cannot find a component with id=" + this.components[id].children[k].id;
 			}

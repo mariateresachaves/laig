@@ -21,6 +21,12 @@ function Piece(scene, radius, height, textureMinion, textureMaster, owner, tile,
 	
 	this.textureMinion = textureMinion;
 	this.textureMaster = textureMaster;
+	
+	this.animationX = 0;
+	this.animationY = 0;
+	this.animationZ = 0;
+	this.animationXAngle = 0;
+	this.animationYAngle = 0;
 };
 
 Piece.prototype = Object.create(CGFobject.prototype);
@@ -43,13 +49,18 @@ Piece.prototype.display = function () {
 
 	this.scene.pushMatrix();
 	
-		this.scene.translate(this.tile.x, 0, this.tile.z);
+		this.scene.translate(this.tile.x + this.animationX, this.animationY, this.tile.z + this.animationZ);
+		this.scene.rotate(this.animationYAngle, 0, 1, 0);
+		this.scene.rotate(this.animationXAngle, 1, 0, 0);
+		
 		if (this.type != 'minion'){
 			this.scene.translate(0, this.height, 0);
 			this.scene.rotate(Math.PI, 1, 0, 0);			
 		}
+		
 		if (this.orientation == 'v')
 			this.scene.rotate(Math.PI/2, 0, 1, 0);
+		
 		this.material.apply();
 	
 		//cilindrical side

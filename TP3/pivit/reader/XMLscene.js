@@ -315,7 +315,7 @@ XMLscene.prototype.display = function ()
 	// This is one possible way to do it
 	if (this.graph.loadedOk)
 	{
-		//this.drawComponent(this.graph.root, "inherit", "inherit");
+		this.drawComponent(this.graph.root, "inherit", "inherit");
 
 		var i = 0;
 
@@ -334,8 +334,6 @@ XMLscene.prototype.display = function ()
 			i++;
 		}
 	}
-
-	this.gameboard.display();
 };
 
 //--- Draw Components ---
@@ -362,8 +360,10 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 	{
 		if (component.children[i].type === "component")
 			this.drawComponent(component.children[i].id, material, texture);
-		else
+		else if (component.children[i].type === "component")
 			this.drawPrimitive(component.children[i].id, material, texture);
+		else if (component.children[i].type === "gameboard")
+			this.gameboard.display();
 	}
 
 	this.popMatrix();
@@ -419,6 +419,7 @@ XMLscene.prototype.update = function (currTime) {
 	{
 		this.graph.components[id].update(currTime);
 	}
+	this.gameboard.update(currTime);
 }
 
 XMLscene.prototype.logPicking = function ()

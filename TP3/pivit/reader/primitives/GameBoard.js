@@ -19,6 +19,8 @@ function GameBoard(scene, playerTypes) {
 	this.firstTile;
 	this.secondTile;
 	
+	this.animations = [];
+	
 	//create tiles
 	var isWhite = false;
 	for(var i = 0; i < 8; i++)
@@ -286,27 +288,26 @@ GameBoard.prototype.makeMoveHandler = function(data)
 		this.boardHistory.push(newBoard);
 		console.log('newBoard (' + newBoard.length + ', ' + newBoard[0].length + '):\n' + JSON.stringify(newBoard));
 
-
+		//ANIMATIONS
+		if (newBoard[this.secondTile.row][this.secondTile.col].length != 0)
+			console.log("Peça comida");
+		
+		this.animations.push(new JumpAnimation(this.scene, 1, this.firstTile, this.secondTile));
+		
 		var piece = this.firstTile.piece;
 		if (piece.type == 'minion' && newBoard[this.secondTile.row][this.secondTile.col][1] == 'M')
-			piece.type = 'master';
-		piece.tile = this.secondTile;
-		piece.changeOrientation();
+			this.animations.push(new PromoteAnimation(this.scene, 1, piece));
 		
-		this.firstTile.piece = null;
-		this.secondTile.piece = piece;
-		
-		this.firstTile = null;
-		this.secondTile = null;
-		this.unselectAllTiles();
-		
-		this.nextPlayer();
+		this.unselectAllTiles();		
 	}		
 }
 
 
 GameBoard.prototype.unselectAllTiles = function()
 {
+	this.firstTile = null;
+	this.secondTile = null;
+		
 	for(row in this.tiles)
 	{
 		for(column in this.tiles[row])
@@ -341,6 +342,18 @@ GameBoard.prototype.getCurrentBoardJSON = function()
 	var board = JSON.stringify(this.boardHistory[this.boardHistory.length - 1]);
 	board = board.replace(new RegExp('M', 'g'), "'M'");
 	return board;
+}
+
+GameBoard.prototype.update = function(currTime) {
+
+	if (this.animations.length > 0)
+	{
+		this.animations[0].update(currTime);
+		if (this.animations[0].ended)
+			this.animations.shift();
+		if (this.animations.length == 0)
+			this.nextPlayer();
+	}
 }
 
 /**

@@ -29,14 +29,18 @@ function GameBoard(scene, playerTypes) {
 		for(var j = 0; j < 8; j++)
 		{
 			if (isWhite){
-				var color = vec4.fromValues(1, 1, 1, 1);
+				var color1 = vec4.fromValues(1, 1, 1, 1);
+				var color2 = vec4.fromValues(1, 0, 0, 1);
+				var color3 = vec4.fromValues(1, 1, 0, 1);
 				isWhite = false;
 			}
 			else{
-				var color = vec4.fromValues(0, 0, 0, 1);
+				var color1 = vec4.fromValues(0, 0, 0, 1);
+				var color2 = vec4.fromValues(0.6, 0, 0, 1);
+				var color3 = vec4.fromValues(0.6, 0.6, 0, 1);
 				isWhite = true;
 			}
-			this.tiles[i][j] = new Tile(this.scene, this, this.tileSize, this.tileSize, i, j, color, vec4.fromValues(1, 0, 0, 1), vec4.fromValues(0, 1, 0, 1));			
+			this.tiles[i][j] = new Tile(this.scene, this, this.tileSize, this.tileSize, i, j, color1, color2, color3);			
 		}
 		isWhite = !isWhite;
 	}
@@ -366,6 +370,10 @@ GameBoard.prototype.display = function()
 		for(column in this.tiles[row]) {
 			this.scene.registerForPick(i, this.tiles[row][column]);
 			i++;
+			if (this.tiles[row][column].piece){
+				this.scene.registerForPick(i, this.tiles[row][column].piece);
+				i++;
+			}
 			this.tiles[row][column].display();
 		}
 	}

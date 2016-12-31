@@ -578,9 +578,9 @@ choose_move(Player, computer, Board, Row, Column, N_moves):-
 	corner_moves(Board, List_moves, List_corners),
 	eliminate_moves(Board, List_moves, List_eliminate),
 	choose_priority(List_moves, List_eliminate, List_corners, Row, Column, N_moves),
-	%sleep(1),
+	% sleep(1),
 	write('[Computer] Row: '), write(Row), write(', Column: '), write(Column), write(', Number of moves: '), write(N_moves), nl.
-	%sleep(1).
+	% sleep(1).
 choose_move(Player, human, Board, Row, Column, N_moves):-
 	write('Choose piece´s row [1-8] '), read(Row_input), 
 	write('Choose piece´s column [a-h] '), read(Column_input),

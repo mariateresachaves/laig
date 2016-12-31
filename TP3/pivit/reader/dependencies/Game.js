@@ -5,10 +5,11 @@ function Game(scene, playerTypes) {
 	
 	this.nPlayers = playerTypes.length;
 	this.players;
-	this.playersHistory = [];
 	this.currentPlayer = 0;	
 
 	this.boardHistory = [];
+	this.playersHistory = [];
+	
 	this.canSelect = false;
 	this.firstTile;
 	this.secondTile;
@@ -120,11 +121,43 @@ Game.prototype.nextPlayer = function ()
 Game.prototype.selectMove = function ()
 {
 	if (this.players[this.currentPlayer - 1][0] == 'computer')
-	{
-		alert("Computer's turn")		
-	}
+		this.getComputerMove();
 	else
 		this.canSelect = true;		
+}
+
+Game.prototype.getComputerMove = function (tile)
+{
+	var board = this.getCurrentBoardJSON();
+	
+	requestString = 'choose_move(' + (this.currentPlayer) + ',' + board + ')'; 
+	requestString = requestString.replace(new RegExp('"', 'g'), '');
+	getPrologRequest(requestString, this.getComputerMoveHandler.bind(this));
+}
+
+Game.prototype.getComputerMoveHandler = function(data)
+{
+	var res = data.target.response;
+	
+	res = res.replace(new RegExp(',a,', 'g'), ',"a",');
+	res = res.replace(new RegExp(',b,', 'g'), ',"b",');
+	res = res.replace(new RegExp(',c,', 'g'), ',"c",');
+	res = res.replace(new RegExp(',d,', 'g'), ',"d",');
+	res = res.replace(new RegExp(',e,', 'g'), ',"e",');
+	res = res.replace(new RegExp(',f,', 'g'), ',"f",');
+	res = res.replace(new RegExp(',g,', 'g'), ',"g",');
+	res = res.replace(new RegExp(',h,', 'g'), ',"h",');
+
+	var newArr = JSON.parse(res);
+	var rowNumber = newArr[0];
+	var columnLetter = newArr[1];
+	var numMoves = newArr[2];
+	
+	this.firstTile = this.gameboard.getTile(rowNumber, columnLetter);
+	var orientation = this.firstTile.piece.orientation;
+	
+	this.secondTile = this.gameboard.getDestinationTile(rowNumber, columnLetter, orientation, numMoves)
+	this.makeMove(this.firstTile, numMoves);
 }
 
 Game.prototype.tileSelection = function (tile)
@@ -212,6 +245,7 @@ Game.prototype.checkValidMoveHandler = function(data)
 	var res = data.target.response;
 	if (res != 'no')
 	{
+		this.canSelect = false;
 		this.makeMove(this.firstTile, res)
 	}		
 }

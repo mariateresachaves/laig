@@ -126,6 +126,9 @@ parse_input(valid_move(Player, Board, Row, Column, N_moves), N_moves):-
 	valid_move(Player, Board, Row, Column, N_moves).
 parse_input(valid_move(_, _, _, _, _), no).
 
+parse_input(choose_move(Player, Board), [Row, Column, N_moves]):-
+	choose_move(Player, computer, Board, Row, Column, N_moves).
+
 parse_input(move(Player, Players, Board_start, Row, Column, N_moves), [Players1, Board_final]):-
 	move(Player, Players, Players1, Board_start, Board_final, Row, Column, N_moves).
 	

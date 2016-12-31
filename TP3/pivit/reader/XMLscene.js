@@ -36,15 +36,15 @@ XMLscene.prototype.init = function (application) {
     this.axis=new CGFaxis(this);
 
 	var $_GET = parseUrl();
-	var players = []
+	var playerTypes = []
 	for (var i = 1; i <= 4; i++){
 		var player = $_GET['player' + i + '_type'];
 		if (player != '-'){
-			players.push(player);
+			playerTypes.push(player);
 		}
 	}
 
-	this.gameboard = new GameBoard(this, players);
+	this.game = new Game(this, playerTypes);
 
 	this.setPickEnabled(true);
 };
@@ -360,10 +360,10 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 	{
 		if (component.children[i].type === "component")
 			this.drawComponent(component.children[i].id, material, texture);
-		else if (component.children[i].type === "component")
+		else if (component.children[i].type === "primitive")
 			this.drawPrimitive(component.children[i].id, material, texture);
 		else if (component.children[i].type === "gameboard")
-			this.gameboard.display();
+			this.game.gameboard.display();
 	}
 
 	this.popMatrix();
@@ -419,7 +419,7 @@ XMLscene.prototype.update = function (currTime) {
 	{
 		this.graph.components[id].update(currTime);
 	}
-	this.gameboard.update(currTime);
+	this.game.update(currTime);
 }
 
 XMLscene.prototype.logPicking = function ()

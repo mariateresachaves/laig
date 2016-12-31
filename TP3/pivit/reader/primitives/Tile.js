@@ -46,7 +46,7 @@ Tile.prototype.constructor = Tile;
 
 Tile.prototype.selected = function()
 {
-	this.board.tileSelection(this);
+	this.board.game.tileSelection(this);
 }
 
 /**

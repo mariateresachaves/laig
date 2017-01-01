@@ -7,25 +7,20 @@ function Tile(scene, board, du, dv, row, col, color, colorSelected, colorValidMo
 	this.row = row;
 	this.col = col;
 	
-	this.x = (this.col-3.5)*du;
-	this.z = (3.5-this.row)*dv;
+	this.x = (this.col + 0.5) * du;
+	this.z = -(0.5 + this.row) * dv;
 	
 	this.isSelected = false;
 	this.isValidMove = false;
 
 	this.piece;
 
-	this.plane = new Plane(this.scene, 1, 1, du*5, dv*5);
-
-	var r = color[0];
-	var g = color[1];
-	var b = color[2];
-	var a = color[3];
+	this.plane = new Plane(this.scene, du, dv, 5, 5);
 
 	this.material1 = new CGFappearance(this.scene);
-	this.material1.setAmbient(r, g, b, a);
-	this.material1.setDiffuse(r, g, b, a);
-	this.material1.setSpecular(r, g, b, a);
+	this.material1.setAmbient(color[0], color[1], color[2], color[3]);
+	this.material1.setDiffuse(color[0], color[1], color[2], color[3]);
+	this.material1.setSpecular(color[0], color[1], color[2], color[3]);
 	this.material1.setShininess(10);
 
 	this.material2 = new CGFappearance(this.scene);
@@ -61,7 +56,7 @@ Tile.prototype.display = function()
 		this.material3.apply();
 	else
 		this.material1.apply();
-	this.scene.translate(this.x,0,this.z);
+	this.scene.translate(this.x, 0, this.z);
     this.scene.rotate(Math.PI/2,-1,0,0);
     this.plane.display();
     this.scene.popMatrix();

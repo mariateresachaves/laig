@@ -22,10 +22,14 @@ MyInterface.prototype.onGraphLoaded = function () {
 	var play_options = this.gui.addFolder("Play options");
 	play_options.open();
 
-	var undo = { undo:function(){ alert("Undo"); }};
-	this.gui.add(undo, 'undo');
+	var undoFunction = function(){ this.scene.game.undo(); };
 
-	var replay = { replay:function(){ alert("Replay"); }};
+	var undo = { undo: undoFunction.bind(this)};
+	this.gui.add(undo, 'undo');
+	
+	var replayFunction = function(){ this.scene.game.replay(); };
+
+	var replay = { replay: replayFunction.bind(this)};
 	this.gui.add(replay, 'replay');
 
 };

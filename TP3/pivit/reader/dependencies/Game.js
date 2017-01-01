@@ -9,12 +9,16 @@ function Game(scene, playerTypes) {
 
 	this.boardHistory = [];
 	this.playersHistory = [];
+	this.animations = [];
+	this.replaying = false;
 	
 	this.canSelect = false;
 	this.firstTile;
 	this.secondTile;
 
 	this.gameboard = new GameBoard(this.scene, this);	
+	this.auxboard = new AuxiliaryBoard(this.scene, this, this.nPlayers);
+	this.gameSequence = new GameSequence(this.scene);
 	this.requestNewGame(playerTypes);
 }
 
@@ -115,6 +119,14 @@ Game.prototype.checkPlayerHasValidMovesHandler = function(data)
 Game.prototype.nextPlayer = function ()
 {
 	this.currentPlayer = this.currentPlayer % this.nPlayers + 1;
+	this.checkGameOver();
+}
+
+Game.prototype.previousPlayer = function ()
+{
+	this.currentPlayer -= 1;
+	if(this.currentPlayer == 0)
+		this.currentPlayer = this.nPlayers;
 	this.checkGameOver();
 }
 
@@ -277,24 +289,32 @@ Game.prototype.makeMoveHandler = function(data)
 
 		this.players = newArr[0];
 		this.playersHistory.push(this.players);		
-		console.log("Players");
-		for(var i = 0; i < this.players.length; i++){
-			console.log("player " + (i + 1) + ": " + this.players[i][0] + ", " + this.players[i][1]);
-		}
+		// console.log("Players");
+		// for(var i = 0; i < this.players.length; i++){
+		//	console.log("player " + (i + 1) + ": " + this.players[i][0] + ", " + this.players[i][1]);
+		// }
 
 		var newBoard = newArr[1];
 		this.boardHistory.push(newBoard);
-		console.log('newBoard (' + newBoard.length + ', ' + newBoard[0].length + '):\n' + JSON.stringify(newBoard));
+		var piece = this.firstTile.piece;
+		var promotion = false;
+		var animations = []
+		// console.log('newBoard (' + newBoard.length + ', ' + newBoard[0].length + '):\n' + JSON.stringify(newBoard));
 
 		//ANIMATIONS
-		if (newBoard[this.secondTile.row][this.secondTile.col].length != 0)
-			console.log("Peça comida");
+		if (this.secondTile.piece){
+			animations.push(new FadeAnimation(this.scene, 1, this.secondTile, this.auxboard.tiles[this.secondTile.piece.owner - 1]));
+		}
 		
-		this.gameboard.animations.push(new JumpAnimation(this.scene, 1, this.firstTile, this.secondTile));
+		animations.push(new JumpAnimation(this.scene, 1, this.firstTile, this.secondTile));
+				
+		if (piece.type == 'minion' && newBoard[this.secondTile.row][this.secondTile.col][1] == 'M'){
+			promotion = true;
+			animations.push(new PromoteAnimation(this.scene, 1, piece));
+		}
 		
-		var piece = this.firstTile.piece;
-		if (piece.type == 'minion' && newBoard[this.secondTile.row][this.secondTile.col][1] == 'M')
-			this.gameboard.animations.push(new PromoteAnimation(this.scene, 1, piece));
+		this.gameSequence.addMove(piece, this.firstTile, this.secondTile, this.secondTile.piece, promotion, animations);
+		this.animations = animations.slice();
 		
 		this.firstTile = null;
 		this.secondTile = null;
@@ -311,5 +331,34 @@ Game.prototype.getCurrentBoardJSON = function()
 
 Game.prototype.update = function (currTime)
 {
-	this.gameboard.update(currTime);
+	if (this.animations.length > 0)
+	{
+		this.animations[0].update(currTime);
+		if (this.animations[0].ended){
+			this.animations[0].reset();
+			this.animations.shift();
+		}
+		if (this.animations.length == 0){
+			if (this.replaying)
+				this.replaying = false;
+			else
+				this.nextPlayer();
+		}
+	}
+}
+
+Game.prototype.undo = function ()
+{
+	if(this.gameSequence.moves.length > 0){
+		this.gameSequence.undo();
+		this.boardHistory.pop();
+		this.playersHistory.pop();
+		this.previousPlayer();
+	}
+}
+
+Game.prototype.replay = function ()
+{
+	this.replaying = true;
+	this.gameSequence.replay();
 }

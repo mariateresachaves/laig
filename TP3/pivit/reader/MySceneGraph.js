@@ -1648,6 +1648,9 @@ MySceneGraph.prototype.parseComponents = function(rootElement) {
 			case "gameboard":
 		    	child.type = "gameboard";
 		    	break;
+			case "auxiliaryboard":
+		    	child.type = "auxiliaryboard";
+		    	break;
 		    default:
 		    	return "element found in " + id + " is not 'componentref' or 'primitiveref' (" + c.nodeName +").";
 		    }

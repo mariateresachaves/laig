@@ -1,49 +1,34 @@
-
-function Tile(scene, board, du, dv, row, col, textureref, color, colorSelected, colorValidMove) {
-    CGFobject.call(this, scene);
-
-    this.scene = scene;
-	this.board = board;
-	this.row = row;
-	this.col = col;
-	this.x = (this.col-4.5)*du;
-	this.z = (4.5-this.row)*dv;
-	this.isSelected = 0;
-	this.isValidMove = 0;
+function AuxiliaryBoard(scene, game, nPlayers) {
+    Board.call(this, scene, game);
 	
-	this.plane = new Plane(this.scene, 1, 1, du*5, dv*5);
-		
-	// this.texture = this.scene.graph.textures[textureref].CGFtexture;
+	this.tileSize = 1;
 
-	this.shader = new CGFshader(this.scene.gl, "shaders/chess.vert", "shaders/chess.frag");
-    this.shader.setUniformsValues(
-		{
-			uSample : 0,
-			color : color,
-			colorSelected : colorSelected,
-			colorValidMove : colorValidMove,
-			isSelected : 0.0,
-			isValidMove: 0.0
-		}
-	);
+	//create tiles
+	var color = vec4.fromValues(0.9, 0.9, 0.9, 1);
+	
+	var isWhite = false;
+	for(var i = 0; i < nPlayers; i++)
+	{
+		this.tiles[i] = new Tile(this.scene, this, this.tileSize, this.tileSize, i, 0, color, color, color);
+	}
 }
 
-Tile.prototype = Object.create(CGFobject.prototype);
-Tile.prototype.constructor = Tile;
+AuxiliaryBoard.prototype = Object.create(Board.prototype);
+AuxiliaryBoard.prototype.constructor = AuxiliaryBoard;
+
+AuxiliaryBoard.prototype.getTile = function(rowNumber, columnLetter)
+{
+	var row = 8 - rowNumber; 
+	var col = columnLetter.charCodeAt(0) - 97;
+	return this.tiles[row][col];
+}
 
 /**
- * ChessBoard display function.
+ * AuxiliaryBoard display function.
  */
-Tile.prototype.display = function() {
-
-    //this.scene.setActiveShader(this.shader);
-
-	this.scene.pushMatrix();
-    //this.texture.bind(0);
-	this.scene.translate(this.x,0,this.z);
-    this.scene.rotate(Math.PI/2,-1,0,0);
-    this.plane.display();
-    this.scene.popMatrix();
-
-    //this.scene.setActiveShader(this.scene.defaultShader);
+AuxiliaryBoard.prototype.display = function()
+{
+	for(row in this.tiles) {
+		this.tiles[row].display();
+	}
 }

@@ -4,7 +4,7 @@
 
 	<views default="vd" >
 		<perspective id="vd" near="0.1" far="150.0" angle="30.0">
-			<from x="15.0" y="10.0" z="0.0" />
+			<from x="0.0" y="10.0" z="15.0" />
 			<to x="0.0" y="0.0" z="0.0" />
 		</perspective>
 		<perspective id="top" near="0.1" far="150.0" angle="45.0">
@@ -54,11 +54,6 @@
 	</lights>
 
 	<textures>
-		<!-- tails textures -->
-		<texture id="master" file="./resources/images/master.png" length_s="0.5" length_t="0.5" />
-	  <texture id="minion" file="./resources/images/minion.png" length_s="1.0" length_t="1.0" />
-
-		<!-- other textures -->
 		<texture id="grass" file="./resources/images/floor.jpg" length_s="0.5" length_t="0.5" />
 		<texture id="soil" file="./resources/images/soil.jpg" length_s="0.3" length_t="0.3" />
 		<texture id="soil_lat" file="./resources/images/soil.jpg" length_s="1.0" length_t="0.1" />
@@ -84,7 +79,7 @@
 		<texture id="master3" file="./resources/images/master_green.png" length_s="1.0" length_t="1.0" />
 		<texture id="minion4" file="./resources/images/minion_yellow.png" length_s="1.0" length_t="1.0" />
 		<texture id="master4" file="./resources/images/master_yellow.png" length_s="1.0" length_t="1.0" />
-  </textures>
+	</textures>
 
 	<materials>
 		<material id="plastic">
@@ -102,118 +97,41 @@
 			<specular r="1" g="0.2" b="0.2" a="1" />
 			<shininess value="1.0" />
 		</material>
-
-		<material id="table">
-			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
-			<ambient r="1.0" g="1.0" b="1.0" a="1.0" />
-			<diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
-			<specular r="0.0" g="0.0" b="0.0" a="0.0" />
-			<shininess value="1.0" />
-		</material>
-
-		<material id="water">
-			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
-			<ambient r="0.3" g="0.3" b="1" a="0.1" />
-			<diffuse r="0.3" g="0.3" b="1" a="0.1" />
-			<specular r="0.3" g="0.3" b="1" a="0.1" />
-			<shininess value="1.0" />
-		</material>
-
-		<material id="pipe">
-			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
-			<ambient r="0.8" g="0.0" b="1.0" a="1.0" />
-			<diffuse r="0.8" g="0.0" b="1.0" a="1.0" />
-			<specular r="0.0" g="0.0" b="0.0" a="0.0" />
-			<shininess value="1.0" />
-		</material>
-
-		<material id="body_1">
-			<emission r="0" g="0" b="0" a="0" />
-			<ambient r="0.1" g="0.1" b="1" a="1" />
-			<diffuse r="0" g="0" b="0" a="1" />
-			<specular r="0" g="0" b="0" a="1" />
-			<shininess value="10.0" />
-		</material>
-
-		<material id="skin">
-			<emission r="0" g="0" b="0" a="0" />
-			<ambient r="1" g="0.9" b="0.65" a="1" />
-			<diffuse r="0" g="0" b="0" a="1" />
-			<specular r="0" g="0" b="0" a="1" />
-			<shininess value="10.0" />
-		</material>
 	</materials>
 
 	<transformations>
 		<transformation id="scene">
 			<rotate axis="z" angle="0" />
-		</transformation>
-
-		<transformation id="table_leg">
-			<scale x="0.1" y="1" z="0.1" />
-			<translate x="0" y="0.5" z="0" />
-		</transformation>
-
-		<transformation id="towel_trans">
-			<translate x="3.2" y="0" z="-3" />
-			<rotate axis="y" angle="75" />
-			<scale x="2.5" y="0.05" z="1.25" />
-		</transformation>
+		</transformation>	
 	</transformations>
 
 
-	<!-- podem existir zero ou mais nós "animation" -->
-	<!-- span é o tempo, em segundos, que a animação deve -->
-	<!-- demorar. Nesta versão do formato DSX, type pode ter -->
-	<!-- o valor "linear" ou "circular"; na animacao circular -->
-	<!-- os angulos sao expressos em graus -->
 	<animations>
-		<animation id="A1" span="3" type="linear">
-			<controlpoint xx="11.7" yy="0" zz="0" />
-			<controlpoint xx="11.7" yy="0" zz="8" />
-		</animation>
-
-		<animation id="A3" span="6" type="linear">
-			<controlpoint xx="7.7" yy="0" zz="12.6" />
-			<controlpoint xx="0" yy="0" zz="12.6" />
-			<controlpoint xx="-5.7" yy="1" zz="12.6" />
-		</animation>
-
-		<animation id="A2" span="3" type="circular" centerx="7.7" centery="0" centerz="8.6" radius="4" startang="0" rotang="90" />
+		<animation id="A2" span="2" type="circular" centerx="17" centery="1" centerz="-3" radius="5" startang="180" rotang="180" />	
 	</animations>
 
 	<primitives>
 		<primitive id="square">
 			<rectangle x1="-0.5" y1="-0.5" x2="0.5" y2="0.5" />
 		</primitive>
-
 		<primitive id="triangle">
 			<triangle x1="0" y1="1" z1="0" x2="0" y2="0" z2="1" x3="1" y3="0" z3="0" />
 		</primitive>
-
 		<primitive id="sphere">
-			<sphere radius="1" slices="50" stacks="10" />
-		</primitive>
-
+            <sphere radius="1" slices="50" stacks="10" />
+        </primitive>
 		<primitive id="cylinder">
-			<cylinder base="1.0" top="1.0" height="1" slices="20" stacks="20" />
-		</primitive>
-
+            <cylinder base="1.0" top="1.0" height="1" slices="25" stacks="10" />
+        </primitive>
 		<primitive id="cone">
-			<cylinder base="1.0" top="0" height="1" slices="25" stacks="10" />
-		</primitive>
-
+            <cylinder base="1.0" top="0" height="1" slices="25" stacks="10" />
+        </primitive>
 		<primitive id="torus">
-			<torus inner="0.4" outer="1" slices="50" loops="50" />
-		</primitive>
-
-		<primitive id="chessboard">
-			<chessboard du="8" dv="8" textureref="stone" su="2" sv="2">
-				<c1 r="0.8" g="0.8" b="0.8" a="1" />
-				<c2 r="0.2" g="0.2" b="0.2" a="1" />
-				<cs r="1" g="0" b="0" a="1" />
-			</chessboard>
-		</primitive>
+            <torus inner="0.4" outer="1" slices="50" loops="50" />
+        </primitive>
+        <primitive id="plane">
+            <plane dimX="3" dimY="2" partsX="10" partsY="7" />
+        </primitive>
 	</primitives>
 
 	<components>
@@ -227,6 +145,20 @@
 			<texture id="none" />
 			<children>
 				<gameboard />
+				<componentref id="auxiliaryboard" />
+			</children>
+		</component>
+		
+		<component id="auxiliaryboard">
+			<transformation>
+				<translate x="-6" y="0" z="2" />
+			</transformation>
+			<materials>
+				<material id="inherit" />
+			</materials>
+			<texture id="none" />
+			<children>
+				<auxiliaryboard />
 			</children>
 		</component>
 

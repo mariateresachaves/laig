@@ -364,6 +364,8 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 			this.drawPrimitive(component.children[i].id, material, texture);
 		else if (component.children[i].type === "gameboard")
 			this.game.gameboard.display();
+		else if (component.children[i].type === "auxiliaryboard")
+			this.game.auxboard.display();
 	}
 
 	this.popMatrix();

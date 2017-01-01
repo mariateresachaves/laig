@@ -66,6 +66,7 @@ Piece.prototype.display = function () {
 		//cilindrical side
 		this.scene.pushMatrix();
 			this.scene.rotate(-Math.PI/2, 1, 0, 0);
+			this.material.apply();
 			this.side.display();
 		this.scene.popMatrix();
 	
@@ -74,8 +75,8 @@ Piece.prototype.display = function () {
 			this.scene.rotate(Math.PI/2, 1, 0, 0);
 	
 			if (this.scene.graph.loadedOk && (this.textureMaster in this.scene.graph.textures)){
-				var x = this.scene.graph.textures[this.textureMaster];
-				x.CGFtexture.bind();
+				var text = this.scene.graph.textures[this.textureMaster];
+				text.CGFtexture.bind();
 			}
 	
 			this.bottom.display();
@@ -87,8 +88,8 @@ Piece.prototype.display = function () {
 			this.scene.rotate(-Math.PI/2, 1, 0, 0);
 
 			if (this.scene.graph.loadedOk && (this.textureMinion in this.scene.graph.textures)){
-				var x = this.scene.graph.textures[this.textureMinion];
-				x.CGFtexture.bind();
+				var text = this.scene.graph.textures[this.textureMinion];
+				text.CGFtexture.bind();
 			}
 	
 			this.top.display();

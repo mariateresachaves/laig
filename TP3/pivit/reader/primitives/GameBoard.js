@@ -1,17 +1,10 @@
-
 function GameBoard(scene, game) {
-    Board.call(this, scene);
+    Board.call(this, scene, game);
 	
-	this.game = game;
-	
-	this.pieceRadius = 0.5;
+	this.pieceRadius = 0.4;
 	this.pieceHeight = 0.1;
 	this.tileSize = 1;
 
-	this.tiles = new Object;
-	
-	this.animations = [];
-	
 	//create tiles
 	var isWhite = false;
 	for(var i = 0; i < 8; i++)
@@ -20,7 +13,7 @@ function GameBoard(scene, game) {
 		for(var j = 0; j < 8; j++)
 		{
 			if (isWhite){
-				var color1 = vec4.fromValues(1, 1, 1, 1);
+				var color1 = vec4.fromValues(0.9, 0.9, 0.9, 1);
 				var color2 = vec4.fromValues(1, 0, 0, 1);
 				var color3 = vec4.fromValues(1, 1, 0, 1);
 				isWhite = false;
@@ -85,23 +78,14 @@ GameBoard.prototype.unselectAllTiles = function()
 	}
 }
 
-GameBoard.prototype.update = function(currTime) {
-
-	if (this.animations.length > 0)
-	{
-		this.animations[0].update(currTime);
-		if (this.animations[0].ended)
-			this.animations.shift();
-		if (this.animations.length == 0)
-			this.game.nextPlayer();
-	}
-}
-
 /**
  * GameBoard display function.
  */
 GameBoard.prototype.display = function()
 {
+	this.scene.pushMatrix();
+	this.scene.translate(-4 * this.tileSize, 0, 4 * this.tileSize);
+
 	var i = 1;
 	for(row in this.tiles) {
 		for(column in this.tiles[row]) {
@@ -114,4 +98,6 @@ GameBoard.prototype.display = function()
 			this.tiles[row][column].display();
 		}
 	}
+	
+	this.scene.popMatrix();
 }

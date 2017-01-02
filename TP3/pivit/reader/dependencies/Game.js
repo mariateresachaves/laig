@@ -26,11 +26,11 @@ Game.States = {
 };
 
 
-function Game(scene, playerTypes) {
-
-  this.scene = scene;
-
-  this.playerTypes = playerTypes;
+function Game(scene, playerTypes)
+{
+	this.scene = scene;
+	
+	this.playerTypes = playerTypes;
 	this.nPlayers = playerTypes.length;
 	this.players;
 	this.currentPlayer = 1;
@@ -38,16 +38,16 @@ function Game(scene, playerTypes) {
 	this.boardHistory = [];
 	this.playersHistory = [];
 	this.animations = [];
-  this.text = '';
+	this.text = '';
 
 	this.firstTile;
 	this.secondTile;
-  this.nMoves;
+	this.nMoves;
 
 	this.gameboard = new GameBoard(this.scene, this);
 	this.auxboard = new AuxiliaryBoard(this.scene, this, this.nPlayers);
 	this.gameSequence = new GameSequence(this.scene);
-  this.state = Game.States.newGame;
+	this.state = Game.States.newGame;
 }
 
 Game.prototype = Object.create(CGFobject.prototype);
@@ -58,7 +58,7 @@ Game.prototype.requestNewGame = function ()
 	requestString = 'newgame(' + this.playerTypes.length + ',[' + this.playerTypes + '])';
 	getPrologRequest(requestString, this.newGameHandler.bind(this));
 
-  this.state = Game.States.newGameRequested;
+	this.state = Game.States.newGameRequested;
 }
 
 Game.prototype.newGameHandler = function(data)
@@ -82,8 +82,8 @@ Game.prototype.newGameHandler = function(data)
 	//console.log('startingBoard (' + startingBoard.length + ', ' + startingBoard[0].length + '):\n' + JSON.stringify(startingBoard));
 
 	this.gameboard.createPieces(startingBoard);
-
-  this.state = Game.States.selectMove;
+	
+	this.state = Game.States.selectMove;
 }
 
 Game.prototype.checkGameOver = function ()
@@ -376,7 +376,7 @@ Game.prototype.getCurrentBoardJSON = function()
 	return board;
 }
 
-Game.prototype.makeAnimations = function (currTime)
+Game.prototype.runAnimations = function (currTime)
 {
 	if (this.animations.length > 0)
 	{
@@ -396,72 +396,97 @@ Game.prototype.makeAnimations = function (currTime)
 
 Game.prototype.update = function (currTime)
 {
-  if (!this.locked) {
-    this.locked = true;
-    switch (this.state) {
-      case Game.States.newGame:
-        this.requestNewGame();
-        break;
-      case Game.States.selectMove:
-        this.selectMove();
-        break;
-      case Game.States.getPossibleMoves:
-        this.getPossibleMoves();
-        break;
-      case Game.States.checkValidMove:
-        this.checkValidMove();
-        break;
-      case Game.States.getComputerMove:
-        this.getComputerMove();
-        break;
-      case Game.States.makeMove:
-        this.makeMove();
-        break;
-      case Game.States.animations:
-        this.makeAnimations(currTime);
-        break;
-      case Game.States.nextPlayer:
-        this.nextPlayer();
-        break;
-      case Game.States.checkGameOver:
-        this.checkGameOver();
-        break;
-      case Game.States.checkPlayerEliminated:
-        this.checkPlayerEliminated();
-        break;
-      case Game.States.checkNoValidMoves:
-        this.checkPlayerHasValidMoves();
-        break;
-      case Game.States.undo:
-        this.undo();
-        break;
-      case Game.States.replay:
-        this.replay();
-        break;
-      case Game.States.gameOver:
-        // TODO: Acrescentar o texto e voltar ao menu inicial
-        break;
-      default:
-        break;
-    }
-    this.locked = false;
-  }
+	if (!this.locked)
+	{
+		this.locked = true;
+		
+		switch (this.state)
+		{
+			case Game.States.newGame:
+			this.requestNewGame();
+			break;
+			
+			case Game.States.selectMove:
+			this.selectMove();
+			break;
+			
+			case Game.States.getPossibleMoves:
+			this.getPossibleMoves();
+			break;
+			
+			case Game.States.checkValidMove:
+			this.checkValidMove();
+			break;
+			
+			case Game.States.getComputerMove:
+			this.getComputerMove();
+			break;
+			
+			case Game.States.makeMove:
+			this.makeMove();
+			break;
+			
+			case Game.States.animations:
+			this.runAnimations(currTime);
+			if (this.animations.length == 0)
+				this.state = Game.States.nextPlayer;
+			break;
+			
+			case Game.States.nextPlayer:
+			this.nextPlayer();
+			break;
+			
+			case Game.States.checkGameOver:
+			this.checkGameOver();
+			break;
+			
+			case Game.States.checkPlayerEliminated:
+			this.checkPlayerEliminated();
+			break;
+			
+			case Game.States.checkNoValidMoves:
+			this.checkPlayerHasValidMoves();
+			break;
+			
+			case Game.States.undo:
+			break;
+			
+			case Game.States.replay:
+			this.runAnimations(currTime);
+			if (this.animations.length == 0)
+				this.state = Game.States.checkGameOver;
+			break;
+			
+			case Game.States.gameOver:
+			// TODO: Acrescentar o texto e voltar ao menu inicial
+			break;
+			
+			default:
+			break;
+		}
+		this.locked = false;
+	}
 }
 
 Game.prototype.undo = function ()
 {
-	if(this.gameSequence.moves.length > 0) {
-    this.currentPlayer = this.gameSequence.getLastMovePlayer();
-    this.gameSequence.undo();
+	if(this.gameSequence.moves.length > 0)
+	{
+		this.state = Game.States.undo;
+		this.currentPlayer = this.gameSequence.getLastMovePlayer();
+		this.gameSequence.undo();
 		this.boardHistory.pop();
 		this.playersHistory.pop();
-    this.state = Game.States.selectMove;
+		this.state = Game.States.selectMove;
 	}
 }
 
 Game.prototype.replay = function ()
 {
-	this.replaying = true;
-	this.gameSequence.replay();
-  this.state = Game.States.checkGameOver;
+	if(this.gameSequence.moves.length > 0)
+	{
+		this.state = -1;
+		this.gameSequence.replay();
+		this.state = Game.States.replay;
+	}
 }

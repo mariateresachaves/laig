@@ -1,9 +1,12 @@
 function GameBoard(scene, game) {
     Board.call(this, scene, game);
-	
+
 	this.pieceRadius = 0.4;
 	this.pieceHeight = 0.1;
 	this.tileSize = 1;
+
+  this.text = new Text(scene);
+  this.text.setText("text");
 
 	//create tiles
 	var isWhite = false;
@@ -24,7 +27,7 @@ function GameBoard(scene, game) {
 				var color3 = vec4.fromValues(0.6, 0.6, 0, 1);
 				isWhite = true;
 			}
-			this.tiles[i][j] = new Tile(this.scene, this, this.tileSize, this.tileSize, i, j, color1, color2, color3);			
+			this.tiles[i][j] = new Tile(this.scene, this, this.tileSize, this.tileSize, i, j, color1, color2, color3);
 		}
 		isWhite = !isWhite;
 	}
@@ -42,21 +45,21 @@ GameBoard.prototype.createPieces = function(startingBoard)
 			var tile = this.tiles[i][j];
 			var tileInfo = startingBoard[i][j];
 			if (tileInfo.length != 0)
-				tile.piece = new Piece( this.scene, this.pieceRadius, this.pieceHeight,	'minion' + tileInfo[0], 'master' + tileInfo[0], tileInfo[0], tile, tileInfo[2] );			
+				tile.piece = new Piece( this.scene, this.pieceRadius, this.pieceHeight,	'minion' + tileInfo[0], 'master' + tileInfo[0], tileInfo[0], tile, tileInfo[2] );
 		}
 	}
 }
 
 GameBoard.prototype.getTile = function(rowNumber, columnLetter)
 {
-	var row = 8 - rowNumber; 
+	var row = 8 - rowNumber;
 	var col = columnLetter.charCodeAt(0) - 97;
 	return this.tiles[row][col];
 }
 
 GameBoard.prototype.getDestinationTile = function(rowNumber, columnLetter, orientation, numMoves)
 {
-	var row = 8 - rowNumber; 
+	var row = 8 - rowNumber;
 	var col = columnLetter.charCodeAt(0) - 97;
 	if (orientation == 'v')
 		row -= numMoves;
@@ -83,6 +86,13 @@ GameBoard.prototype.unselectAllTiles = function()
  */
 GameBoard.prototype.display = function()
 {
+
+  this.scene.pushMatrix();
+  this.scene.rotate(-Math.PI/2, 0, 1, 0);
+  this.scene.translate(0, 3, 3);
+  this.text.display();
+  this.scene.popMatrix();
+
 	this.scene.pushMatrix();
 	this.scene.translate(-4 * this.tileSize, 0, 4 * this.tileSize);
 
@@ -98,6 +108,6 @@ GameBoard.prototype.display = function()
 			this.tiles[row][column].display();
 		}
 	}
-	
+
 	this.scene.popMatrix();
 }

@@ -6,10 +6,15 @@ function GameSequence(scene) {
 GameSequence.prototype = Object.create(Object.prototype);
 GameSequence.prototype.constructor = GameSequence;
 
-GameSequence.prototype.addMove = function(piece, srcTile, destTile, capture, promotion, animations)
+GameSequence.prototype.addMove = function(player, piece, srcTile, destTile, capture, promotion, animations)
 {
-	var move = new GameMove(this.scene, piece, srcTile, destTile, capture, promotion, animations);
+	var move = new GameMove(this.scene, player, piece, srcTile, destTile, capture, promotion, animations);
 	this.moves.push(move);
+}
+
+GameSequence.prototype.getLastMovePlayer = function()
+{
+	return this.moves[this.moves.length - 1].player;
 }
 
 GameSequence.prototype.undo = function()

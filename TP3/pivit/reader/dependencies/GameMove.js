@@ -1,10 +1,11 @@
-function GameMove(scene, piece, srcTile, destTile, capture, promotion, animations)
+function GameMove(scene, player, piece, srcTile, destTile, capture, promotion, animations)
 {
+  this.player = player;
   this.piece = piece;
   this.srcTile = srcTile;
   this.destTile = destTile;
   this.capture = capture;
-  this.promotion = promotion;  
+  this.promotion = promotion;
   this.animations = animations;
 }
 
@@ -15,18 +16,18 @@ GameMove.prototype.undo = function()
 {
 	if(this.promotion)
 		this.piece.type = 'minion';
-	
+
 	this.srcTile.piece = this.piece;
 	this.piece.tile = this.srcTile;
 	this.piece.changeOrientation();
 
 	//capture
-	if(this.capture){
+	if(this.capture) {
 		this.capture.tile.piece = null;
 		this.capture.tile = this.destTile;
 		this.destTile.piece = this.capture;
 	}
-	else{
+	else {
 		this.destTile.piece = null;
 	}
 }

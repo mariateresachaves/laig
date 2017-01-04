@@ -27,6 +27,7 @@ function Piece(scene, radius, height, textureMinion, textureMaster, owner, tile,
 	this.animationZ = 0;
 	this.animationXAngle = 0;
 	this.animationYAngle = 0;
+	this.animationScale = 1;
 };
 
 Piece.prototype = Object.create(CGFobject.prototype);
@@ -52,6 +53,7 @@ Piece.prototype.display = function () {
 		this.scene.translate(this.tile.x + this.animationX, this.animationY, this.tile.z + this.animationZ);
 		this.scene.rotate(this.animationYAngle, 0, 1, 0);
 		this.scene.rotate(this.animationXAngle, 1, 0, 0);
+		this.scene.scale(this.animationScale, this.animationScale, this.animationScale);
 		
 		if (this.type != 'minion'){
 			this.scene.translate(0, this.height, 0);

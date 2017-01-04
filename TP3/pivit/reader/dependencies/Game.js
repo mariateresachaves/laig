@@ -1,28 +1,28 @@
 Game.States = {
-  newGame:                        0,
-  newGameRequested:               1,
-  selectMove:                     2,
-  waitSelection:                  3,
-  getPossibleMoves:               4,
-  getPossibleMovesRequested:      5,
-  firstTileSelected:              6,
-  checkValidMove:                 7,
-  checkValidMoveRequested:        8,
-  getComputerMove:                9,
-  getComputerMoveRequested:       10,
-  makeMove:                       11,
-  makeMoveRequested:              12,
-  animations:                     13,
-  nextPlayer:                     14,
-  checkGameOver:                  15,
-  checkGameOverRequested:         16,
-  gameOver:                       17,
-  checkPlayerEliminated:          18,
-  checkPlayerEliminatedRequested: 19,
-  checkNoValidMoves:              20,
-  checkNoValidMovesRequested:     21,
-  undo:                           22,
-  replay:                         23
+	newGame:                        0,
+	newGameRequested:               1,
+	selectMove:                     2,
+	waitSelection:                  3,
+	getPossibleMoves:               4,
+	getPossibleMovesRequested:      5,
+	firstTileSelected:              6,
+	checkValidMove:                 7,
+	checkValidMoveRequested:        8,
+	getComputerMove:                9,
+	getComputerMoveRequested:       10,
+	makeMove:                       11,
+	makeMoveRequested:              12,
+	animations:                     13,
+	nextPlayer:                     14,
+	checkGameOver:                  15,
+	checkGameOverRequested:         16,
+	gameOver:                       17,
+	checkPlayerEliminated:          18,
+	checkPlayerEliminatedRequested: 19,
+	checkNoValidMoves:              20,
+	checkNoValidMovesRequested:     21,
+	undo:                           22,
+	replay:                         23
 };
 
 
@@ -92,8 +92,8 @@ Game.prototype.checkGameOver = function ()
 	requestString = 'game_over(' + board + ',' + JSON.stringify(this.players) + ')';
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkGameOverHandler.bind(this));
-
-  this.state = Game.States.checkGameOverRequested;
+	
+	this.state = Game.States.checkGameOverRequested;
 }
 
 Game.prototype.checkGameOverHandler = function(data)
@@ -107,13 +107,12 @@ Game.prototype.checkGameOverHandler = function(data)
 		res = res.replace(new RegExp('Most Masters', 'g'), '"Most Masters"');
 
 		var newArr = JSON.parse(res);
-		this.text = 'GAME OVER\nPlayer ' + newArr[0] + ' won (' + newArr[1] + ')';
-		//var newArr = JSON.parse(res);
+		this.updateInfoText('GAME OVER\nPlayer ' + newArr[0] + ' won (' + newArr[1] + ')');
 
-    this.state = Game.States.gameOver;
+		this.state = Game.States.gameOver;
 	}
 	else
-    this.state = Game.States.checkPlayerEliminated;
+		this.state = Game.States.checkPlayerEliminated;
 }
 
 Game.prototype.checkPlayerEliminated = function ()
@@ -123,16 +122,16 @@ Game.prototype.checkPlayerEliminated = function ()
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkPlayerEliminatedHandler.bind(this));
 
-  this.state = Game.States.checkPlayerEliminatedRequested;
+	this.state = Game.States.checkPlayerEliminatedRequested;
 }
 
 Game.prototype.checkPlayerEliminatedHandler = function(data)
 {
 	var res = data.target.response;
 	if (res == 'yes')
-    this.state = Game.States.nextPlayer;
+		this.state = Game.States.nextPlayer;
 	else
-    this.state = Game.States.checkNoValidMoves;
+		this.state = Game.States.checkNoValidMoves;
 }
 
 Game.prototype.checkPlayerHasValidMoves = function ()
@@ -142,21 +141,26 @@ Game.prototype.checkPlayerHasValidMoves = function ()
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkPlayerHasValidMovesHandler.bind(this));
 
-  this.state = Game.States.checkNoValidMovesRequested;
+	this.state = Game.States.checkNoValidMovesRequested;
 }
 
 Game.prototype.checkPlayerHasValidMovesHandler = function(data)
 {
 	var res = data.target.response;
 	if (res == 'yes')
-    this.state = Game.States.nextPlayer;
+	{
+		this.updateInfoText('Skipping Player ' + this.currentPlayer + '\nNo valid moves');
+		sleep(2);
+		this.state = Game.States.nextPlayer;
+	}		
 	else
-    this.state = Game.States.selectMove;
+		this.state = Game.States.selectMove;
 }
 
 Game.prototype.nextPlayer = function ()
 {
 	this.currentPlayer = this.currentPlayer % this.nPlayers + 1;
+	this.updateInfoText('Player ' + this.currentPlayer + ' turn');
 	this.state = Game.States.checkGameOver;
 }
 
@@ -165,7 +169,7 @@ Game.prototype.selectMove = function ()
 	if (this.players[this.currentPlayer - 1][0] == 'computer')
 		this.state = Game.States.getComputerMove;
 	else
-    this.state = Game.States.waitSelection;
+		this.state = Game.States.waitSelection;
 }
 
 Game.prototype.getComputerMove = function ()
@@ -176,7 +180,7 @@ Game.prototype.getComputerMove = function ()
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.getComputerMoveHandler.bind(this));
 
-  this.state = Game.States.getComputerMoveRequested;
+	this.state = Game.States.getComputerMoveRequested;
 }
 
 Game.prototype.getComputerMoveHandler = function(data)
@@ -200,10 +204,10 @@ Game.prototype.getComputerMoveHandler = function(data)
 	this.firstTile = this.gameboard.getTile(rowNumber, columnLetter);
 	var orientation = this.firstTile.piece.orientation;
 
-	this.secondTile = this.gameboard.getDestinationTile(rowNumber, columnLetter, orientation, this.nMoves)
-
-  if (this.state == Game.States.getComputerMoveRequested)
-    this.state = Game.States.makeMove;
+	this.secondTile = this.gameboard.getDestinationTile(rowNumber, columnLetter, orientation, this.nMoves);
+	
+	if (this.state == Game.States.getComputerMoveRequested)
+		this.state = Game.States.makeMove;
 }
 
 Game.prototype.tileSelection = function (tile)
@@ -214,20 +218,24 @@ Game.prototype.tileSelection = function (tile)
 		{
 			tile.isSelected = true;
 			this.firstTile = tile;
-      this.state = Game.States.getPossibleMoves;
+
+			this.state = Game.States.getPossibleMoves;
 		}
 	}
 	else if(this.state == Game.States.firstTileSelected)
 	{
-    if (this.firstTile == tile) {
-      this.gameboard.unselectAllTiles();
-  		this.firstTile = null;
-      this.state = Game.States.waitSelection;
-    } else {
-      this.secondTile = tile;
-      this.state = Game.States.checkValidMove;
-    }
-  }
+		if (this.firstTile == tile)
+		{
+			this.gameboard.unselectAllTiles();
+			this.firstTile = null;
+			this.state = Game.States.waitSelection;
+		}
+		else
+		{
+			this.secondTile = tile;
+			this.state = Game.States.checkValidMove;
+		}
+	}
 }
 
 Game.prototype.getPossibleMoves = function ()
@@ -240,7 +248,7 @@ Game.prototype.getPossibleMoves = function ()
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.getPossibleMovesHandler.bind(this));
 
-  this.state = Game.States.getPossibleMovesRequested;
+	this.state = Game.States.getPossibleMovesRequested;
 }
 
 Game.prototype.getPossibleMovesHandler = function(data)
@@ -265,8 +273,8 @@ Game.prototype.getPossibleMovesHandler = function(data)
 		this.gameboard.getDestinationTile(newArr[i][0], newArr[i][1], orientation, newArr[i][2]).isValidMove = true;
 	}
 
-  if (this.state == Game.States.getPossibleMovesRequested)
-    this.state = Game.States.firstTileSelected;
+	if (this.state == Game.States.getPossibleMovesRequested)
+		this.state = Game.States.firstTileSelected;
 }
 
 Game.prototype.checkValidMove = function ()
@@ -279,7 +287,7 @@ Game.prototype.checkValidMove = function ()
 	else if (this.firstTile.piece.orientation == 'h' && this.firstTile.col != this.secondTile.col)
 		this.nMoves = this.secondTile.col - this.firstTile.col;
 	else
-    this.state = Game.States.firstTileSelected;
+		this.state = Game.States.firstTileSelected;
 
 	var board = this.getCurrentBoardJSON();
 	var rowNumber = 8 - this.firstTile.row;
@@ -288,8 +296,8 @@ Game.prototype.checkValidMove = function ()
 	requestString = 'valid_move(' + (this.currentPlayer) + ',' + board + ',' + rowNumber +',' + columnLetter + ',' + this.nMoves + ')';
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkValidMoveHandler.bind(this));
-
-  this.state = Game.States.checkValidMoveRequested;
+	
+	this.state = Game.States.checkValidMoveRequested;
 }
 
 Game.prototype.checkValidMoveHandler = function(data)
@@ -297,11 +305,10 @@ Game.prototype.checkValidMoveHandler = function(data)
 	var res = data.target.response;
 	if (res != 'no')
 	{
-    this.state = Game.States.makeMove;
+		this.state = Game.States.makeMove;
 	}
-
-  if (this.state == Game.States.checkValidMoveRequested)
-    this.state = Game.States.getComputerMove;
+	if (this.state == Game.States.checkValidMoveRequested)
+		this.state = Game.States.getComputerMove;
 }
 
 Game.prototype.makeMove = function ()
@@ -313,15 +320,15 @@ Game.prototype.makeMove = function ()
 	requestString = 'move(' + (this.currentPlayer) + ',' + JSON.stringify(this.players) + ',' + board + ',' + rowNumber +',' + columnLetter + ',' + this.nMoves + ')';
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.makeMoveHandler.bind(this));
-
-  this.state = Game.States.makeMoveRequested;
+	
+	this.state = Game.States.makeMoveRequested;
 }
 
 Game.prototype.makeMoveHandler = function(data)
 {
 	var res = data.target.response;
-
-  if (res != [] && this.state == Game.States.makeMoveRequested)
+	
+	if (res != [] && this.state == Game.States.makeMoveRequested)
 	{
 		res = res.replace(new RegExp('computer', 'g'), '"computer"');
 		res = res.replace(new RegExp('human', 'g'), '"human"');
@@ -364,16 +371,9 @@ Game.prototype.makeMoveHandler = function(data)
 		this.firstTile = null;
 		this.secondTile = null;
 		this.gameboard.unselectAllTiles();
-
-    this.state = Game.States.animations;
+		
+		this.state = Game.States.animations;
 	}
-}
-
-Game.prototype.getCurrentBoardJSON = function()
-{
-	var board = JSON.stringify(this.boardHistory[this.boardHistory.length - 1]);
-	board = board.replace(new RegExp('M', 'g'), "'M'");
-	return board;
 }
 
 Game.prototype.runAnimations = function (currTime)
@@ -381,15 +381,10 @@ Game.prototype.runAnimations = function (currTime)
 	if (this.animations.length > 0)
 	{
 		this.animations[0].update(currTime);
-		if (this.animations[0].ended){
+		if (this.animations[0].ended)
+		{
 			this.animations[0].reset();
 			this.animations.shift();
-		}
-		if (this.animations.length == 0){
-			if (this.replaying)
-				this.replaying = false;
-			else
-        this.state = Game.States.nextPlayer;
 		}
 	}
 }
@@ -470,7 +465,7 @@ Game.prototype.update = function (currTime)
 
 Game.prototype.undo = function ()
 {
-	if(this.gameSequence.moves.length > 0)
+	if(this.gameSequence.moves.length > 0 && this.state != Game.States.animations && this.state != Game.States.replay)
 	{
 		this.state = Game.States.undo;
 		this.currentPlayer = this.gameSequence.getLastMovePlayer();
@@ -483,10 +478,22 @@ Game.prototype.undo = function ()
 
 Game.prototype.replay = function ()
 {
-	if(this.gameSequence.moves.length > 0)
+	if(this.gameSequence.moves.length > 0 && this.state != Game.States.animations && this.state != Game.States.undo)
 	{
 		this.state = -1;
 		this.gameSequence.replay();
 		this.state = Game.States.replay;
 	}
+}
+
+Game.prototype.updateInfoText = function (text)
+{
+	document.getElementById('infoText').innerHTML = text;
+}
+
+Game.prototype.getCurrentBoardJSON = function()
+{
+	var board = JSON.stringify(this.boardHistory[this.boardHistory.length - 1]);
+	board = board.replace(new RegExp('M', 'g'), "'M'");
+	return board;
 }

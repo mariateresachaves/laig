@@ -5,7 +5,8 @@ function JumpAnimation(scene, span, startTile, endTile) {
 	Animation.call(this, scene, span);
 	this.startTile = startTile;
 	this.endTile = endTile;
-	this.dist = Math.sqrt(Math.pow(endTile.x - startTile.x, 2) + Math.pow(endTile.z - startTile.z, 2)) / 2;
+	this.piece = this.startTile.getTopPiece();
+	this.arcLength = Math.sqrt(Math.pow(this.endTile.x - this.startTile.x, 2) + Math.pow(this.endTile.z - this.startTile.z, 2)) / 2;
 };
 
 JumpAnimation.prototype = Object.create(Animation.prototype);
@@ -17,27 +18,29 @@ JumpAnimation.prototype.update = function(currTime)
 		this.startTime = currTime;
 	
 	var elapsedTime = (currTime - this.startTime)/1000
-	var piece = this.startTile.piece;
 	
 	if (elapsedTime > this.span)
 	{	
-		this.startTile.piece = null;
-		this.endTile.piece = piece;
+		this.startTile.removeTopPiece();
+		this.endTile.addPiece(this.piece);
 		
-		piece.tile = this.endTile;
-		piece.animationX = 0;
-		piece.animationY = 0;
-		piece.animationZ = 0;
-		piece.animationYAngle = 0;
-		piece.changeOrientation();
+		this.piece.animationX = 0;
+		this.piece.animationY = 0;
+		this.piece.animationZ = 0;
+		this.piece.animationYAngle = 0;
+		this.piece.changeOrientation();
 		
 		this.ended = true;
 	}
 	else
 	{
-		piece.animationX = (this.endTile.x - this.startTile.x) * (elapsedTime / this.span);
-		piece.animationY = this.dist * Math.sin( Math.acos( 1 - 2*(elapsedTime / this.span) ) );
-		piece.animationZ = (this.endTile.z - this.startTile.z) * (elapsedTime / this.span);
-		piece.animationYAngle = Math.PI/2 * (elapsedTime / this.span);
+		var angleDelta =  Math.PI * (elapsedTime / this.span);
+		//piece.animationX = (this.endTile.x - this.startTile.x) * (elapsedTime / this.span);
+		this.piece.animationX = (this.endTile.x - this.startTile.x) * (1 - Math.cos(angleDelta) )/2;
+		//piece.animationY = this.arcLength * Math.sin( Math.acos( 1 - 2*(elapsedTime / this.span) ) );
+		this.piece.animationY = this.arcLength * Math.sin(angleDelta);
+		//piece.animationZ = (this.endTile.z - this.startTile.z) * (elapsedTime / this.span);
+		this.piece.animationZ = (this.endTile.z - this.startTile.z) * (1 - Math.cos(angleDelta) )/2;
+		this.piece.animationYAngle = angleDelta/2;
 	}
 };

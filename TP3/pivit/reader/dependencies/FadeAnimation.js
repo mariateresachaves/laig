@@ -5,7 +5,8 @@ function FadeAnimation(scene, span, startTile, endTile) {
 	Animation.call(this, scene, span);
 	this.startTile = startTile;
 	this.endTile = endTile;
-	this.piece = this.startTile.piece;
+	this.piece = this.startTile.getTopPiece();
+	this.pieceChangedTile = false;
 };
 
 FadeAnimation.prototype = Object.create(Animation.prototype);
@@ -24,19 +25,30 @@ FadeAnimation.prototype.update = function(currTime)
 
 	}	
 	else if (elapsedTime > this.span)
-	{	
-		this.startTile.piece = null;
-		this.endTile.piece = this.piece;		
-		this.piece.tile = this.endTile;
-		this.piece.animationScale = 1;
+	{
+		if (!this.pieceChangedTile)
+		{
+			this.pieceChangedTile = true;
+			this.startTile.removeTopPiece();
+			this.endTile.addPiece(this.piece);
+		}
 		
+		this.piece.animationScale = 1;		
 		this.ended = true;
 	}
 	else
 	{
-		this.startTile.piece = null;
-		this.endTile.piece = this.piece;		
-		this.piece.tile = this.endTile;
+		if (!this.pieceChangedTile)
+		{
+			this.pieceChangedTile = true;
+			this.startTile.removeTopPiece();
+			this.endTile.addPiece(this.piece);
+		}
 		this.piece.animationScale = (elapsedTime / (this.span/2)) - 1;		
 	}
+};
+
+FadeAnimation.prototype.reset = function() {
+	Animation.prototype.reset.call(this);
+	this.pieceChangedTile = false;
 };

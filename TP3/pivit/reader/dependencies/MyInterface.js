@@ -8,6 +8,8 @@ function MyInterface(scene) {
 
 	this.scene = scene;
 	scene.interface = this;
+	
+
 };
 
 MyInterface.prototype = Object.create(CGFinterface.prototype);
@@ -17,20 +19,7 @@ MyInterface.prototype.constructor = MyInterface;
  * Function to create the lights groups.
  */
 MyInterface.prototype.onGraphLoaded = function () {
-	this.gui = new dat.GUI();
 
-	var play_options = this.gui.addFolder("Play options");
-	play_options.open();
-
-	var undoFunction = function(){ this.scene.game.undo(); };
-
-	var undo = { undo: undoFunction.bind(this)};
-	this.gui.add(undo, 'undo');
-	
-	var replayFunction = function(){ this.scene.game.replay(); };
-
-	var replay = { replay: replayFunction.bind(this)};
-	this.gui.add(replay, 'replay');
 
 };
 
@@ -43,6 +32,19 @@ MyInterface.prototype.init = function(application) {
 	// call CGFinterface init
 	CGFinterface.prototype.init.call(this, application);
 
+	this.gui = new dat.GUI();
+
+	var playOptions = this.gui.addFolder("Play options");
+	playOptions.open();
+	playOptions.add(this.scene.game, 'undo');
+	playOptions.add(this.scene.game, 'replay');
+	
+	this.gui.add( { mainmenu: function(){ window.location.href = 'index.html'; } }, 'mainmenu');	
+	
+	var changeThemeFunction = function(value){ this.scene.graph = new MySceneGraph(value + '.dsx', this.scene); };
+	var theme = this.gui.add(this.scene, 'theme', ['default', 'tvroom', 'swimmingpool']);	
+	theme.onFinishChange(changeThemeFunction.bind(this));
+	
 	return true;
 };
 
@@ -50,7 +52,8 @@ MyInterface.prototype.init = function(application) {
  * Function to process a key event.
  * @param event key event.
  */
-MyInterface.prototype.processKeyUp = function(event) {
+MyInterface.prototype.processKeyUp = function(event)
+{
 	switch (event.which || event.keyCode)
 	{
 		case (MyInterface.Keys.KEY_M):

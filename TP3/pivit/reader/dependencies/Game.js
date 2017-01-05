@@ -25,7 +25,6 @@ Game.States = {
 	replay:                         23
 };
 
-
 function Game(scene, playerTypes)
 {
 	this.scene = scene;
@@ -43,6 +42,10 @@ function Game(scene, playerTypes)
 	this.firstTile;
 	this.secondTile;
 	this.nMoves;
+	
+	this.lastTime;
+	this.gameTime = 0;
+	this.countTime = false;
 
 	this.gameboard = new GameBoard(this.scene, this);
 	this.auxboard = new AuxiliaryBoard(this.scene, this, this.nPlayers);
@@ -79,9 +82,8 @@ Game.prototype.newGameHandler = function(data)
 
 	var startingBoard = newArr[1];
 	this.boardHistory.push(startingBoard);
-	//console.log('startingBoard (' + startingBoard.length + ', ' + startingBoard[0].length + '):\n' + JSON.stringify(startingBoard));
-
 	this.gameboard.createPieces(startingBoard);
+	this.displayStatistics();
 	
 	this.state = Game.States.selectMove;
 }
@@ -93,26 +95,32 @@ Game.prototype.checkGameOver = function ()
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkGameOverHandler.bind(this));
 	
-	this.state = Game.States.checkGameOverRequested;
+	if (this.state == Game.States.checkGameOver)
+		this.state = Game.States.checkGameOverRequested;
 }
 
 Game.prototype.checkGameOverHandler = function(data)
 {
 	var res = data.target.response;
 
-	if (res != '[]')
+	if (this.state == Game.States.checkGameOverRequested)
 	{
-		res = res.replace(new RegExp('First Master', 'g'), '"First Master"');
-		res = res.replace(new RegExp('Last player standing', 'g'), '"Last player standing"');
-		res = res.replace(new RegExp('Most Masters', 'g'), '"Most Masters"');
+		if (res != '[]')
+		{
+			this.state = Game.States.gameOver;
+			
+			res = res.replace(new RegExp('First Master', 'g'), '"First Master"');
+			res = res.replace(new RegExp('Last player standing', 'g'), '"Last player standing"');
+			res = res.replace(new RegExp('Most Masters', 'g'), '"Most Masters"');
 
-		var newArr = JSON.parse(res);
-		this.updateInfoText('GAME OVER\nPlayer ' + newArr[0] + ' won (' + newArr[1] + ')');
-
-		this.state = Game.States.gameOver;
+			var newArr = JSON.parse(res);
+			this.updateInfoText('GAME OVER<BR>Player ' + newArr[0] + ' won<BR>(' + newArr[1] + ')');
+			this.showReturnButton(true);
+		}
+		else{
+			this.state = Game.States.checkPlayerEliminated;
+		}
 	}
-	else
-		this.state = Game.States.checkPlayerEliminated;
 }
 
 Game.prototype.checkPlayerEliminated = function ()
@@ -127,49 +135,61 @@ Game.prototype.checkPlayerEliminated = function ()
 
 Game.prototype.checkPlayerEliminatedHandler = function(data)
 {
-	var res = data.target.response;
-	if (res == 'yes')
-		this.state = Game.States.nextPlayer;
-	else
-		this.state = Game.States.checkNoValidMoves;
+	if (this.state == Game.States.checkPlayerEliminatedRequested)
+	{
+		var res = data.target.response;
+		if (res == 'yes')
+			this.state = Game.States.nextPlayer;
+		else
+			this.state = Game.States.checkNoValidMoves;
+	}
 }
 
 Game.prototype.checkPlayerHasValidMoves = function ()
 {
-	var board = this.getCurrentBoardJSON();
-	requestString = 'no_valid_moves(' + (this.currentPlayer) + ',' + board + ')';
-	requestString = requestString.replace(new RegExp('"', 'g'), '');
-	getPrologRequest(requestString, this.checkPlayerHasValidMovesHandler.bind(this));
-
-	this.state = Game.States.checkNoValidMovesRequested;
+	if (this.state = Game.States.checkNoValidMoves)
+	{
+		var board = this.getCurrentBoardJSON();
+		requestString = 'no_valid_moves(' + (this.currentPlayer) + ',' + board + ')';
+		requestString = requestString.replace(new RegExp('"', 'g'), '');
+		getPrologRequest(requestString, this.checkPlayerHasValidMovesHandler.bind(this));
+		
+		this.state = Game.States.checkNoValidMovesRequested;
+	}
 }
 
 Game.prototype.checkPlayerHasValidMovesHandler = function(data)
 {
-	var res = data.target.response;
-	if (res == 'yes')
+	if (this.state == Game.States.checkNoValidMovesRequested)
 	{
-		this.updateInfoText('Skipping Player ' + this.currentPlayer + '\nNo valid moves');
-		sleep(2);
-		this.state = Game.States.nextPlayer;
-	}		
-	else
-		this.state = Game.States.selectMove;
+		var res = data.target.response;
+		if (res == 'yes')
+		{
+			this.updateInfoText('Skipping Player ' + this.currentPlayer + '\nNo valid moves');
+			sleep(2);
+			this.state = Game.States.nextPlayer;
+		}		
+		else
+			this.state = Game.States.selectMove;
+	}
 }
 
 Game.prototype.nextPlayer = function ()
 {
 	this.currentPlayer = this.currentPlayer % this.nPlayers + 1;
-	this.updateInfoText('Player ' + this.currentPlayer + ' turn');
 	this.state = Game.States.checkGameOver;
 }
 
 Game.prototype.selectMove = function ()
 {
-	if (this.players[this.currentPlayer - 1][0] == 'computer')
-		this.state = Game.States.getComputerMove;
-	else
-		this.state = Game.States.waitSelection;
+	if(this.state == Game.States.selectMove)
+	{
+		this.updateInfoText('Player ' + this.currentPlayer + ' turn');
+		if (this.players[this.currentPlayer - 1][0] == 'computer')
+			this.state = Game.States.getComputerMove;
+		else
+			this.state = Game.States.waitSelection;
+	}
 }
 
 Game.prototype.getComputerMove = function ()
@@ -180,7 +200,8 @@ Game.prototype.getComputerMove = function ()
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.getComputerMoveHandler.bind(this));
 
-	this.state = Game.States.getComputerMoveRequested;
+	if (this.state == Game.States.getComputerMove)
+		this.state = Game.States.getComputerMoveRequested;
 }
 
 Game.prototype.getComputerMoveHandler = function(data)
@@ -197,24 +218,26 @@ Game.prototype.getComputerMoveHandler = function(data)
 	res = res.replace(new RegExp(',h,', 'g'), ',"h",');
 
 	var newArr = JSON.parse(res);
-	var rowNumber = newArr[0];
-	var columnLetter = newArr[1];
-	this.nMoves = newArr[2];
-
-	this.firstTile = this.gameboard.getTile(rowNumber, columnLetter);
-	var orientation = this.firstTile.piece.orientation;
-
-	this.secondTile = this.gameboard.getDestinationTile(rowNumber, columnLetter, orientation, this.nMoves);
 	
 	if (this.state == Game.States.getComputerMoveRequested)
+	{
+		var rowNumber = newArr[0];
+		var columnLetter = newArr[1];
+		this.nMoves = newArr[2];
+		
+		this.firstTile = this.gameboard.getTile(rowNumber, columnLetter);
+		var orientation = this.firstTile.getTopPieceOrientation();		
+		this.secondTile = this.gameboard.getDestinationTile(rowNumber, columnLetter, orientation, this.nMoves);
+
 		this.state = Game.States.makeMove;
+	}
 }
 
 Game.prototype.tileSelection = function (tile)
 {
 	if(this.state == Game.States.waitSelection)
 	{
-		if(tile.piece && tile.piece.owner == this.currentPlayer)
+		if(tile.hasPieces() && tile.getTopPieceOwner() == this.currentPlayer)
 		{
 			tile.isSelected = true;
 			this.firstTile = tile;
@@ -248,7 +271,8 @@ Game.prototype.getPossibleMoves = function ()
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.getPossibleMovesHandler.bind(this));
 
-	this.state = Game.States.getPossibleMovesRequested;
+	if(this.state == Game.States.getPossibleMoves)
+		this.state = Game.States.getPossibleMovesRequested;
 }
 
 Game.prototype.getPossibleMovesHandler = function(data)
@@ -266,7 +290,7 @@ Game.prototype.getPossibleMovesHandler = function(data)
 
 	var newArr = JSON.parse(res);
 
-	var orientation = this.gameboard.getTile(newArr[0][0], newArr[0][1]).piece.orientation;
+	var orientation = this.gameboard.getTile(newArr[0][0], newArr[0][1]).getTopPieceOrientation();
 
 	for(var i = 0; i < newArr.length; i++)
 	{
@@ -279,15 +303,19 @@ Game.prototype.getPossibleMovesHandler = function(data)
 
 Game.prototype.checkValidMove = function ()
 {
-	if (this.firstTile.row != this.secondTile.row && this.firstTile.col != this.secondTile.col)
-    this.state = Game.States.firstTileSelected;
-
-	if (this.firstTile.piece.orientation == 'v' && this.firstTile.row != this.secondTile.row)
-		this.nMoves = this.firstTile.row - this.secondTile.row;
-	else if (this.firstTile.piece.orientation == 'h' && this.firstTile.col != this.secondTile.col)
-		this.nMoves = this.secondTile.col - this.firstTile.col;
-	else
+	if (this.firstTile.row != this.secondTile.row && this.firstTile.col != this.secondTile.col){
 		this.state = Game.States.firstTileSelected;
+		return;
+	}
+
+	if (this.firstTile.getTopPieceOrientation() == 'v' && this.firstTile.row != this.secondTile.row)
+		this.nMoves = this.firstTile.row - this.secondTile.row;
+	else if (this.firstTile.getTopPieceOrientation() == 'h' && this.firstTile.col != this.secondTile.col)
+		this.nMoves = this.secondTile.col - this.firstTile.col;
+	else{
+		this.state = Game.States.firstTileSelected;
+		return;
+	}
 
 	var board = this.getCurrentBoardJSON();
 	var rowNumber = 8 - this.firstTile.row;
@@ -297,18 +325,24 @@ Game.prototype.checkValidMove = function ()
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.checkValidMoveHandler.bind(this));
 	
-	this.state = Game.States.checkValidMoveRequested;
+	if (this.state == Game.States.checkValidMove)
+		this.state = Game.States.checkValidMoveRequested;
 }
 
 Game.prototype.checkValidMoveHandler = function(data)
 {
-	var res = data.target.response;
-	if (res != 'no')
-	{
-		this.state = Game.States.makeMove;
-	}
 	if (this.state == Game.States.checkValidMoveRequested)
-		this.state = Game.States.getComputerMove;
+	{
+		var res = data.target.response;
+		if (res != 'no')
+		{
+			this.state = Game.States.makeMove;
+		}
+		else
+		{
+			this.state = Game.States.firstTileSelected;
+		}
+	}
 }
 
 Game.prototype.makeMove = function ()
@@ -321,7 +355,8 @@ Game.prototype.makeMove = function ()
 	requestString = requestString.replace(new RegExp('"', 'g'), '');
 	getPrologRequest(requestString, this.makeMoveHandler.bind(this));
 	
-	this.state = Game.States.makeMoveRequested;
+	if (this.state == Game.States.makeMove)
+		this.state = Game.States.makeMoveRequested;
 }
 
 Game.prototype.makeMoveHandler = function(data)
@@ -341,21 +376,17 @@ Game.prototype.makeMoveHandler = function(data)
 
 		this.players = newArr[0];
 		this.playersHistory.push(this.players);
-		// console.log("Players");
-		// for(var i = 0; i < this.players.length; i++){
-		//	console.log("player " + (i + 1) + ": " + this.players[i][0] + ", " + this.players[i][1]);
-		// }
 
 		var newBoard = newArr[1];
 		this.boardHistory.push(newBoard);
-		var piece = this.firstTile.piece;
+		this.displayStatistics();
+		var piece = this.firstTile.getTopPiece();
 		var promotion = false;
-		var animations = []
-		// console.log('newBoard (' + newBoard.length + ', ' + newBoard[0].length + '):\n' + JSON.stringify(newBoard));
+		var animations = [];
 
 		//ANIMATIONS
-		if (this.secondTile.piece) {
-			animations.push(new FadeAnimation(this.scene, 1, this.secondTile, this.auxboard.tiles[this.secondTile.piece.owner - 1]));
+		if ( this.secondTile.hasPieces() ) {
+			animations.push(new FadeAnimation(this.scene, 1, this.secondTile, this.auxboard.tiles[this.secondTile.getTopPieceOwner() - 1]));
 		}
 
 		animations.push(new JumpAnimation(this.scene, 1, this.firstTile, this.secondTile));
@@ -365,7 +396,7 @@ Game.prototype.makeMoveHandler = function(data)
 			animations.push(new PromoteAnimation(this.scene, 1, piece));
 		}
 
-		this.gameSequence.addMove(this.currentPlayer, piece, this.firstTile, this.secondTile, this.secondTile.piece, promotion, animations);
+		this.gameSequence.addMove(this.currentPlayer, piece, this.firstTile, this.secondTile, this.secondTile.getTopPiece(), promotion, animations);
 		this.animations = animations.slice();
 
 		this.firstTile = null;
@@ -391,6 +422,14 @@ Game.prototype.runAnimations = function (currTime)
 
 Game.prototype.update = function (currTime)
 {
+	var elapsedTime = 0;
+	
+	if(this.lastTime && this.countTime)
+		this.gameTime += (currTime - this.lastTime)/1000;
+	
+	this.lastTime = currTime;
+	this.displayGameTime();
+	
 	if (!this.locked)
 	{
 		this.locked = true;
@@ -398,66 +437,61 @@ Game.prototype.update = function (currTime)
 		switch (this.state)
 		{
 			case Game.States.newGame:
-			this.requestNewGame();
-			break;
+				this.requestNewGame();
+				break;
 			
 			case Game.States.selectMove:
-			this.selectMove();
-			break;
+				this.countTime = true;
+				this.selectMove();
+				break;
 			
 			case Game.States.getPossibleMoves:
-			this.getPossibleMoves();
-			break;
+				this.getPossibleMoves();
+				break;
 			
 			case Game.States.checkValidMove:
-			this.checkValidMove();
-			break;
+				this.checkValidMove();
+				break;
 			
 			case Game.States.getComputerMove:
-			this.getComputerMove();
-			break;
+				this.getComputerMove();
+				break;
 			
 			case Game.States.makeMove:
-			this.makeMove();
-			break;
+				this.makeMove();
+				this.countTime = false;
+				break;
 			
 			case Game.States.animations:
-			this.runAnimations(currTime);
-			if (this.animations.length == 0)
-				this.state = Game.States.nextPlayer;
-			break;
+				this.runAnimations(currTime);
+				if (this.animations.length == 0)
+					this.state = Game.States.nextPlayer;
+				break;
 			
 			case Game.States.nextPlayer:
-			this.nextPlayer();
-			break;
+				this.nextPlayer();
+				break;
 			
 			case Game.States.checkGameOver:
-			this.checkGameOver();
-			break;
+				this.checkGameOver();
+				break;
 			
 			case Game.States.checkPlayerEliminated:
-			this.checkPlayerEliminated();
-			break;
+				this.checkPlayerEliminated();
+				break;
 			
 			case Game.States.checkNoValidMoves:
-			this.checkPlayerHasValidMoves();
-			break;
-			
-			case Game.States.undo:
-			break;
+				this.checkPlayerHasValidMoves();
+				break;
 			
 			case Game.States.replay:
-			this.runAnimations(currTime);
-			if (this.animations.length == 0)
-				this.state = Game.States.checkGameOver;
-			break;
-			
-			case Game.States.gameOver:
-			// TODO: Acrescentar o texto e voltar ao menu inicial
-			break;
-			
+				this.runAnimations(currTime);
+				if (this.animations.length == 0)
+					this.state = Game.States.checkGameOver;
+				break;
+				
 			default:
-			break;
+				break;
 		}
 		this.locked = false;
 	}
@@ -468,7 +502,13 @@ Game.prototype.undo = function ()
 	if(this.gameSequence.moves.length > 0 && this.state != Game.States.animations && this.state != Game.States.replay)
 	{
 		this.state = Game.States.undo;
+		this.countTime = false;
+		this.showReturnButton(false);
+		this.gameboard.unselectAllTiles();
+		this.firstTile = null;
+		this.secondTile = null;
 		this.currentPlayer = this.gameSequence.getLastMovePlayer();
+		this.updateInfoText('Player ' + this.currentPlayer + ' turn');
 		this.gameSequence.undo();
 		this.boardHistory.pop();
 		this.playersHistory.pop();
@@ -478,9 +518,13 @@ Game.prototype.undo = function ()
 
 Game.prototype.replay = function ()
 {
-	if(this.gameSequence.moves.length > 0 && this.state != Game.States.animations && this.state != Game.States.undo)
+	if(this.gameSequence.moves.length > 0 && this.state != Game.States.animations && this.state != Game.States.replay && this.state != Game.States.undo)
 	{
 		this.state = -1;
+		this.countTime = false;
+		this.gameboard.unselectAllTiles();
+		this.firstTile = null;
+		this.secondTile = null;
 		this.gameSequence.replay();
 		this.state = Game.States.replay;
 	}
@@ -489,6 +533,79 @@ Game.prototype.replay = function ()
 Game.prototype.updateInfoText = function (text)
 {
 	document.getElementById('infoText').innerHTML = text;
+}
+
+Game.prototype.showReturnButton = function (boolean)
+{
+	if(boolean)
+		document.getElementById('return').innerHTML = '<a href="index.html">Return to Main Menu</a>';
+	else
+		document.getElementById('return').innerHTML = '';
+}
+
+Game.prototype.displayGameTime = function()
+{
+    var h = Math.floor(this.gameTime/3600);
+
+    var m = Math.floor( (this.gameTime / 60) % 60);
+	if (m < 10) m = "0" + m;
+	
+    var s = Math.floor(this.gameTime % 60);
+    if (s < 10) s = "0" + s;
+	
+    document.getElementById('gametime').innerHTML = h + ":" + m + ":" + s;
+}
+
+Game.prototype.displayStatistics = function()
+{
+	var board = this.boardHistory[this.boardHistory.length - 1];
+	var playerStats = new Object;
+	
+	for(var i = 1; i <= this.nPlayers ; i++)
+	{
+		playerStats[i] = new Object;
+		switch (this.players[i-1][1]){
+			case 1:
+				playerStats[i].firstMaster = '1st';
+				break;
+			case 2:
+				playerStats[i].firstMaster = '2nd';
+				break;
+			case 3:
+				playerStats[i].firstMaster = '3rd';
+				break;
+			case 4:
+				playerStats[i].firstMaster = '4th';
+				break;
+			default:
+				playerStats[i].firstMaster = 'na.';
+				break;
+		}
+		playerStats[i].masters = 0;
+		playerStats[i].pieces = 0;
+	}
+	
+	for(var i = 0; i < board.length; i++)
+	{
+		var boardRow = board[i];
+		for(var j = 0; j < boardRow.length; j++)
+		{
+			if(boardRow[j].length > 0)
+			{
+				if(boardRow[j][1] == 'M')
+					playerStats[boardRow[j][0]].masters++;
+				playerStats[boardRow[j][0]].pieces++;
+			}
+		}		
+	}
+	
+	var text = '';
+	for(var i = 1; i <= this.nPlayers; i++)
+	{
+		text += 'Player ' + i + ': first master = ' +  playerStats[i].firstMaster + ', pieces = ' + playerStats[i].pieces + ', masters = ' + playerStats[i].masters + '<br>';
+	}
+	
+    document.getElementById('statistics').innerHTML = text;
 }
 
 Game.prototype.getCurrentBoardJSON = function()

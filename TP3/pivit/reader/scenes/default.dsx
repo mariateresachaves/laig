@@ -54,23 +54,7 @@
 	</lights>
 
 	<textures>
-		<texture id="grass" file="./resources/images/floor.jpg" length_s="0.5" length_t="0.5" />
-		<texture id="soil" file="./resources/images/soil.jpg" length_s="0.3" length_t="0.3" />
-		<texture id="soil_lat" file="./resources/images/soil.jpg" length_s="1.0" length_t="0.1" />
-		<texture id="metal" file="./resources/images/metal.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="wood" file="./resources/images/wood.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="wood_lat" file="./resources/images/wood.jpg" length_s="0.01" length_t="1.0" />
-		<texture id="iron" file="./resources/images/iron.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="face" file="./resources/images/ball.png" length_s="1.0" length_t="1.0" />
-		<texture id="roof" file="./resources/images/roof.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="metal_roof" file="./resources/images/metal_roof.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="pyramid" file="./resources/images/pyramid.jpg" length_s="2.0" length_t="2.0" />
-		<texture id="waffle" file="./resources/images/waffle.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="icecream" file="./resources/images/icecream.png" length_s="1.0" length_t="1.0" />
 		<texture id="stone" file="./resources/images/stone.png" length_s="1.0" length_t="1.0" />
-		<texture id="stripe" file="./resources/images/stripe.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="tree" file="./resources/images/tree.jpg" length_s="1.0" length_t="1.0" />
-		<texture id="trunk" file="./resources/images/trunk.jpg" length_s="1.0" length_t="1.0" />
 		<texture id="minion1" file="./resources/images/minion_blue.png" length_s="1.0" length_t="1.0" />
 		<texture id="master1" file="./resources/images/master_blue.png" length_s="1.0" length_t="1.0" />
 		<texture id="minion2" file="./resources/images/minion_red.png" length_s="1.0" length_t="1.0" />
@@ -82,6 +66,54 @@
 	</textures>
 
 	<materials>
+		<material id="blacktile">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="0.1" g="0.1" b="0.1" a="1" />
+			<diffuse r="0.1" g="0.1" b="0.1" a="1" />
+			<specular r="0" g="0" b="0" a="1" />
+			<shininess value="10.0" />
+		</material>
+		
+		<material id="blacktileselected">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="0.6" g="0" b="0" a="1" />
+			<diffuse r="0.6" g="0" b="0" a="1" />
+			<specular r="0.6" g="0" b="0" a="1" />
+			<shininess value="10.0" />
+		</material>
+		
+		<material id="blacktilevalidmove">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="0.6" g="0.6" b="0" a="1" />
+			<diffuse r="0.6" g="0.6" b="0" a="1" />
+			<specular r="0.6" g="0.6" b="0" a="1" />
+			<shininess value="10.0" />
+		</material>
+		
+		<material id="whitetile">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="0.9" g="0.9" b="0.9" a="1" />
+			<diffuse r="0.9" g="0.9" b="0.9" a="1" />
+			<specular r="0.9" g="0.9" b="0.9" a="1" />
+			<shininess value="10.0" />
+		</material>
+		
+		<material id="whitetileselected">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="1" g="0" b="0" a="1" />
+			<diffuse r="1" g="0" b="0" a="1" />
+			<specular r="1" g="0" b="0" a="1" />
+			<shininess value="10.0" />
+		</material>
+		
+		<material id="whitetilevalidmove">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="1" g="1" b="0" a="1" />
+			<diffuse r="1" g="1" b="0" a="1" />
+			<specular r="1" g="1" b="0" a="1" />
+			<shininess value="10.0" />
+		</material>
+	
 		<material id="plastic">
 			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
 			<ambient r="1" g="1" b="1" a="1" />
@@ -142,10 +174,22 @@
 			<materials>
 				<material id="plastic" />
 			</materials>
-			<texture id="none" />
+			<texture id="stone" />
+			<children>
+				<componentref id="gameboard" />
+				<componentref id="auxiliaryboard" />
+			</children>
+		</component>
+		
+		<component id="gameboard">
+			<transformation>				
+			</transformation>
+			<materials>
+				<material id="inherit" />
+			</materials>
+			<texture id="stone" />
 			<children>
 				<gameboard />
-				<componentref id="auxiliaryboard" />
 			</children>
 		</component>
 		
@@ -156,7 +200,7 @@
 			<materials>
 				<material id="inherit" />
 			</materials>
-			<texture id="none" />
+			<texture id="stone" />
 			<children>
 				<auxiliaryboard />
 			</children>

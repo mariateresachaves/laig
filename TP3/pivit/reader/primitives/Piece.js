@@ -46,11 +46,11 @@ Piece.prototype.changeOrientation = function()
 		this.orientation = 'v';
 }
 
-Piece.prototype.display = function () {
+Piece.prototype.display = function (drawPieceOrientation, nPieces) {
 
 	this.scene.pushMatrix();
 	
-		this.scene.translate(this.tile.x + this.animationX, this.animationY, this.tile.z + this.animationZ);
+		this.scene.translate(this.tile.x + this.animationX, nPieces*this.height + this.animationY, this.tile.z + this.animationZ);
 		this.scene.rotate(this.animationYAngle, 0, 1, 0);
 		this.scene.rotate(this.animationXAngle, 1, 0, 0);
 		this.scene.scale(this.animationScale, this.animationScale, this.animationScale);
@@ -60,7 +60,7 @@ Piece.prototype.display = function () {
 			this.scene.rotate(Math.PI, 1, 0, 0);			
 		}
 		
-		if (this.orientation == 'v')
+		if (this.orientation == 'v' && drawPieceOrientation)
 			this.scene.rotate(Math.PI/2, 0, 1, 0);
 		
 		this.material.apply();

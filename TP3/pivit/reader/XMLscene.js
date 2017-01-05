@@ -45,6 +45,7 @@ XMLscene.prototype.init = function (application) {
 	}
 
 	this.game = new Game(this, playerTypes);
+	this.theme = 'default';
 
 	this.setPickEnabled(true);
 };
@@ -192,11 +193,6 @@ XMLscene.prototype.onGraphLoaded = function () {
 	this.initCameras();
 
 	this.setUpdatePeriod(1000 / 60);
-
-  console.log("********** GUI ************");
-  console.log("Number of players = " + this.players);
-  console.log("Scene = " + this.scene_env);
-  console.log("***************************");
 };
 
 //--- Update Lights ---
@@ -204,7 +200,8 @@ XMLscene.prototype.onGraphLoaded = function () {
 /**
  * Function to update the lights.
  */
-XMLscene.prototype.updateLights = function() {
+XMLscene.prototype.updateLights = function()
+{
 	for (i = 0; i < this.lights.length; i++)
 		this.lights[i].update();
 };
@@ -214,7 +211,8 @@ XMLscene.prototype.updateLights = function() {
 /**
  * Function to change the camera.
  */
-XMLscene.prototype.changeCamera = function() {
+XMLscene.prototype.changeCamera = function()
+{
   this.camera_index++;
 	if (this.camera_index >= this.cameras.length)
 		this.camera_index = 0;
@@ -363,9 +361,9 @@ XMLscene.prototype.drawComponent = function (componentID, parentMaterial, parent
 		else if (component.children[i].type === "primitive")
 			this.drawPrimitive(component.children[i].id, material, texture);
 		else if (component.children[i].type === "gameboard")
-			this.game.gameboard.display();
+			this.game.gameboard.display(texture.CGFtexture);
 		else if (component.children[i].type === "auxiliaryboard")
-			this.game.auxboard.display();
+			this.game.auxboard.display(texture.CGFtexture);
 	}
 
 	this.popMatrix();

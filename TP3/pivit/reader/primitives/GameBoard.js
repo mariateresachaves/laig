@@ -5,9 +5,6 @@ function GameBoard(scene, game) {
 	this.pieceHeight = 0.1;
 	this.tileSize = 1;
 
-  this.text = new Text(scene);
-  this.text.setText("text");
-
 	//create tiles
 	var isWhite = false;
 	for(var i = 0; i < 8; i++)
@@ -16,18 +13,18 @@ function GameBoard(scene, game) {
 		for(var j = 0; j < 8; j++)
 		{
 			if (isWhite){
-				var color1 = vec4.fromValues(0.9, 0.9, 0.9, 1);
-				var color2 = vec4.fromValues(1, 0, 0, 1);
-				var color3 = vec4.fromValues(1, 1, 0, 1);
+				var materialID = 'whitetile';
+				var materialSelectedID = 'whitetileselected';
+				var materialValidMoveID = 'whitetilevalidmove';
 				isWhite = false;
 			}
 			else{
-				var color1 = vec4.fromValues(0, 0, 0, 1);
-				var color2 = vec4.fromValues(0.6, 0, 0, 1);
-				var color3 = vec4.fromValues(0.6, 0.6, 0, 1);
+				var materialID = 'blacktile';
+				var materialSelectedID = 'blacktileselected';
+				var materialValidMoveID = 'blacktilevalidmove';
 				isWhite = true;
 			}
-			this.tiles[i][j] = new Tile(this.scene, this, this.tileSize, this.tileSize, i, j, color1, color2, color3);
+			this.tiles[i][j] = new Tile(this.scene, this, this.tileSize, this.tileSize, i, j, materialID, materialSelectedID, materialValidMoveID);
 		}
 		isWhite = !isWhite;
 	}
@@ -45,7 +42,7 @@ GameBoard.prototype.createPieces = function(startingBoard)
 			var tile = this.tiles[i][j];
 			var tileInfo = startingBoard[i][j];
 			if (tileInfo.length != 0)
-				tile.piece = new Piece( this.scene, this.pieceRadius, this.pieceHeight,	'minion' + tileInfo[0], 'master' + tileInfo[0], tileInfo[0], tile, tileInfo[2] );
+				tile.addPiece( new Piece( this.scene, this.pieceRadius, this.pieceHeight, 'minion' + tileInfo[0], 'master' + tileInfo[0], tileInfo[0], tile, tileInfo[2]) );
 		}
 	}
 }
@@ -84,15 +81,8 @@ GameBoard.prototype.unselectAllTiles = function()
 /**
  * GameBoard display function.
  */
-GameBoard.prototype.display = function()
+GameBoard.prototype.display = function(texture)
 {
-
-  this.scene.pushMatrix();
-  this.scene.rotate(-Math.PI/2, 0, 1, 0);
-  this.scene.translate(0, 3, 3);
-  this.text.display();
-  this.scene.popMatrix();
-
 	this.scene.pushMatrix();
 	this.scene.translate(-4 * this.tileSize, 0, 4 * this.tileSize);
 
@@ -105,7 +95,7 @@ GameBoard.prototype.display = function()
 				this.scene.registerForPick(i, this.tiles[row][column].piece);
 				i++;
 			}
-			this.tiles[row][column].display();
+			this.tiles[row][column].display(texture, true);
 		}
 	}
 

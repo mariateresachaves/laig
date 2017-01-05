@@ -9,7 +9,7 @@ function AuxiliaryBoard(scene, game, nPlayers) {
 	var isWhite = false;
 	for(var i = 0; i < nPlayers; i++)
 	{
-		this.tiles[i] = new Tile(this.scene, this, this.tileSize, this.tileSize, i, 0, color, color, color);
+		this.tiles[i] = new Tile(this.scene, this, this.tileSize, this.tileSize, i, 0, 'whitetile', 'whitetile', 'whitetile');
 	}
 }
 
@@ -26,9 +26,9 @@ AuxiliaryBoard.prototype.getTile = function(rowNumber, columnLetter)
 /**
  * AuxiliaryBoard display function.
  */
-AuxiliaryBoard.prototype.display = function()
-{
+AuxiliaryBoard.prototype.display = function(texture)
+{	
 	for(row in this.tiles) {
-		this.tiles[row].display();
+		this.tiles[row].display(texture, false);
 	}
 }

@@ -63,12 +63,11 @@ Piece.prototype.display = function (drawPieceOrientation, nPieces) {
 		if (this.orientation == 'v' && drawPieceOrientation)
 			this.scene.rotate(Math.PI/2, 0, 1, 0);
 		
-		this.material.apply();
+		this.scene.graph.materials['piece'].apply();
 	
 		//cilindrical side
 		this.scene.pushMatrix();
 			this.scene.rotate(-Math.PI/2, 1, 0, 0);
-			this.material.apply();
 			this.side.display();
 		this.scene.popMatrix();
 	

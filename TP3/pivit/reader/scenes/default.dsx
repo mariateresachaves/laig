@@ -129,6 +129,14 @@
 			<specular r="1" g="0.2" b="0.2" a="1" />
 			<shininess value="1.0" />
 		</material>
+		
+		<material id="piece">
+			<emission r="0.0" g="0.0" b="0.0" a="0.0" />
+			<ambient r="0.9" g="0.9" b="0.9" a="1" />
+			<diffuse r="0.9" g="0.9" b="0.9" a="1" />
+			<specular r="0.2" g="0.2" b="0.2" a="1" />
+			<shininess value="1.0" />
+		</material>
 	</materials>
 
 	<transformations>
